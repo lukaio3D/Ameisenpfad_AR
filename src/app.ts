@@ -31,6 +31,7 @@ class App {
             uiOptions: {
               sessionMode: "immersive-ar",
             },
+            optionalFeatures: true,
           });
 
         // hide/show the Inspector
