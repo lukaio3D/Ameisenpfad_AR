@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -35,6 +35,10 @@ class App {
         });
 
         const fm = xr.baseExperience.featuresManager;
+        const sm = xr.baseExperience.sessionManager;
+      
+        // enable hit test
+        const xrTest = fm.enableFeature(WebXRHitTest, "latest");
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
