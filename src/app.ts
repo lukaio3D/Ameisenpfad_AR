@@ -5,6 +5,10 @@ import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBu
 
 class App {
     constructor() {
+        this.initialize();
+    }
+
+    async initialize() {
         // create the canvas html element and attach it to the webpage
         var canvas = document.createElement("canvas");
         canvas.style.width = "100%";
@@ -20,6 +24,13 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+
+        const xr = await scene.createDefaultXRExperienceAsync({
+            // ask for an ar-session
+            uiOptions: {
+              sessionMode: "immersive-ar",
+            },
+          });
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
