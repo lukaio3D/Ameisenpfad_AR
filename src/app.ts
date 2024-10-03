@@ -29,10 +29,12 @@ class App {
         const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
             uiOptions: {
-              sessionMode: "immersive-ar",
+                sessionMode: "immersive-ar",
             },
             optionalFeatures: true,
-          });
+        });
+
+        const fm = xr.baseExperience.featuresManager;
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
