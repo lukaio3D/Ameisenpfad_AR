@@ -30,13 +30,14 @@ class App {
             // ask for an ar-session
             uiOptions: {
                 sessionMode: "immersive-ar",
+                referenceSpaceType: "local-floor"
             },
             optionalFeatures: true,
         });
 
         const fm = xr.baseExperience.featuresManager;
         const sm = xr.baseExperience.sessionManager;
-      
+
         // enable hit test
         const xrTest = fm.enableFeature(WebXRHitTest, "latest");
 
