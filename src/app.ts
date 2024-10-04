@@ -25,7 +25,7 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // Load hero character and play animation
-        SceneLoader.ImportMesh("", "src/", "240920_AntAnim.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        SceneLoader.ImportMesh("", "../public/", "240920_AntAnim.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
 
             const ant = newMeshes[0];
             ant.position = new Vector3(1, 0, 0);
