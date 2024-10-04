@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -25,31 +25,9 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // Load hero character and play animation
-        SceneLoader.ImportMesh("", "../public/", "240920_AntAnim.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        appendSceneAsync("240920_AntAnim.glb", scene) 
 
-            const ant = newMeshes[0];
-            ant.position = new Vector3(1, 0, 0);
-
-            // Create 50 ants in a matrix
-            const rows = 10;
-            const cols = 10;
-            for (let row = 0; row < rows; row++) {
-                for (let col = 0; col < cols; col++) {
-                    const index = row * cols + col;
-                    if (index >= 100) break; // Ensure we only create 50 ants
-
-                    const antClone = ant.clone("ant" + index, null);
-                    antClone.position = new Vector3(col * 1, 0, row * 1);
-
-                    // Add pointer down event to the ant clone
-                    antClone.actionManager = new ActionManager(scene);
-                    antClone.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
-                        console.log("Ant " + index + " clicked");
-                    }));
-                }
-            }
-
-            //Get the Samba animation Group
+/*             //Get the Samba animation Group
             const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
 
             //Play the Samba animation  
@@ -72,11 +50,10 @@ class App {
                     sambaAnim.stop(true);
                     i = 0;
                 }
-            }));
-        });
+            })); */
 
 
-        const xr = await scene.createDefaultXRExperienceAsync({
+/*         const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
             uiOptions: {
                 sessionMode: "immersive-ar",
@@ -98,7 +75,7 @@ class App {
             { element: "#overlay" },
             undefined,
             false
-        );
+        ); */
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
