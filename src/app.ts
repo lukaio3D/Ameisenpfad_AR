@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -24,7 +24,57 @@ class App {
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, Vector3.Zero(), scene);
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
-        var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+        // Load hero character and play animation
+        SceneLoader.ImportMesh("", "src/", "240920_AntAnim.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+
+            const ant = newMeshes[0];
+            ant.position = new Vector3(1, 0, 0);
+
+            // Create 50 ants in a matrix
+            const rows = 10;
+            const cols = 10;
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const index = row * cols + col;
+                    if (index >= 100) break; // Ensure we only create 50 ants
+
+                    const antClone = ant.clone("ant" + index, null);
+                    antClone.position = new Vector3(col * 1, 0, row * 1);
+
+                    // Add pointer down event to the ant clone
+                    antClone.actionManager = new ActionManager(scene);
+                    antClone.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
+                        console.log("Ant " + index + " clicked");
+                    }));
+                }
+            }
+
+            //Get the Samba animation Group
+            const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
+
+            //Play the Samba animation  
+            sambaAnim.stop(true);
+
+            // Create a simple box
+            const box = MeshBuilder.CreateBox("box", { size: 0.5 }, scene);
+            box.visibility = 0;
+            box.position = new Vector3(1, 0, 0);
+
+            let i = 0;
+            // Add pointer down event to the box
+            box.actionManager = new ActionManager(scene);
+            box.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
+
+                if (i === 0) {
+                    sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
+                    i = 1;
+                } else {
+                    sambaAnim.stop(true);
+                    i = 0;
+                }
+            }));
+        });
+
 
         const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
