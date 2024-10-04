@@ -25,7 +25,7 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // Load hero character and play animation
-        appendSceneAsync("assets/models/240920_AntAnim.glb", scene);
+        appendSceneAsync("assets/240920_AntAnim.glb", scene);
 
         /*             //Get the Samba animation Group
                     const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
@@ -53,7 +53,7 @@ class App {
                     })); */
 
 
-        const xr = await scene.createDefaultXRExperienceAsync({
+/*         const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
             uiOptions: {
                 sessionMode: "immersive-ar",
@@ -75,7 +75,9 @@ class App {
             { element: "#overlay" },
             undefined,
             false
-        );
+        ); */
+
+        scene.debugLayer.show();
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
