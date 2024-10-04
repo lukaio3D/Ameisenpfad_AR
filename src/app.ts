@@ -25,7 +25,7 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // Load hero character and play animation
-        appendSceneAsync("240920_AntAnim.glb", scene) 
+        appendSceneAsync("assets/models/240920_AntAnim.glb", scene); 
 
 /*             //Get the Samba animation Group
             const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
