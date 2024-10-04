@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -12,8 +12,8 @@ class App {
     async initialize() {
         // create the canvas html element and attach it to the webpage
         var canvas = document.createElement("canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
+        canvas.style.width = "100vw";
+        canvas.style.height = "100vh";
         canvas.id = "gameCanvas";
         document.body.appendChild(canvas);
 
@@ -40,6 +40,15 @@ class App {
 
         // enable hit test
         const xrTest = fm.enableFeature(WebXRHitTest, "latest");
+
+        // enable dom overlay
+        const domOverlayFeature = fm.enableFeature(
+            WebXRDomOverlay,
+            "latest",
+            { element: "#overlay" },
+            undefined,
+            false
+        );
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
