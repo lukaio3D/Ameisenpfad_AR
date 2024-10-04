@@ -28,6 +28,17 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.(glb|gltf)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'assets/models',
+                        },
+                    },
+                ],
+            },
         ],
     },
     plugins: [
