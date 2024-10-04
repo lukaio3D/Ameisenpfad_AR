@@ -25,35 +25,35 @@ class App {
         camera.attachControl(canvas, true);
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
         // Load hero character and play animation
-        appendSceneAsync("assets/models/240920_AntAnim.glb", scene); 
+        appendSceneAsync("assets/models/240920_AntAnim.glb", scene);
 
-/*             //Get the Samba animation Group
-            const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
-
-            //Play the Samba animation  
-            sambaAnim.stop(true);
-
-            // Create a simple box
-            const box = MeshBuilder.CreateBox("box", { size: 0.5 }, scene);
-            box.visibility = 0;
-            box.position = new Vector3(1, 0, 0);
-
-            let i = 0;
-            // Add pointer down event to the box
-            box.actionManager = new ActionManager(scene);
-            box.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
-
-                if (i === 0) {
-                    sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
-                    i = 1;
-                } else {
+        /*             //Get the Samba animation Group
+                    const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
+        
+                    //Play the Samba animation  
                     sambaAnim.stop(true);
-                    i = 0;
-                }
-            })); */
+        
+                    // Create a simple box
+                    const box = MeshBuilder.CreateBox("box", { size: 0.5 }, scene);
+                    box.visibility = 0;
+                    box.position = new Vector3(1, 0, 0);
+        
+                    let i = 0;
+                    // Add pointer down event to the box
+                    box.actionManager = new ActionManager(scene);
+                    box.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
+        
+                        if (i === 0) {
+                            sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
+                            i = 1;
+                        } else {
+                            sambaAnim.stop(true);
+                            i = 0;
+                        }
+                    })); */
 
 
-/*         const xr = await scene.createDefaultXRExperienceAsync({
+        const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
             uiOptions: {
                 sessionMode: "immersive-ar",
@@ -75,7 +75,7 @@ class App {
             { element: "#overlay" },
             undefined,
             false
-        ); */
+        );
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
