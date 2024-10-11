@@ -89,9 +89,9 @@ class App {
         // featuresManager from the base webxr experience helper
         const planeDetector = fm.enableFeature(WebXRPlaneDetector, "latest") as WebXRPlaneDetector;
 
-        const lightEstimationFeature = fm.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
+/*         const lightEstimationFeature = fm.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
             createDirectionalLightSource: true,
-        });
+        }); */
 
 /*         // featuresManager from the base webxr experience helper
         const depthSensing = fm.enableFeature(
