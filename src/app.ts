@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing, DirectionalLight, ShadowGenerator, WebXRBackgroundRemover, Quaternion, StandardMaterial, Color3, WebXRAnchorSystem, FreeCamera } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -21,76 +21,106 @@ class App {
         var engine = new Engine(canvas, true);
         var scene = new Scene(engine);
 
-        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, Vector3.Zero(), scene);
-        camera.attachControl(canvas, true);
-        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
-        // Load hero character and play animation
-        appendSceneAsync("assets/240920_AntAnim.glb", scene);
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new Scene(engine);
 
-        /*                     //Get the Samba animation Group
-                            const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
-                
-                            //Play the Samba animation  
-                            sambaAnim.stop(true);
-                
-                            // Create a simple box
-                            const box = MeshBuilder.CreateBox("box", { size: 0.5 }, scene);
-                            box.visibility = 0;
-                            box.position = new Vector3(1, 0, 0);
-                
-                            let i = 0;
-                            // Add pointer down event to the box
-                            box.actionManager = new ActionManager(scene);
-                            box.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnPickTrigger, function () {
-                
-                                if (i === 0) {
-                                    sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
-                                    i = 1;
-                                } else {
-                                    sambaAnim.stop(true);
-                                    i = 0;
-                                }
-                            })); */
+    // This creates and positions a free camera (non-mesh)
+    var camera = new FreeCamera("camera1", new Vector3(0, 1, -5), scene);
 
+    // This targets the camera to scene origin
+    camera.setTarget(Vector3.Zero());
 
-        const xr = await scene.createDefaultXRExperienceAsync({
-            // ask for an ar-session
-            uiOptions: {
-                sessionMode: "immersive-ar",
-                referenceSpaceType: "local-floor"
-            },
-            optionalFeatures: true,
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    var dirLight = new DirectionalLight('light', new Vector3(0, -1, -0.5), scene);
+    dirLight.position = new Vector3(0, 5, -5);
+
+    var shadowGenerator = new ShadowGenerator(1024, dirLight);
+    shadowGenerator.useBlurExponentialShadowMap = true;
+    shadowGenerator.blurKernel = 32;
+
+    const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
+    const idleRange = { from: 0, to: 100 }; // Define idleRange with appropriate values
+
+    var xr = await scene.createDefaultXRExperienceAsync({
+        uiOptions: {
+            sessionMode: "immersive-ar",
+            referenceSpaceType: "local-floor"
+        },
+        optionalFeatures: true
+    });
+
+    const fm = xr.baseExperience.featuresManager;
+
+    const xrTest = fm.enableFeature(WebXRHitTest.Name, "latest") as WebXRHitTest;
+    const anchors = fm.enableFeature(WebXRAnchorSystem.Name, 'latest');
+
+    const xrBackgroundRemover = fm.enableFeature(WebXRBackgroundRemover.Name);
+
+    let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
+    b.rotationQuaternion = new Quaternion();
+    // b.isVisible = false;
+    shadowGenerator.addShadowCaster(b, true);
+
+    const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.15, thickness: 0.05 });
+    marker.isVisible = false;
+    marker.rotationQuaternion = new Quaternion();
+
+    var skeleton = model.skeletons[0];
+
+    let hitTest;
+
+    b.isVisible = false;
+
+    (xrTest as WebXRHitTest).onHitTestResultObservable.add((results) => {
+        if (results.length) {
+            marker.isVisible = true;
+            hitTest = results[0];
+            hitTest.transformationMatrix.decompose(undefined, b.rotationQuaternion, b.position);
+            hitTest.transformationMatrix.decompose(undefined, marker.rotationQuaternion, marker.position);
+        } else {
+            marker.isVisible = false;
+            hitTest = undefined;
+        }
+    });
+    const mat1 = new StandardMaterial('1', scene);
+    mat1.diffuseColor = Color3.Red();
+    const mat2 = new StandardMaterial('1', scene);
+    mat2.diffuseColor = Color3.Blue();
+
+    if (anchors) {
+        console.log('anchors attached');
+        (anchors as WebXRAnchorSystem).onAnchorAddedObservable.add(anchor => {
+            console.log('attaching', anchor);
+            b.isVisible = true;
+            anchor.attachedNode = b.clone("mensch", null, true);
+            (anchor.attachedNode as Mesh).skeleton = skeleton.clone('skelet');
+            shadowGenerator.addShadowCaster(anchor.attachedNode as Mesh, true);
+            scene.beginAnimation((anchor.attachedNode as Mesh).skeleton, idleRange.from, idleRange.to, true);
+            b.isVisible = false;
         });
 
-        const fm = xr.baseExperience.featuresManager;
-        const sm = xr.baseExperience.sessionManager;
+        (anchors as WebXRAnchorSystem).onAnchorRemovedObservable.add(anchor => {
+            console.log('disposing', anchor);
+            if (anchor) {
+                (anchor.attachedNode as Mesh).isVisible = false;
+                anchor.attachedNode.dispose();
+            }
+        });
+    }
 
-        // enable hit test
-        const hitTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;;
-
-        // enable dom overlay
-        const domOverlayFeature = fm.enableFeature(
-            WebXRDomOverlay,
-            "latest",
-            { element: "#overlay" },
-            undefined,
-            false
-        );
-
-
-        /*         scene.debugLayer.show(); */
-
-        /*         // hide/show the Inspector
-                window.addEventListener("keydown", (ev) => {
-                    // Shift+Ctrl+Alt+I
-                    if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.key === 'i') {
-                        if (scene.debugLayer.isVisible()) {
-                            scene.debugLayer.hide();
-                        } else {
-                            scene.debugLayer.show();
-                        }
-                    }
-                }); */
+    scene.onPointerDown = (evt, pickInfo) => {
+        if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
+            (anchors as WebXRAnchorSystem).addAnchorPointUsingHitTestResultAsync(hitTest);
+        }
+    }
 
         // run the main render loop
         engine.runRenderLoop(() => {
