@@ -68,41 +68,6 @@ class App {
         // enable hit test
         const hitTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;;
 
-        // a dot to show in the found position
-        const dot = SphereBuilder.CreateSphere(
-            "dot",
-            {
-                diameter: 0.05,
-            },
-            scene,
-        );
-        dot.isVisible = false;
-        hitTest.onHitTestResultObservable.add((results) => {
-            if (results.length) {
-                dot.isVisible = true;
-                results[0].transformationMatrix.decompose(dot.scaling, dot.rotationQuaternion, dot.position);
-            } else {
-                dot.isVisible = false;
-            }
-        });
-
-/*         // featuresManager from the base webxr experience helper
-        const planeDetector = fm.enableFeature(WebXRPlaneDetector, "latest") as WebXRPlaneDetector; */
-
-        const lightEstimationFeature = fm.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
-            createDirectionalLightSource: true,
-        });
-
-        // featuresManager from the base webxr experience helper
-        const depthSensing = fm.enableFeature(
-            WebXRFeatureName.DEPTH_SENSING,
-            "latest",
-            {
-                dataFormatPreference: ["ushort", "float"],
-                usagePreference: ["cpu", "gpu"],
-            } as IWebXRDepthSensingOptions,
-        ) as WebXRDepthSensing;
-
         // enable dom overlay
         const domOverlayFeature = fm.enableFeature(
             WebXRDomOverlay,
@@ -111,7 +76,6 @@ class App {
             undefined,
             false
         );
-
 
 
         /*         scene.debugLayer.show(); */
