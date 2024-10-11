@@ -27,7 +27,7 @@ class App {
         // Load hero character and play animation
         appendSceneAsync("assets/240920_AntAnim.glb", scene);
 
-        /*             //Get the Samba animation Group
+                    //Get the Samba animation Group
                     const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
         
                     //Play the Samba animation  
@@ -50,10 +50,10 @@ class App {
                             sambaAnim.stop(true);
                             i = 0;
                         }
-                    })); */
+                    }));
 
 
-/*         const xr = await scene.createDefaultXRExperienceAsync({
+         const xr = await scene.createDefaultXRExperienceAsync({
             // ask for an ar-session
             uiOptions: {
                 sessionMode: "immersive-ar",
@@ -75,11 +75,11 @@ class App {
             { element: "#overlay" },
             undefined,
             false
-        ); */
+        );
 
-        scene.debugLayer.show();
+/*         scene.debugLayer.show(); */
 
-        // hide/show the Inspector
+/*         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
             // Shift+Ctrl+Alt+I
             if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.key === 'i') {
@@ -89,7 +89,7 @@ class App {
                     scene.debugLayer.show();
                 }
             }
-        });
+        }); */
 
         // run the main render loop
         engine.runRenderLoop(() => {
