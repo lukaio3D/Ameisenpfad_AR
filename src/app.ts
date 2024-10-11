@@ -86,14 +86,14 @@ class App {
             }
         });
 
-        // featuresManager from the base webxr experience helper
-        const planeDetector = fm.enableFeature(WebXRPlaneDetector, "latest") as WebXRPlaneDetector;
-
-/*         const lightEstimationFeature = fm.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
-            createDirectionalLightSource: true,
-        }); */
-
 /*         // featuresManager from the base webxr experience helper
+        const planeDetector = fm.enableFeature(WebXRPlaneDetector, "latest") as WebXRPlaneDetector; */
+
+        const lightEstimationFeature = fm.enableFeature(WebXRFeatureName.LIGHT_ESTIMATION, "latest", {
+            createDirectionalLightSource: true,
+        });
+
+        // featuresManager from the base webxr experience helper
         const depthSensing = fm.enableFeature(
             WebXRFeatureName.DEPTH_SENSING,
             "latest",
@@ -101,7 +101,7 @@ class App {
                 dataFormatPreference: ["ushort", "float"],
                 usagePreference: ["cpu", "gpu"],
             } as IWebXRDepthSensingOptions,
-        ) as WebXRDepthSensing; */
+        ) as WebXRDepthSensing;
 
         // enable dom overlay
         const domOverlayFeature = fm.enableFeature(
