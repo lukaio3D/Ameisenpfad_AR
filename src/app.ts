@@ -27,7 +27,7 @@ class App {
         // Load hero character and play animation
         appendSceneAsync("assets/240920_AntAnim.glb", scene);
 
-                    //Get the Samba animation Group
+/*                     //Get the Samba animation Group
                     const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
         
                     //Play the Samba animation  
@@ -50,7 +50,7 @@ class App {
                             sambaAnim.stop(true);
                             i = 0;
                         }
-                    }));
+                    })); */
 
 
          const xr = await scene.createDefaultXRExperienceAsync({
