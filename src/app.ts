@@ -46,9 +46,9 @@ class App {
         shadowGenerator.useBlurExponentialShadowMap = true;
         shadowGenerator.blurKernel = 32;
 
-        let b
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
- */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene).then(() => b = container.meshes[2]);
+ */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
+        let b = container.meshes[1];
 
         var xr = await scene.createDefaultXRExperienceAsync({
             uiOptions: {
