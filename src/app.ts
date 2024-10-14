@@ -69,7 +69,7 @@ class App {
     // b.isVisible = false;
     shadowGenerator.addShadowCaster(b, true);
 
-    const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.15, thickness: 0.05 });
+    const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.10, thickness: 0.01 });
     marker.isVisible = false;
     marker.rotationQuaternion = new Quaternion();
 
@@ -103,8 +103,6 @@ class App {
             anchor.attachedNode = b.clone("mensch", null, true);
             (anchor.attachedNode as Mesh).skeleton = skeleton.clone('skelet');
             shadowGenerator.addShadowCaster(anchor.attachedNode as Mesh, true);
-            scene.beginAnimation((anchor.attachedNode as Mesh).skeleton, idleRange.from, idleRange.to, true);
-            b.isVisible = false;
         });
 
         (anchors as WebXRAnchorSystem).onAnchorRemovedObservable.add(anchor => {
