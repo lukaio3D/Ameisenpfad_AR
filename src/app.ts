@@ -46,9 +46,9 @@ class App {
         shadowGenerator.useBlurExponentialShadowMap = true;
         shadowGenerator.blurKernel = 32;
 
+        let b
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
- */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
-        const model = container.meshes[2];
+ */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene).then(() => b = container.meshes[2]);
 
         var xr = await scene.createDefaultXRExperienceAsync({
             uiOptions: {
@@ -63,7 +63,7 @@ class App {
         const xrTest = fm.enableFeature(WebXRHitTest.Name, "latest") as WebXRHitTest;
         const anchors = fm.enableFeature(WebXRAnchorSystem.Name, 'latest');
 
-        let b = model /* CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 }); */
+
         b.rotationQuaternion = new Quaternion();
         // b.isVisible = false;
         shadowGenerator.addShadowCaster(b, true);
