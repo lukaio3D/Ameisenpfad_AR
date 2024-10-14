@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing, DirectionalLight, ShadowGenerator, WebXRBackgroundRemover, Quaternion, StandardMaterial, Color3, WebXRAnchorSystem, FreeCamera, CylinderBuilder, CreateCylinder } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing, DirectionalLight, ShadowGenerator, WebXRBackgroundRemover, Quaternion, StandardMaterial, Color3, WebXRAnchorSystem, FreeCamera, CylinderBuilder, CreateCylinder, loadAssetContainerAsync } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -46,7 +46,9 @@ class App {
     shadowGenerator.useBlurExponentialShadowMap = true;
     shadowGenerator.blurKernel = 32;
 
-    const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
+/*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
+ */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
+    const model = container.meshes[0];
     const idleRange = { from: 0, to: 100 }; // Define idleRange with appropriate values
 
     var xr = await scene.createDefaultXRExperienceAsync({
@@ -62,8 +64,7 @@ class App {
     const xrTest = fm.enableFeature(WebXRHitTest.Name, "latest") as WebXRHitTest;
     const anchors = fm.enableFeature(WebXRAnchorSystem.Name, 'latest');
 
-    let b = model.meshes[0] /* CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 }); */
-    console.log(b);
+    let b = model /* CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 }); */
     b.rotationQuaternion = new Quaternion();
     // b.isVisible = false;
     shadowGenerator.addShadowCaster(b, true);
@@ -71,8 +72,6 @@ class App {
     const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.05, thickness: 0.02 });
     marker.isVisible = false;
     marker.rotationQuaternion = new Quaternion();
-
-    var skeleton = model.skeletons[0];
 
     let hitTest;
 
@@ -100,7 +99,6 @@ class App {
             console.log('attaching', anchor);
             b.isVisible = true;
             anchor.attachedNode = b.clone("mensch", null, true);
-            (anchor.attachedNode as Mesh).skeleton = skeleton.clone('skelet');
             shadowGenerator.addShadowCaster(anchor.attachedNode as Mesh, true);
             scene.beginAnimation((anchor.attachedNode as Mesh).skeleton, idleRange.from, idleRange.to, true);
             b.isVisible = false;
