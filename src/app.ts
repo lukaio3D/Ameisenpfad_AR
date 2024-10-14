@@ -45,12 +45,12 @@ class App {
         var shadowGenerator = new ShadowGenerator(1024, dirLight);
         shadowGenerator.useBlurExponentialShadowMap = true;
         shadowGenerator.blurKernel = 32;
-
+        let b;
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
- */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
-        let b = container.meshes[1];
-
-        var xr = await scene.createDefaultXRExperienceAsync({
+ */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene).then((container) => {
+        b = container.meshes[1];
+ });
+        let xr = await scene.createDefaultXRExperienceAsync({
             uiOptions: {
                 sessionMode: "immersive-ar",
                 referenceSpaceType: "local-floor"
