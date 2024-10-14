@@ -95,14 +95,15 @@ class App {
             (anchors as WebXRAnchorSystem).onAnchorAddedObservable.add(anchor => {
                 console.log('attaching', anchor);
                 b.isVisible = true;
-                anchor.attachedNode = b.clone("mensch", null, true);
-                shadowGenerator.addShadowCaster(anchor.attachedNode as Mesh, true);
+                const clonedNode = b.clone("mensch", null, true);
+                anchor.attachedNode = clonedNode;
+                shadowGenerator.addShadowCaster(clonedNode as Mesh, true);
                 b.isVisible = false;
             });
 
             (anchors as WebXRAnchorSystem).onAnchorRemovedObservable.add(anchor => {
                 console.log('disposing', anchor);
-                if (anchor) {
+                if (anchor && anchor.attachedNode) {
                     (anchor.attachedNode as Mesh).isVisible = false;
                     anchor.attachedNode.dispose();
                 }
