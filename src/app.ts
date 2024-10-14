@@ -87,10 +87,8 @@ class App {
                 hitTest = undefined;
             }
         });
-        const mat1 = new StandardMaterial('1', scene);
-        mat1.diffuseColor = Color3.Red();
-        const mat2 = new StandardMaterial('1', scene);
-        mat2.diffuseColor = Color3.Blue();
+
+        let modelPlaced = false; // Flag to check if the model is already placed
 
         if (anchors) {
             console.log('anchors attached');
@@ -112,8 +110,9 @@ class App {
         }
 
         scene.onPointerDown = (evt, pickInfo) => {
-            if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
+            if (!modelPlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
                 (anchors as WebXRAnchorSystem).addAnchorPointUsingHitTestResultAsync(hitTest);
+                modelPlaced = true; // Set the flag to true after placing the model
             }
         }
 
