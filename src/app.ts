@@ -48,7 +48,7 @@ class App {
 
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
  */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
-        const model = container.meshes[1];
+        const model = container.meshes[2];
 
         var xr = await scene.createDefaultXRExperienceAsync({
             uiOptions: {
