@@ -62,12 +62,13 @@ class App {
     const xrTest = fm.enableFeature(WebXRHitTest.Name, "latest") as WebXRHitTest;
     const anchors = fm.enableFeature(WebXRAnchorSystem.Name, 'latest');
 
-    let b = /* model.meshes[0] */ CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
+    let b = model.meshes[0] /* CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 }); */
+    console.log(b);
     b.rotationQuaternion = new Quaternion();
     // b.isVisible = false;
     shadowGenerator.addShadowCaster(b, true);
 
-    const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.15, thickness: 0.05 });
+    const marker = MeshBuilder.CreateTorus('marker', { diameter: 0.05, thickness: 0.02 });
     marker.isVisible = false;
     marker.rotationQuaternion = new Quaternion();
 
