@@ -48,7 +48,7 @@ class App {
 
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
  */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
-        let b = container.meshes[1];
+        let b = container.meshes[0];
         console.log(container);
         console.log(b);
 
