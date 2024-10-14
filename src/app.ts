@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing, DirectionalLight, ShadowGenerator, WebXRBackgroundRemover, Quaternion, StandardMaterial, Color3, WebXRAnchorSystem, FreeCamera, CylinderBuilder, CreateCylinder, loadAssetContainerAsync } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, WebXRHitTest, WebXRDomOverlay, ActionManager, ExecuteCodeAction, SceneLoader, appendSceneAsync, PointerEventTypes, WebXRState, SphereBuilder, WebXRPlaneDetector, WebXRFeatureName, IWebXRDepthSensingOptions, WebXRDepthSensing, DirectionalLight, ShadowGenerator, WebXRBackgroundRemover, Quaternion, StandardMaterial, Color3, WebXRAnchorSystem, FreeCamera, CylinderBuilder, CreateCylinder, loadAssetContainerAsync, RecastJSPlugin, TransformNode } from "@babylonjs/core";
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 
 class App {
@@ -49,7 +49,9 @@ class App {
 /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
  */    const container = await loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
         let b = container.meshes[1];
-        
+        console.log(container);
+        console.log(b);
+
         let xr = await scene.createDefaultXRExperienceAsync({
             uiOptions: {
                 sessionMode: "immersive-ar",
@@ -124,3 +126,7 @@ class App {
     }
 }
 new App();
+
+function createStaticMesh(scene: Scene) {
+    throw new Error("Function not implemented.");
+}
