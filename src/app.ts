@@ -118,12 +118,6 @@ class App {
     ant.isVisible = false;
     xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
-        dot.isVisible = true;
-        results[0].transformationMatrix.decompose(
-          dot.scaling,
-          dot.rotationQuaternion,
-          dot.position
-        );
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
           ant.scaling,
@@ -132,7 +126,6 @@ class App {
         );
       } else {
         ant.isVisible = false;
-        dot.isVisible = false;
       }
     });
 
