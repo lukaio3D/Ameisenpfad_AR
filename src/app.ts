@@ -85,9 +85,7 @@ class App {
       "assets/240920_AntAnim.glb",
       scene
     );
-    let b = container.meshes[1];
-    console.log(container);
-    console.log(b);
+    let ant = container.meshes[1];
 
     let xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
@@ -110,17 +108,17 @@ class App {
       },
       scene
     );
-    dot.isVisible = false;
+    ant.isVisible = false;
     xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
-        dot.isVisible = true;
+        ant.isVisible = true;
         results[0].transformationMatrix.decompose(
-          dot.scaling,
-          dot.rotationQuaternion,
-          dot.position
+          ant.scaling,
+          ant.rotationQuaternion,
+          ant.position
         );
       } else {
-        dot.isVisible = false;
+        ant.isVisible = false;
       }
     });
 
