@@ -122,10 +122,13 @@ class App {
       scene
     );
 
+    let hitTest;
+
     dot.isVisible = false;
     ant.isVisible = false;
     xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
+        hitTest = results[0];
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
           ant.scaling,
@@ -136,15 +139,30 @@ class App {
         ant.isVisible = false;
       }
     });
-    
-    document.addEventListener("touchstart", (event) => {
-      xrTest.onHitTestResultObservable.add((results) => {
-        if (results.length) {
-          const hitResult = results[0];
-          anchors.addAnchorPointUsingHitTestResultAsync(hitResult);
-        }
+
+    if (anchors) {
+      console.log('anchors attached');
+      anchors.onAnchorAddedObservable.add(anchor => {
+          console.log('attaching', anchor);
+          ant.isVisible = true;
+          anchor.attachedNode = ant.clone("ameise", null);
+          ant.isVisible = false;
+      })
+
+      anchors.onAnchorRemovedObservable.add(anchor => {
+          console.log('disposing', anchor);
+          if (anchor) {
+              (anchor.attachedNode as Mesh).isVisible = false;
+              anchor.attachedNode.dispose();
+          }
       });
-    });
+  }
+    
+    scene.onPointerDown = (evt, pickInfo) => {
+      if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
+          anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
+      }
+  }
 
     // run the main render loop
     engine.runRenderLoop(() => {
