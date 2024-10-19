@@ -80,12 +80,17 @@ class App {
     );
     dirLight.position = new Vector3(0, 5, -5);
 
-    /*     const model = await SceneLoader.ImportMeshAsync("", "assets/", "240920_AntAnim.glb", scene);
-     */ const container = await loadAssetContainerAsync(
-      "assets/240920_AntAnim.glb",
+    const model = await SceneLoader.ImportMeshAsync(
+      "ant",
+      "assets/",
+      "240920_AntAnim.glb",
       scene
     );
-    let ant = container.meshes[1];
+    //  const container = await loadAssetContainerAsync(
+    //   "assets/240920_AntAnim.glb",
+    //   scene
+    // );
+    const ant = model.meshes[0];
 
     let xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
@@ -108,6 +113,8 @@ class App {
       },
       scene
     );
+
+    dot.isVisible = false;
     ant.isVisible = false;
     xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
