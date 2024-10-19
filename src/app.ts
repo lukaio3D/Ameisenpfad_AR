@@ -81,7 +81,7 @@ class App {
     dirLight.position = new Vector3(0, 5, -5);
 
     const model = await SceneLoader.ImportMeshAsync(
-      "ant",
+      "",
       "assets/",
       "240920_AntAnim.glb",
       scene
@@ -114,7 +114,8 @@ class App {
       scene
     );
 
-
+    dot.isVisible = false;
+    ant.isVisible = false;
     xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
         dot.isVisible = true;
@@ -123,14 +124,14 @@ class App {
           dot.rotationQuaternion,
           dot.position
         );
-        // ant.isVisible = true;
-        // results[0].transformationMatrix.decompose(
-        //   ant.scaling,
-        //   ant.rotationQuaternion,
-        //   ant.position
-        // );
+        ant.isVisible = true;
+        results[0].transformationMatrix.decompose(
+          ant.scaling,
+          ant.rotationQuaternion,
+          ant.position
+        );
       } else {
-        // ant.isVisible = false;
+        ant.isVisible = false;
         dot.isVisible = false;
       }
     });
