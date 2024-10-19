@@ -86,13 +86,16 @@ class App {
     //   "240920_AntAnim.glb",
     //   scene
     // );
-     const container = await loadAssetContainerAsync(
+    const container = await loadAssetContainerAsync(
       "assets/240920_AntAnim.glb",
       scene
     );
     container.addAllToScene();
     const ant = container.meshes[0];
     console.log(ant);
+
+    const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
+    sambaAnim.stop(true);
 
     let xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
@@ -105,7 +108,10 @@ class App {
     const fm = xr.baseExperience.featuresManager;
 
     const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
-/*     const anchors = fm.enableFeature(WebXRAnchorSystem, "latest"); */
+    const anchors = fm.enableFeature(
+      WebXRAnchorSystem,
+      "latest"
+    ) as WebXRAnchorSystem;
 
     // a dot to show in the found position
     const dot = SphereBuilder.CreateSphere(
@@ -129,6 +135,15 @@ class App {
       } else {
         ant.isVisible = false;
       }
+    });
+    
+    document.addEventListener("touchstart", (event) => {
+      xrTest.onHitTestResultObservable.add((results) => {
+        if (results.length) {
+          const hitResult = results[0];
+          anchors.addAnchorPointUsingHitTestResultAsync(hitResult);
+        }
+      });
     });
 
     // run the main render loop
