@@ -80,17 +80,19 @@ class App {
     );
     dirLight.position = new Vector3(0, 5, -5);
 
-    const model = await SceneLoader.ImportMeshAsync(
-      "",
-      "assets/",
-      "240920_AntAnim.glb",
-      scene
-    );
-    //  const container = await loadAssetContainerAsync(
-    //   "assets/240920_AntAnim.glb",
+    // const model = await SceneLoader.ImportMeshAsync(
+    //   "",
+    //   "assets/",
+    //   "240920_AntAnim.glb",
     //   scene
     // );
-    const ant = model.meshes[0];
+     const container = await loadAssetContainerAsync(
+      "assets/240920_AntAnim.glb",
+      scene
+    );
+    container.addAllToScene();
+    const ant = container.meshes[0];
+    console.log(ant);
 
     let xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
@@ -103,7 +105,7 @@ class App {
     const fm = xr.baseExperience.featuresManager;
 
     const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
-    const anchors = fm.enableFeature(WebXRAnchorSystem, "latest");
+/*     const anchors = fm.enableFeature(WebXRAnchorSystem, "latest"); */
 
     // a dot to show in the found position
     const dot = SphereBuilder.CreateSphere(
