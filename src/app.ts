@@ -123,14 +123,15 @@ class App {
           dot.rotationQuaternion,
           dot.position
         );
-        ant.isVisible = true;
-        results[0].transformationMatrix.decompose(
-          ant.scaling,
-          ant.rotationQuaternion,
-          ant.position
-        );
+        // ant.isVisible = true;
+        // results[0].transformationMatrix.decompose(
+        //   ant.scaling,
+        //   ant.rotationQuaternion,
+        //   ant.position
+        // );
       } else {
-        ant.isVisible = false;
+        // ant.isVisible = false;
+        dot.isVisible = false;
       }
     });
 
