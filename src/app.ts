@@ -91,8 +91,9 @@ class App {
       scene
     );
     container.addAllToScene();
+    console.log(container);
     const ant = container.meshes[0];
-    ant.isVisible = false;
+    console.log(ant);
     ant.scaling = new Vector3(2, 2, 2);
     console.log(ant);
 
@@ -125,13 +126,12 @@ class App {
     );
 
     let hitTest;
-    let hitTestObserver;
     let antToBePlaced = true;
 
     dot.isVisible = false;
     ant.isVisible = false;
 
-    hitTestObserver = xrTest.onHitTestResultObservable.add((results) => {
+    xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
         hitTest = results[0];
         ant.isVisible = true;
@@ -142,12 +142,29 @@ class App {
         );
       } else {
         ant.isVisible = false;
+        hitTest = null; // Reset hitTest if no results
       }
     });
 
-    window.onclick = async (evt) => {
+    window.onclick = (evt) => {
       console.log("click");
-      if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
+      console.log(
+        "AntToBePlaced: " +
+          antToBePlaced +
+          "HitTest: " +
+          hitTest +
+          "Anchors :" +
+          anchors +
+          "XR State: " +
+          xr.baseExperience.state
+      );
+      if (
+        antToBePlaced &&
+        hitTest &&
+        anchors &&
+        xr.baseExperience.state === WebXRState.IN_XR
+      ) {
+        console.log("placing ant");
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
         xrTest.dispose();
