@@ -146,7 +146,7 @@ class App {
       }
     });
 
-    scene.onPointerPick = async (evt, pickInfo) => {
+    window.onclick = async (evt) => {
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
