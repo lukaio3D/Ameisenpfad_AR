@@ -127,6 +127,7 @@ class App {
 
     dot.isVisible = false;
     ant.isVisible = false;
+
     hitTestObserver = xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
         hitTest = results[0];
@@ -156,7 +157,7 @@ class App {
       if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
-        xrTest.onHitTestResultObservable.remove(hitTestObserver);
+        xrTest.paused = true;
       }
     };
 
