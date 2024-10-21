@@ -159,7 +159,7 @@ class App {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
         antToBePlaced = false;
-        xrTest.paused = true;
+        xrTest.onHitTestResultObservable.remove(hitTestObserver);
       }
     };
 
