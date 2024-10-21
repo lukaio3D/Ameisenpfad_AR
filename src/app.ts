@@ -150,7 +150,7 @@ class App {
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
-        xrTest.onHitTestResultObservable.remove(hitTestObserver);
+        xrTest.dispose();
         antToBePlaced = false;
       }
     };
