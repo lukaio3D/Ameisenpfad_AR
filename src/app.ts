@@ -157,7 +157,13 @@ class App {
         xrTest.detach();
         antToBePlaced = false;
       }
-    };
+      if(!antToBePlaced && pickInfo.pickedMesh === ant) {
+        if(!antAnim.isPlaying) {
+        antAnim.start(true);
+      } else {
+        antAnim.stop(true);
+      }
+    }};
 
     // run the main render loop
     engine.runRenderLoop(() => {
