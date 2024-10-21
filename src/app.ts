@@ -154,9 +154,11 @@ class App {
     }
 
     scene.onPointerDown = (evt, pickInfo) => {
-      if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
+      let antToBePlaced = true;
+      if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
+        antToBePlaced = false;
         xrTest.paused = true;
       }
     };
