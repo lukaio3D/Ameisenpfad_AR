@@ -130,7 +130,7 @@ class App {
     ant.isVisible = false;
 
     hitTestObserver = xrTest.onHitTestResultObservable.add((results) => {
-      if (results.length) {
+      if (results.length && antToBePlaced) {
         hitTest = results[0];
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
