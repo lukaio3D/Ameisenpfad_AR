@@ -132,7 +132,7 @@ class App {
     ant.isVisible = false;
 
     xrTest.onHitTestResultObservable.add((results) => {
-      if (results.length) {
+      if (results.length && antToBePlaced) {
         hitTest = results[0];
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
@@ -167,7 +167,6 @@ class App {
         console.log("placing ant");
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
-        xrTest.dispose();
         antToBePlaced = false;
       }
     };
