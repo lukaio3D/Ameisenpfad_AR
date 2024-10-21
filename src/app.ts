@@ -142,7 +142,6 @@ class App {
         );
       } else {
         ant.isVisible = false;
-        hitTest = null; // Reset hitTest if no results
       }
     });
 
