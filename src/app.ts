@@ -147,6 +147,7 @@ class App {
     });
 
     window.onclick = async (evt) => {
+      console.log("click");
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
