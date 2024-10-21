@@ -124,6 +124,7 @@ class App {
 
     let hitTest;
     let hitTestObserver;
+    let antToBePlaced = true;
 
     dot.isVisible = false;
     ant.isVisible = false;
@@ -154,12 +155,11 @@ class App {
     }
 
     scene.onPointerDown = (evt, pickInfo) => {
-      let antToBePlaced = true;
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         // Remove hit test observer
-        antToBePlaced = false;
         xrTest.onHitTestResultObservable.remove(hitTestObserver);
+        antToBePlaced = false;
       }
     };
 
