@@ -158,9 +158,11 @@ class App {
         antToBePlaced = false;
       }
       if(!antToBePlaced && pickInfo.pickedMesh === ant) {
+        console.log("start Animation");
         if(!antAnim.isPlaying) {
         antAnim.start(true);
       } else {
+        console.log("stop Animation");
         antAnim.stop(true);
       }
     }};
