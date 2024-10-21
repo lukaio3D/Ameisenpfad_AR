@@ -146,19 +146,13 @@ class App {
       }
     });
 
-    if (anchors && antToBePlaced) {
-      console.log("anchors attached");
-      anchors.onAnchorAddedObservable.add((anchor) => {
-        console.log("attaching", anchor);
-        ant.isVisible = true;
-        anchor.attachedNode = ant.clone("ameise", null);
-        ant.isVisible = false;
-      });
-    }
-
     scene.onPointerDown = (evt, pickInfo) => {
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
+        anchors.onAnchorAddedObservable.add((anchor) => {
+          console.log("attaching", anchor);
+          anchor.attachedNode = ant.clone("ameise", null);
+        });
         // Remove hit test observer
         xrTest.onHitTestResultObservable.remove(hitTestObserver);
         antToBePlaced = false;
