@@ -136,7 +136,7 @@ class App {
         hitTest = results[0];
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
-          ant.scaling,
+          undefined,
           ant.rotationQuaternion,
           ant.position
         );
@@ -147,26 +147,14 @@ class App {
     });
 
     scene.onPointerDown = (evt, pickInfo) => {
-      console.log("click");
-      console.log(
-        "AntToBePlaced: " +
-          antToBePlaced +
-          "HitTest: " +
-          hitTest +
-          "Anchors :" +
-          anchors +
-          "XR State: " +
-          xr.baseExperience.state
-      );
       if (
         antToBePlaced &&
         hitTest &&
         anchors &&
         xr.baseExperience.state === WebXRState.IN_XR
       ) {
-        console.log("placing ant");
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
-        // Remove hit test observer
+        xrTest.detach();
         antToBePlaced = false;
       }
     };
