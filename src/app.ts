@@ -92,10 +92,12 @@ class App {
     );
     container.addAllToScene();
     const ant = container.meshes[0];
+    ant.isVisible = false;
+    ant.scaling = new Vector3(2, 2, 2);
     console.log(ant);
 
-    const sambaAnim = scene.getAnimationGroupByName("Armature Ant");
-    sambaAnim.stop(true);
+    const antAnim = scene.getAnimationGroupByName("Armature Ant");
+    antAnim.stop(true);
 
     let xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
