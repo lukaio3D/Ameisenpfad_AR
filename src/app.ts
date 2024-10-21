@@ -123,10 +123,11 @@ class App {
     );
 
     let hitTest;
+    let hitTestObserver;
 
     dot.isVisible = false;
     ant.isVisible = false;
-    xrTest.onHitTestResultObservable.add((results) => {
+    hitTestObserver = xrTest.onHitTestResultObservable.add((results) => {
       if (results.length) {
         hitTest = results[0];
         ant.isVisible = true;
@@ -142,29 +143,31 @@ class App {
     });
 
     if (anchors) {
-      console.log('anchors attached');
-      anchors.onAnchorAddedObservable.add(anchor => {
-          console.log('attaching', anchor);
-          ant.isVisible = true;
-          anchor.attachedNode = ant.clone("ameise", null);
-          ant.isVisible = false;
-          xrTest.detach();
-      })
+      console.log("anchors attached");
+      anchors.onAnchorAddedObservable.add((anchor) => {
+        console.log("attaching", anchor);
+        ant.isVisible = true;
+        anchor.attachedNode = ant.clone("ameise", null);
+        ant.isVisible = false;
 
-      anchors.onAnchorRemovedObservable.add(anchor => {
-          console.log('disposing', anchor);
-          if (anchor) {
-              (anchor.attachedNode as Mesh).isVisible = false;
-              anchor.attachedNode.dispose();
-          }
+        // Remove hit test observer
+        xrTest.onHitTestResultObservable.remove(hitTestObserver);
       });
-  }
-    
+
+      anchors.onAnchorRemovedObservable.add((anchor) => {
+        console.log("disposing", anchor);
+        if (anchor) {
+          (anchor.attachedNode as Mesh).isVisible = false;
+          anchor.attachedNode.dispose();
+        }
+      });
+    }
+
     scene.onPointerDown = (evt, pickInfo) => {
       if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
-          anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
+        anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
       }
-  }
+    };
 
     // run the main render loop
     engine.runRenderLoop(() => {
