@@ -130,7 +130,7 @@ class App {
     ant.isVisible = false;
 
     hitTestObserver = xrTest.onHitTestResultObservable.add((results) => {
-      if (results.length && antToBePlaced) {
+      if (results.length) {
         hitTest = results[0];
         ant.isVisible = true;
         results[0].transformationMatrix.decompose(
@@ -144,7 +144,7 @@ class App {
       }
     });
 
-    if (anchors) {
+    if (anchors && antToBePlaced) {
       console.log("anchors attached");
       anchors.onAnchorAddedObservable.add((anchor) => {
         console.log("attaching", anchor);
