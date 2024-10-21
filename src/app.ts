@@ -146,7 +146,7 @@ class App {
       }
     });
 
-    window.onclick = (evt) => {
+    scene.onPointerDown = (evt, pickInfo) => {
       console.log("click");
       console.log(
         "AntToBePlaced: " +
