@@ -149,10 +149,6 @@ class App {
     scene.onPointerDown = async (evt, pickInfo) => {
       if (antToBePlaced && hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
-        anchors.onAnchorAddedObservable.add((anchor) => {
-          console.log("attaching", anchor);
-          anchor.attachedNode = ant.clone("ameise", null);
-        });
         // Remove hit test observer
         xrTest.onHitTestResultObservable.remove(hitTestObserver);
         antToBePlaced = false;
