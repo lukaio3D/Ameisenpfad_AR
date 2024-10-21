@@ -148,6 +148,7 @@ class App {
           ant.isVisible = true;
           anchor.attachedNode = ant.clone("ameise", null);
           ant.isVisible = false;
+          xrTest.detach();
       })
 
       anchors.onAnchorRemovedObservable.add(anchor => {
