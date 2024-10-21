@@ -149,23 +149,14 @@ class App {
         ant.isVisible = true;
         anchor.attachedNode = ant.clone("ameise", null);
         ant.isVisible = false;
-
-        // Remove hit test observer
-        xrTest.onHitTestResultObservable.remove(hitTestObserver);
-      });
-
-      anchors.onAnchorRemovedObservable.add((anchor) => {
-        console.log("disposing", anchor);
-        if (anchor) {
-          (anchor.attachedNode as Mesh).isVisible = false;
-          anchor.attachedNode.dispose();
-        }
       });
     }
 
     scene.onPointerDown = (evt, pickInfo) => {
       if (hitTest && anchors && xr.baseExperience.state === WebXRState.IN_XR) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
+        // Remove hit test observer
+        xrTest.onHitTestResultObservable.remove(hitTestObserver);
       }
     };
 
