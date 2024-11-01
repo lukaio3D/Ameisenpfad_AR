@@ -154,7 +154,6 @@ class App {
         xr.baseExperience.state === WebXRState.IN_XR
       ) {
         anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
-        xrTest.detach();
         antToBePlaced = false;
       }
       if(!antToBePlaced && pickInfo.pickedMesh === ant) {
