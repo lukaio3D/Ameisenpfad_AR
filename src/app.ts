@@ -124,13 +124,13 @@ class App {
 
     navigationPlugin.createNavMesh([staticMesh], navmeshParameters);
 
-    var navmeshdebug = navigationPlugin.createDebugNavMesh(scene);
-    navmeshdebug.position = new Vector3(0, 0.01, 0);
+    // var navmeshdebug = navigationPlugin.createDebugNavMesh(scene);
+    // navmeshdebug.position = new Vector3(0, 0.01, 0);
 
-    var matdebug = new StandardMaterial('matdebug', scene);
-    matdebug.diffuseColor = new Color3(0.1, 0.2, 1);
-    matdebug.alpha = 0.2;
-    navmeshdebug.material = matdebug;
+    // var matdebug = new StandardMaterial('matdebug', scene);
+    // matdebug.diffuseColor = new Color3(0.1, 0.2, 1);
+    // matdebug.alpha = 0.2;
+    // navmeshdebug.material = matdebug;
     
     // crowd
 
@@ -138,18 +138,18 @@ class App {
     let agents = [];
     var i;
     var agentParams = {
-        radius: 0.1,
+        radius: 0.5,
         height: 0.2,
         maxAcceleration: 4.0,
         maxSpeed: 1.0,
         collisionQueryRange: 0.5,
         pathOptimizationRange: 0.0,
-        separationWeight: 1.0};
+        separationWeight: 1};
         
     for (i = 0; i <1; i++) {
         var width = 0.20;
         var agentCube = antContainer ;
-        var targetCube = MeshBuilder.CreateBox("cube", { size: 0.1, height: 0.1 }, scene);
+        var targetCube = MeshBuilder.CreateBox("cube", { size: 0.01, height: 0.01 }, scene);
         var matAgent = new StandardMaterial('mat2', scene);
         var variation = Math.random();
         matAgent.diffuseColor = new Color3(0.4 + variation * 0.6, 0.3, 1.0 - variation * 0.3);
@@ -187,7 +187,7 @@ class App {
                     crowd.agentGoto(agents[i], navigationPlugin.getClosestPoint(startingPoint));
                 }
                 var pathPoints = navigationPlugin.computePath(crowd.getAgentPosition(agents[0]), navigationPlugin.getClosestPoint(startingPoint));
-                pathLine = MeshBuilder.CreateDashedLines("ribbon", {points: pathPoints, updatable: true, instance: pathLine}, scene);
+                // pathLine = MeshBuilder.CreateDashedLines("ribbon", {points: pathPoints, updatable: true, instance: pathLine}, scene);
             }
     }
     
@@ -214,7 +214,7 @@ class App {
             {
                 vel.normalize();
                 var desiredRotation = Math.atan2(vel.x, vel.z);
-                ag.mesh.rotation.y = ag.mesh.rotation.y + (desiredRotation - ag.mesh.rotation.y ) * 0.05;
+                ag.mesh.rotation.y = ag.mesh.rotation.y + (desiredRotation - ag.mesh.rotation.y ) * 0.1;
 
             }
         }
@@ -250,55 +250,54 @@ class App {
       "latest"
     ) as WebXRAnchorSystem;
 
-    // // a dot to show in the found position
-    // const dot = SphereBuilder.CreateSphere(
-    //   "dot",
-    //   {
-    //     diameter: 0.05,
-    //   },
-    //   scene
-    // );
+    // a dot to show in the found position
+    const dot = SphereBuilder.CreateSphere(
+      "dot",
+      {
+        diameter: 0.05,
+      },
+      scene
+    );
 
     let hitTest;
-    // let antToBePlaced = true;
+    let antToBePlaced = true;
 
-    // dot.isVisible = false;
-    // ant.isVisible = false;
+    dot.isVisible = false;
 
-    // xrTest.onHitTestResultObservable.add((results) => {
-    //   if (results.length && antToBePlaced) {
-    //     hitTest = results[0];
-    //     ant.isVisible = true;
-    //     results[0].transformationMatrix.decompose(
-    //       undefined,
-    //       ant.rotationQuaternion,
-    //       ant.position
-    //     );
-    //   } else {
-    //     ant.isVisible = false;
-    //     hitTest = null; // Reset hitTest if no results
-    //   }
-    // });
+    xrTest.onHitTestResultObservable.add((results) => {
+      if (results.length && antToBePlaced) {
+        hitTest = results[0];
+        ant.isVisible = true;
+        results[0].transformationMatrix.decompose(
+          undefined,
+          ant.rotationQuaternion,
+          ant.position
+        );
+      } else {
+        ant.isVisible = false;
+        hitTest = null; // Reset hitTest if no results
+      }
+    });
 
-    // scene.onPointerDown = (evt, pickInfo) => {
-    //   if (
-    //     antToBePlaced &&
-    //     hitTest &&
-    //     anchors &&
-    //     xr.baseExperience.state === WebXRState.IN_XR
-    //   ) {
-    //     anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
-    //     antToBePlaced = false;
-    //   }
-    //   if(!antToBePlaced && pickInfo.pickedMesh === ant) {
-    //     console.log("start Animation");
-    //     if(!antAnim.isPlaying) {
-    //     antAnim.start(true);
-    //   } else {
-    //     console.log("stop Animation");
-    //     antAnim.stop(true);
-    //   }
-    // }};
+    scene.onPointerDown = (evt, pickInfo) => {
+      if (
+        antToBePlaced &&
+        hitTest &&
+        anchors &&
+        xr.baseExperience.state === WebXRState.IN_XR
+      ) {
+        anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
+        antToBePlaced = false;
+      }
+      if(!antToBePlaced && pickInfo.pickedMesh === ant) {
+        console.log("start Animation");
+        if(!antAnim.isPlaying) {
+        antAnim.start(true);
+      } else {
+        console.log("stop Animation");
+        antAnim.stop(true);
+      }
+    }};
 
     // Inspector.Show(scene, {
     // });
