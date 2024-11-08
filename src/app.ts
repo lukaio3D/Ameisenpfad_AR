@@ -233,7 +233,7 @@ class App {
             startingPoint = getGroundPosition();
             if (startingPoint) { // we need to disconnect camera from canvas
                 setTimeout(function () {
-                    camera.detachControl();
+                    // camera.detachControl();
                 }, 0);
                 var agents = crowd.getAgents();
                 var i;
