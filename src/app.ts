@@ -12,7 +12,7 @@ class App {
   async initialize() {
     // create the canvas html element and attach it to the webpage
     var canvas = document.createElement("canvas");
-    canvas.style.width = "70vw";
+    canvas.style.width = "100vw";
     canvas.style.height = "100vh";
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
