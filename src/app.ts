@@ -169,13 +169,13 @@ class App {
       optionalFeatures: true,
     });
 
-    // const fm = xr.baseExperience.featuresManager;
+    const fm = xr.baseExperience.featuresManager;
 
-    // const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
-    // const anchors = fm.enableFeature(
-    //   WebXRAnchorSystem,
-    //   "latest"
-    // ) as WebXRAnchorSystem;
+    const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
+    const anchors = fm.enableFeature(
+      WebXRAnchorSystem,
+      "latest"
+    ) as WebXRAnchorSystem;
 
     // // a dot to show in the found position
     // const dot = SphereBuilder.CreateSphere(
