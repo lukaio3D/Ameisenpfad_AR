@@ -143,10 +143,8 @@ class App {
     navmeshdebug.material = matdebug;
 
     // crowd
-    var crowd = navigationPlugin.createCrowd(10, 0.1, scene);
+    var crowd = navigationPlugin.createCrowd(10, 1, scene);
     let antTransform = new TransformNode("antTransform", scene);
-    const box = MeshBuilder.CreateBox("box", { size: 0.1 }, scene);
-    box.parent = antTransform;
     ant.parent = antTransform;
     var agentParams = {
       radius: 0.1,
@@ -157,19 +155,19 @@ class App {
       pathOptimizationRange: 0.0,
       separationWeight: 1.0,
     };
-    let endPoint = new Vector3(1, 0, 0);
+    let endPoint = new Vector3(-3, 3, 3);
 
     const agentIndex = crowd.addAgent(new Vector3(0, 0, 0), agentParams, antTransform);
     crowd.agentGoto(agentIndex, navigationPlugin.getClosestPoint(endPoint)); 
 
     // AR Setup
-    // let xr = await scene.createDefaultXRExperienceAsync({
-    //   uiOptions: {
-    //     sessionMode: "immersive-ar",
-    //     referenceSpaceType: "local-floor",
-    //   },
-    //   optionalFeatures: true,
-    // });
+    let xr = await scene.createDefaultXRExperienceAsync({
+      uiOptions: {
+        sessionMode: "immersive-ar",
+        referenceSpaceType: "local-floor",
+      },
+      optionalFeatures: true,
+    });
 
     // const fm = xr.baseExperience.featuresManager;
 
