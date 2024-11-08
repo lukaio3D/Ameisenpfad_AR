@@ -48,7 +48,7 @@ class App {
   async initialize() {
     // create the canvas html element and attach it to the webpage
     var canvas = document.createElement("canvas");
-    canvas.style.width = "100vw";
+    canvas.style.width = "70vw";
     canvas.style.height = "100vh";
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
@@ -89,76 +89,21 @@ class App {
     );
     dirLight.position = new Vector3(0, 5, -5);
 
-    // const model = await SceneLoader.ImportMeshAsync(
-    //   "",
-    //   "assets/",
-    //   "240920_AntAnim.glb",
-    //   scene
-    // );
     const container = await loadAssetContainerAsync(
       "assets/240920_AntAnim.glb",
       scene
     );
     container.addAllToScene();
-    const ant = container.meshes[0];
-    ant.scaling = new Vector3(2, 2, 2);
-
+    const antContainer = container.createRootMesh();
+    const ant = scene.getMeshByName("Ant");
+    ant.rotate(Vector3.Up(), -Math.PI / 2);
     const antAnim = scene.getAnimationGroupByName("Armature Ant");
-    antAnim.stop(true);
+
+
 
     // Navmesh Setup
     let recast = await Recast();
     let navigationPlugin = new RecastJSPlugin();
-
-    // const groundMesh = MeshBuilder.CreateGround(
-    //   "ground",
-    //   { width: 10, height: 10 },
-    //   scene
-    // );
-
-    // const navParameters = {
-    //   cs: 0.2,
-    //   ch: 0.2,
-    //   walkableSlopeAngle: 35,
-    //   walkableHeight: 1,
-    //   walkableClimb: 1,
-    //   walkableRadius: 1,
-    //   maxEdgeLen: 12,
-    //   maxSimplificationError: 1.3,
-    //   minRegionArea: 8,
-    //   mergeRegionArea: 20,
-    //   maxVertsPerPoly: 6,
-    //   detailSampleDist: 6,
-    //   detailSampleMaxError: 1,
-    // };
-
-    // navigationPlugin.createNavMesh([groundMesh], navParameters);
-
-    // var navmeshdebug = navigationPlugin.createDebugNavMesh(scene);
-    // navmeshdebug.position = new Vector3(0, 0.01, 0);
-
-    // var matdebug = new StandardMaterial("matdebug", scene);
-    // matdebug.diffuseColor = new Color3(0.1, 0.2, 1);
-    // matdebug.alpha = 0.2;
-    // navmeshdebug.material = matdebug;
-
-    // // crowd
-    // var crowd = navigationPlugin.createCrowd(10, 1, scene);
-    // let antTransform = new TransformNode("antTransform", scene);
-    // ant.parent = antTransform;
-    // var agentParams = {
-    //   radius: 0.1,
-    //   height: 0.2,
-    //   maxAcceleration: 4.0,
-    //   maxSpeed: 1.0,
-    //   collisionQueryRange: 0.5,
-    //   pathOptimizationRange: 0.0,
-    //   separationWeight: 1.0,
-    // };
-    // let endPoint = new Vector3(-3, 3, 3);
-
-    // const agentIndex = crowd.addAgent(antTransform.position, agentParams, antTransform);
-    // crowd.agentGoto(agentIndex, navigationPlugin.getClosestPoint(endPoint)); 
 
     var staticMesh = createStaticMesh(scene);
     var navmeshParameters = {
@@ -189,7 +134,7 @@ class App {
     
     // crowd
 
-    var crowd = navigationPlugin.createCrowd(10, 0.1, scene);
+    var crowd = navigationPlugin.createCrowd(10, 1, scene);
     let agents = [];
     var i;
     var agentParams = {
@@ -203,7 +148,7 @@ class App {
         
     for (i = 0; i <1; i++) {
         var width = 0.20;
-        var agentCube = MeshBuilder.CreateBox("cube", { size: width, height: width }, scene);
+        var agentCube = antContainer ;
         var targetCube = MeshBuilder.CreateBox("cube", { size: 0.1, height: 0.1 }, scene);
         var matAgent = new StandardMaterial('mat2', scene);
         var variation = Math.random();
@@ -263,12 +208,14 @@ class App {
             var ag = agents[i];
             ag.mesh.position = crowd.getAgentPosition(ag.idx);
             let vel = crowd.getAgentVelocity(ag.idx);
+            antAnim.speedRatio = vel.length()*0.9;
             crowd.getAgentNextTargetPathToRef(ag.idx, ag.target.position);
             if (vel.length() > 0.2)
             {
                 vel.normalize();
                 var desiredRotation = Math.atan2(vel.x, vel.z);
-                ag.mesh.rotation.y = ag.mesh.rotation.y + (desiredRotation - ag.mesh.rotation.y) * 0.05;
+                ag.mesh.rotation.y = ag.mesh.rotation.y + (desiredRotation - ag.mesh.rotation.y ) * 0.05;
+
             }
         }
     });
@@ -279,16 +226,10 @@ class App {
       // Materials
       var mat1 = new StandardMaterial('mat1', scene);
       mat1.diffuseColor = new Color3(1, 1, 1);
+      mat1.alpha = 0;
   
-      var sphere = MeshBuilder.CreateSphere("sphere1", {diameter: 2, segments: 16}, scene);
-      sphere.material = mat1;
-      sphere.position.y = 1;
-  
-      var cube = MeshBuilder.CreateBox("cube", { size: 1, height: 3 }, scene);
-      cube.position = new Vector3(1, 1.5, 0);
-      //cube.material = mat2;
-  
-      var mesh = Mesh.MergeMeshes([sphere, cube, ground]);
+      var mesh = Mesh.MergeMeshes([ground]);
+      mesh.material = mat1;
       return mesh;
   }
 
@@ -360,7 +301,6 @@ class App {
     // }};
 
     // Inspector.Show(scene, {
-    //   embedMode: true,
     // });
 
     // run the main render loop
