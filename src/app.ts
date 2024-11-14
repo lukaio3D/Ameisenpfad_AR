@@ -3,6 +3,7 @@ import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
 import { Engine, Scene } from "@babylonjs/core";
+import { Inspector } from "@babylonjs/inspector";
 
 class App {
   constructor() {
@@ -25,8 +26,8 @@ class App {
     // create the scene
     createAntCommunicationScene(engine, canvas, scene);
 
-    // Inspector.Show(scene, {
-    // });
+    // show the inspector
+    Inspector.Show(scene, {overlay: true});
 
     // run the main render loop
     engine.runRenderLoop(() => {

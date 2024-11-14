@@ -1,15 +1,14 @@
 import {
   ArcRotateCamera,
+  Color3,
   DirectionalLight,
   HemisphericLight,
   loadAssetContainerAsync,
-  Scene,
-  RecastJSPlugin,
   Vector3,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
-import Recast from "recast-detour";
+import Ant from "../Features/Ant";
 
 export default async function createAntCommunicationScene(
   engine,
@@ -41,13 +40,19 @@ export default async function createAntCommunicationScene(
   var dirLight = new DirectionalLight("light", new Vector3(0, -1, -0.5), scene);
   dirLight.position = new Vector3(0, 5, -5);
 
-  const container = loadAssetContainerAsync("assets/240920_AntAnim.glb", scene);
-  (await container).addAllToScene();
-  const antContainer = (await container).createRootMesh();
-  const ant = scene.getMeshByName("Ant");
-  ant.rotate(Vector3.Up(), -Math.PI / 2);
-  const antAnim = scene.getAnimationGroupByName("Armature Ant");
+  // Ameisen erstellen
+  const ant1 = new Ant(scene, new Vector3(0, 0, 0));
+  const ant2 = new Ant(scene, new Vector3(2, 0, 0));
+  const ant3 = new Ant(scene, new Vector3(-2, 0, 0));
 
-  await createNavigationFeatures(scene, antContainer, antAnim);
-  await createARFeatures(scene, ant, antAnim);
+  // Materialien anpassen
+  setTimeout(() => {
+    ant1.setMaterialColor(new Color3(1, 0, 0)); // Rot
+    ant2.setMaterialColor(new Color3(0, 1, 0)); // Grün
+    ant3.setMaterialColor(new Color3(0, 0, 1)); // Blau
+  },1000)
+  
+
+  // await createNavigationFeatures(scene, antContainer, antAnim);
+  // await createARFeatures(scene, ant, antAnim);
 }
