@@ -1,9 +1,9 @@
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
 import { Engine, Scene } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
+import createGUI from "./Features/GUI";
 
 class App {
   constructor() {
@@ -22,9 +22,11 @@ class App {
     var engine = new Engine(canvas, true);
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new Scene(engine);
+    // Instantiate the GUI 
+    createGUI();
 
     // create the scene
-    createAntCommunicationScene(engine, canvas, scene);
+    createAntCommunicationScene(canvas, scene);
 
     // show the inspector
     Inspector.Show(scene, {overlay: true});

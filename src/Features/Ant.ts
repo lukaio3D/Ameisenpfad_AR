@@ -7,6 +7,8 @@ import {
   PBRMaterial,
   StandardMaterial,
   Color3,
+  ICrowd,
+  RecastJSPlugin,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -18,6 +20,14 @@ export default class Ant {
   constructor(scene: Scene, position: Vector3) {
     this.scene = scene;
     this.loadModel(position);
+  }
+
+  public getTransformNode(): TransformNode {
+    return this.antTransformNode;
+  }
+
+  public getAnimationGroup(): AnimationGroup {
+    return this.antAnimationGroup;
   }
 
   private async loadModel(position: Vector3) {
@@ -54,19 +64,14 @@ export default class Ant {
   }
 
   // Methode zum Anpassen des Materials
-  public setMaterialColor(color: Color3) {
-      const newMaterial = new StandardMaterial("newAntMaterial", this.scene);
-      newMaterial.diffuseColor = color;
+  public async setMaterialColor(color: Color3) {
+    const newMaterial = new StandardMaterial("newAntMaterial", this.scene);
+    newMaterial.diffuseColor = color;
 
-      // Neues Material den Meshes zuweisen
-      this.antTransformNode.getChildMeshes().forEach((mesh) => {
-        mesh.material = newMaterial;
-      });
-      console.log("Material angepasst");
-  }
-
-  // Optionale Methode zum Bewegen der Ameise
-  public moveTo(targetPosition: Vector3) {
-    // Bewegungslogik hier implementieren
+    // Neues Material den Meshes zuweisen
+    this.antTransformNode.getChildMeshes().forEach((mesh) => {
+      mesh.material = newMaterial;
+    });
+    console.log("Material angepasst");
   }
 }

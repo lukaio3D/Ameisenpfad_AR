@@ -3,15 +3,14 @@ import {
   Color3,
   DirectionalLight,
   HemisphericLight,
-  loadAssetContainerAsync,
   Vector3,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
 import Ant from "../Features/Ant";
+import PlayerAnt from "../Features/PlayerAnt";
 
 export default async function createAntCommunicationScene(
-  engine,
   canvas,
   scene
 ) {
@@ -40,19 +39,20 @@ export default async function createAntCommunicationScene(
   var dirLight = new DirectionalLight("light", new Vector3(0, -1, -0.5), scene);
   dirLight.position = new Vector3(0, 5, -5);
 
-  // Ameisen erstellen
-  const ant1 = new Ant(scene, new Vector3(0, 0, 0));
+
+
+  // Ameisen erstellen und Crowd übergeben
+  const ant1 = new PlayerAnt(scene, new Vector3(0, 0, 0));
   const ant2 = new Ant(scene, new Vector3(2, 0, 0));
   const ant3 = new Ant(scene, new Vector3(-2, 0, 0));
 
-  // Materialien anpassen
+  // Optional: Materialien anpassen
   setTimeout(() => {
-    ant1.setMaterialColor(new Color3(1, 0, 0)); // Rot
-    ant2.setMaterialColor(new Color3(0, 1, 0)); // Grün
-    ant3.setMaterialColor(new Color3(0, 0, 1)); // Blau
-  },1000)
-  
+  ant2.setMaterialColor(new Color3(0, 1, 0)); // Grün
+  ant3.setMaterialColor(new Color3(1, 0, 0)); // Rot
+  },1000);
 
-  // await createNavigationFeatures(scene, antContainer, antAnim);
-  // await createARFeatures(scene, ant, antAnim);
+  createNavigationFeatures(scene, ant1.getTransformNode());
+  createARFeatures(scene, ant1.getTransformNode(), ant1.getAnimationGroup());
+
 }
