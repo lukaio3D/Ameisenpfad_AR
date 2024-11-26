@@ -1,6 +1,6 @@
 import { SphereBuilder, WebXRAnchorSystem, WebXRHitTest, WebXRState } from "@babylonjs/core";
 
-    export default async function createARFeatures(scene, ant, antAnim) {
+    export default async function createARFeatures(scene) {
     
     // AR Setup
     let xr = await scene.createDefaultXRExperienceAsync({
@@ -11,13 +11,13 @@ import { SphereBuilder, WebXRAnchorSystem, WebXRHitTest, WebXRState } from "@bab
         optionalFeatures: true,
       });
   
-      // const fm = xr.baseExperience.featuresManager;
+      const fm = xr.baseExperience.featuresManager;
   
-      // const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
-      // const anchors = fm.enableFeature(
-      //   WebXRAnchorSystem,
-      //   "latest"
-      // ) as WebXRAnchorSystem;
+      const xrTest = fm.enableFeature(WebXRHitTest, "latest") as WebXRHitTest;
+      const anchors = fm.enableFeature(
+        WebXRAnchorSystem,
+        "latest"
+      ) as WebXRAnchorSystem;
   
       // // a dot to show in the found position
       // const dot = SphereBuilder.CreateSphere(

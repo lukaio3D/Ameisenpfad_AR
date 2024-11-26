@@ -4,11 +4,13 @@ import {
   AnimationGroup,
   TransformNode,
   SceneLoader,
-  PBRMaterial,
   StandardMaterial,
+  PBRMaterial,
   Color3,
-  ICrowd,
+  IAgentParameters,
   RecastJSPlugin,
+  RecastJSCrowd,
+  MeshBuilder,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -16,9 +18,20 @@ export default class Ant {
   private scene: Scene;
   private antTransformNode: TransformNode;
   private antAnimationGroup: AnimationGroup;
+  private antMaterial: StandardMaterial;
+  private navigationPlugin: RecastJSPlugin;
+  private crowd: RecastJSCrowd;
+  private agentIndex: number;
 
-  constructor(scene: Scene, position: Vector3) {
+  constructor(
+    scene: Scene,
+    position: Vector3,
+    navigationPlugin: RecastJSPlugin,
+    crowd: RecastJSCrowd
+  ) {
     this.scene = scene;
+    this.navigationPlugin = navigationPlugin;
+    this.crowd = crowd;
     this.loadModel(position);
   }
 
@@ -31,18 +44,18 @@ export default class Ant {
   }
 
   private async loadModel(position: Vector3) {
-    // Laden des Modells
+    // Modell laden
     const container = await SceneLoader.LoadAssetContainerAsync(
       "assets/",
       "240920_AntAnim.glb",
       this.scene
     );
 
-    // Wurzelknoten erstellen und die geladenen Meshes anhängen
+    // TransformNode erstellen und Meshes anhängen
     this.antTransformNode = new TransformNode("antTransformNode", this.scene);
     container.meshes.forEach((mesh) => {
       if (mesh.name !== "__root__") {
-        mesh.parent = this.antTransformNode;
+        mesh.setParent(this.antTransformNode);
       }
     });
 
@@ -53,25 +66,58 @@ export default class Ant {
     // Optionale Rotation
     this.antTransformNode.rotate(Vector3.Up(), -Math.PI / 2);
 
-    // Animation abrufen und abspielen
+    // Animation abrufen und starten
     if (container.animationGroups.length > 0) {
       this.antAnimationGroup = container.animationGroups[0];
-      this.antAnimationGroup.pause();
+      this.antAnimationGroup.stop(true);
     }
 
-    // Hinzufügen der geladenen Assets zur Szene
+    // Assets zur Szene hinzufügen
     container.addAllToScene();
+
+    // Agent zur Crowd hinzufügen
+    this.addToCrowd();
+  }
+
+  private addToCrowd() {
+    const agentParams: IAgentParameters = {
+      radius: 1,
+      height: 1,
+      maxAcceleration: 8.0,
+      maxSpeed: 1.0,
+      collisionQueryRange: 0.5,
+      pathOptimizationRange: 0.0,
+      separationWeight: 1.0,
+    };
+
+    // Agent hinzufügen und Index speichern
+    this.agentIndex = this.crowd.addAgent(
+      this.antTransformNode.position,
+      agentParams,
+      this.antTransformNode
+    );
+  }
+
+  // Methode zum Bewegen der Ameise über das NavMesh
+  public moveAntToPosition(targetPosition: Vector3) {
+    if (this.navigationPlugin) {
+      const destination = this.navigationPlugin.getClosestPoint(targetPosition);
+      this.crowd.agentGoto(this.agentIndex, destination);
+      console.log(this.navigationPlugin);
+      console.log(this.crowd);
+    } else {
+      console.error("Navigationsplugin ist nicht verfügbar.");
+    }
+  }
+
+  public changeMaterial(newMaterial: StandardMaterial) {
+    this.antMaterial = newMaterial;
   }
 
   // Methode zum Anpassen des Materials
   public async setMaterialColor(color: Color3) {
-    const newMaterial = new StandardMaterial("newAntMaterial", this.scene);
-    newMaterial.diffuseColor = color;
-
-    // Neues Material den Meshes zuweisen
-    this.antTransformNode.getChildMeshes().forEach((mesh) => {
-      mesh.material = newMaterial;
-    });
-    console.log("Material angepasst");
+    if (this.antMaterial) {
+      this.antMaterial.diffuseColor = color;
+    }
   }
 }

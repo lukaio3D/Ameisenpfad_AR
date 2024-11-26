@@ -26,7 +26,7 @@ class App {
     createGUI();
 
     // create the scene
-    createAntCommunicationScene(canvas, scene);
+   await createAntCommunicationScene(canvas, scene);
 
     // show the inspector
     Inspector.Show(scene, {overlay: true});
