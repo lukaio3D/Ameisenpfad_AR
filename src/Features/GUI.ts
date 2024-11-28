@@ -1,11 +1,10 @@
 import * as GUI from '@babylonjs/gui'
 
 export default function createGUI(){
-    return () => {
-        // GUI
-        var advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    return function createGUI() {
+        const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-        var button1 = GUI.Button.CreateSimpleButton("but1", "Click Me");
+        let button1 = GUI.Button.CreateSimpleButton("but1", "Click Me");
         button1.width = "150px"
         button1.height = "40px";
         button1.color = "white";
@@ -14,5 +13,6 @@ export default function createGUI(){
         button1.onPointerUpObservable.add(function() {
             alert("you did it!");
         });
-        advancedTexture.addControl(button1); }  
+        advancedTexture.addControl(button1);
+    }
 }
