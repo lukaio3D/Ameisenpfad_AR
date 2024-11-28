@@ -12,11 +12,12 @@ import {
   IAgentParameters,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
-import Ant from "../Features/Ant";
-import PlayerAnt from "../Features/PlayerAnt";
-import BoxObject from "../GameObjects/BoxObject";
+import PlayerAnt from "../GameObjects/PlayerAnt";
 import PlayerController from "../Features/PlayerController";
 import createARFeatures from "../Features/ARFeatures";
+import AntObject from "../GameObjects/AntObject";
+import FriendAnt from "../GameObjects/FriendAnt";
+import EnemyAnt from "../GameObjects/EnemyAnt";
 
 export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
@@ -58,37 +59,41 @@ export default async function createAntCommunicationScene(
     groundMesh
   );
 
-  function createRandomPointOnNavMesh() {
-    let xCoords = Math.random() * 5 * Math.random() > 0.5 ? -1 : 1;
-    let zCoords = Math.random() * 5 * Math.random() > 0.5 ? -1 : 1;
-    return navigationPlugin.getClosestPoint(new Vector3(xCoords, 0, zCoords));
-  }
-
   //Player Box
-  const box1 = new BoxObject(scene, navigationPlugin, crowd);
-  PlayerController(scene, box1);
+  const playerAnt = new PlayerAnt(
+    new Vector3(0, 0, 0),
+    scene,
+    navigationPlugin,
+    crowd
+  );
 
-  //Enemy Box
-  const box2 = new BoxObject(scene, navigationPlugin, crowd);
-  box2.changeColor(new Color3(1, 0, 0));
-  setInterval(() => {
-    box2.moveBox(createRandomPointOnNavMesh());
-  }, 4000);
+  playerAnt.ready.then(() => {
+    spawnAntRandomly();
+  });
 
-  //Friend Box
-  const box3 = new BoxObject(scene, navigationPlugin, crowd);
-  box3.changeColor(new Color3(0, 1, 0));
-  setInterval(() => {
-    box3.moveBox(createRandomPointOnNavMesh());
-  }, 5000);
+  const spawnAntRandomly = () => {
+    let randomNumber = Math.random();
+    if (randomNumber > 0.5) {
+      new EnemyAnt(
+        playerAnt.createRandomPointOnNavMesh(),
+        scene,
+        navigationPlugin,
+        crowd,
+        playerAnt
+      );
+    } else {
+      new FriendAnt(
+        playerAnt.createRandomPointOnNavMesh(),
+        scene,
+        navigationPlugin,
+        crowd,
+        playerAnt
+      );
+    }
+  };
 
-  // Ameisen erstellen und Crowd übergeben
-  // const ant1 = new PlayerAnt(
-  //   scene,
-  //   new Vector3(0, 0, 0),
-  //   navigationPlugin,
-  //   crowd
-  // );
+  // Jetzt können Sie weitere Aktionen mit ant1 durchführen
+
   // const ant2 = new Ant(scene, new Vector3(2, 0, -2), navigationPlugin, crowd);
   // const ant3 = new Ant(scene, new Vector3(-2, 0, 2), navigationPlugin, crowd);
 

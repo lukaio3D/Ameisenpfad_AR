@@ -1,8 +1,8 @@
 
 import { Scene } from "@babylonjs/core";
-import BoxObject from "../GameObjects/BoxObject";
+import AntObject from "../GameObjects/AntObject";
 
-export default function PlayerController (scene: Scene, playerObject: BoxObject) {
+export default function PlayerController (scene: Scene, playerObject: AntObject) {
     
     // Methode um Mausposition auf einem Mesh in der Szene zu erhalten
     let getGroundPosition = function () {
@@ -15,6 +15,6 @@ export default function PlayerController (scene: Scene, playerObject: BoxObject)
 
     scene.onPointerDown = () => {
       let clickedPosition = getGroundPosition();
-        playerObject.moveBox(clickedPosition);
+        playerObject.moveAnt(clickedPosition);
     };
 }
