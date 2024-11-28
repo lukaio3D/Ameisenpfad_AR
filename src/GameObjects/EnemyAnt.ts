@@ -1,8 +1,18 @@
-import { AbstractMesh, Color3, Mesh, RecastJSPlugin, Scene, Vector3 } from "@babylonjs/core";
+import {
+  AbstractMesh,
+  Color3,
+  Material,
+  Mesh,
+  PBRBaseMaterial,
+  StandardMaterial,
+  RecastJSPlugin,
+  Scene,
+  Vector3,
+} from "@babylonjs/core";
 import AntObject from "./AntObject";
 import PlayerAnt from "./PlayerAnt";
 
-export default class EnemyBox extends AntObject {
+export default class EnemyAnt extends AntObject {
   constructor(
     startPosition: Vector3,
     scene: Scene,
@@ -14,7 +24,6 @@ export default class EnemyBox extends AntObject {
     this.ready.then(() => {
       this.initializeEnemyAnt(scene, playerAnt);
     });
-    
   }
 
   private initializeEnemyAnt(scene: Scene, playerAnt: PlayerAnt) {
@@ -22,14 +31,19 @@ export default class EnemyBox extends AntObject {
     this.addEnemyBehaviour(scene, this.getMesh(), playerAnt.getMesh());
   }
 
-  private addEnemyBehaviour(scene: Scene, enemyMesh: AbstractMesh, playerMesh: AbstractMesh) {
+  private addEnemyBehaviour(
+    scene: Scene,
+    enemyMesh: AbstractMesh,
+    playerMesh: AbstractMesh
+  ) {
+    const antMaterial = this.getMaterial();
+    const enemyMaterial = new StandardMaterial("enemyMaterial");
+    enemyMaterial.diffuseColor = new Color3(1, 0, 0);
     scene.registerBeforeRender(() => {
       if (playerMesh.intersectsMesh(enemyMesh, false)) {
-        console.log("Enemy hit player");
-        this.changeColor(new Color3(1, 0, 0));
+        this.changeMaterial(enemyMaterial);
       } else {
-        this.changeColor(new Color3(1, 1, 1));
-        console.log("Enemy dont hit player");
+        this.changeMaterial(antMaterial);
       }
     });
   }

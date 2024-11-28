@@ -11,6 +11,8 @@ import {
   AbstractMesh,
   AnimationGroup,
   TransformNode,
+  PBRBaseMaterial,
+  Material,
 } from "@babylonjs/core";
 
 export default class AntObject {
@@ -19,7 +21,7 @@ export default class AntObject {
   private antTransformNode: TransformNode;
   private antAnimationGroup: AnimationGroup;
   private antIndex: number;
-  private antMaterial: StandardMaterial;
+  private antMaterial: Material;
   readonly navigationPlugin: RecastJSPlugin;
   readonly crowd: ICrowd;
   readonly agentParams: IAgentParameters = {
@@ -82,7 +84,7 @@ export default class AntObject {
       this.antAnimationGroup.stop(true);
     }
     //Material zuweisen
-    this.antMesh.material = this.antMaterial;
+    this.antMaterial = this.antMesh.material as PBRBaseMaterial;
   }
 
   private addAntToCrowd(crowd: ICrowd) {
@@ -96,17 +98,19 @@ export default class AntObject {
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
       this.antTransformNode.lookAt(
-        this.crowd.getAgentVelocity(this.antIndex).add(this.antTransformNode.position)
+        this.crowd
+          .getAgentVelocity(this.antIndex)
+          .add(this.antTransformNode.position)
       );
     });
   }
 
   private animateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-        this.antAnimationGroup.start(true);
-        this.antAnimationGroup.loopAnimation = true;
-        this.updateAnimationSpeed();
-      });
+      this.antAnimationGroup.start(true);
+      this.antAnimationGroup.loopAnimation = true;
+      this.updateAnimationSpeed();
+    });
   }
 
   private updateAnimationSpeed() {
@@ -114,7 +118,7 @@ export default class AntObject {
     const velocity = this.crowd.getAgentVelocity(this.antIndex);
 
     // Geschwindigkeit berechnen (Betrag des Vektors)
-    const speed = velocity.length()*1.5;
+    const speed = velocity.length() * 1.5;
 
     // speedRatio setzen (Multiplizieren Sie ggf. mit einem Faktor zur Anpassung)
     if (this.antAnimationGroup) {
@@ -149,11 +153,15 @@ export default class AntObject {
     }, Math.random() * 3000 + 4000);
   }
 
+  public getMaterial(): Material {
+    return this.antMaterial;
+  }
+
   public changeColor(newColor: Color3) {
     // Neues Material erstellen
     const newAntMaterial = new StandardMaterial(
-        "newAntMaterial",
-        this.antMesh.getScene()
+      "newAntMaterial",
+      this.antMesh.getScene()
     );
     newAntMaterial.diffuseColor = newColor;
 
@@ -161,10 +169,17 @@ export default class AntObject {
     const allMeshes = this.antMesh.getChildMeshes();
 
     allMeshes.forEach((mesh) => {
-        mesh.material = newAntMaterial;
+      mesh.material = newAntMaterial;
     });
+  }
 
-    console.log("Color changed");
+  public changeMaterial(newMaterial: Material) {
+    // Alle untergeordneten Meshes abrufen und Material setzen
+    const allMeshes = this.antMesh.getChildMeshes();
+
+    allMeshes.forEach((mesh) => {
+      mesh.material = newMaterial;
+    });
   }
 
   public createRandomPointOnNavMesh() {

@@ -49,6 +49,9 @@ export default async function createAntCommunicationScene(
   const groundMesh = [
     MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene),
   ];
+  let groundMaterial = new StandardMaterial("groundMaterial", scene);
+  groundMesh[0].material = groundMaterial;
+  groundMaterial.alpha = 0;
 
   //AR Features aktivieren
   await createARFeatures(scene);
@@ -56,7 +59,8 @@ export default async function createAntCommunicationScene(
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
     scene,
-    groundMesh
+    groundMesh,
+    false
   );
 
   //Player Box
