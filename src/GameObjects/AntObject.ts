@@ -73,7 +73,7 @@ export default class AntObject {
     this.antMesh.parent = this.antTransformNode;
 
     // Skalierung einstellen
-    this.antMesh.scaling = new Vector3(2, 2, 2);
+    // this.antMesh.scaling = new Vector3(2, 2, 2);
 
     // Optionale Rotation
     this.antMesh.rotate(Vector3.Up(), Math.PI / 2);

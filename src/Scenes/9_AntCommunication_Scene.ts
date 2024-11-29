@@ -1,23 +1,18 @@
 import {
   ArcRotateCamera,
-  Color3,
   DirectionalLight,
   HemisphericLight,
   Vector3,
   Scene,
   StandardMaterial,
-  RecastJSCrowd,
   MeshBuilder,
-  TransformNode,
-  IAgentParameters,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import PlayerAnt from "../GameObjects/PlayerAnt";
-import PlayerController from "../Features/PlayerController";
 import createARFeatures from "../Features/ARFeatures";
-import AntObject from "../GameObjects/AntObject";
 import FriendAnt from "../GameObjects/FriendAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
+import { GameLogic } from "../Features/GameLogic";
 
 export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
@@ -63,6 +58,8 @@ export default async function createAntCommunicationScene(
     false
   );
 
+  GameLogic();
+
   //Player Box
   const playerAnt = new PlayerAnt(
     new Vector3(0, 0, 0),
@@ -96,15 +93,4 @@ export default async function createAntCommunicationScene(
     }
   };
 
-  // Jetzt können Sie weitere Aktionen mit ant1 durchführen
-
-  // const ant2 = new Ant(scene, new Vector3(2, 0, -2), navigationPlugin, crowd);
-  // const ant3 = new Ant(scene, new Vector3(-2, 0, 2), navigationPlugin, crowd);
-
-  // setTimeout(() => {
-  //   // Ameisen bewegen (Beispiel)
-  //   ant2.changeMaterial(new StandardMaterial("antMaterial", scene));
-  //   ant2.moveAntToPosition(new Vector3(2, 0, 2));
-  //   crowd.agentGoto(0, navigationPlugin.getClosestPoint(new Vector3(2, 0, 2)));
-  // }, 2000);
 }
