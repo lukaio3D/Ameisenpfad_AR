@@ -28,7 +28,7 @@ export default class AntObject {
     radius: 0.2,
     height: 0.2,
     maxAcceleration: 4.0,
-    maxSpeed: 1.0,
+    maxSpeed: 0.7,
     collisionQueryRange: 0.8,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
@@ -73,7 +73,7 @@ export default class AntObject {
     this.antMesh.parent = this.antTransformNode;
 
     // Skalierung einstellen
-    // this.antMesh.scaling = new Vector3(2, 2, 2);
+    this.antMesh.scaling = new Vector3(0.5, 0.5, 0.5);
 
     // Optionale Rotation
     this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
@@ -97,11 +97,13 @@ export default class AntObject {
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-      this.antTransformNode.lookAt(
-        this.crowd
-          .getAgentVelocity(this.antIndex)
-          .add(this.antTransformNode.position)
-      );
+      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.1) {
+        this.antTransformNode.lookAt(
+          this.crowd
+            .getAgentVelocity(this.antIndex)
+            .add(this.antTransformNode.position)
+        );
+      }
     });
   }
 
@@ -122,7 +124,7 @@ export default class AntObject {
 
     // speedRatio setzen (Multiplizieren Sie ggf. mit einem Faktor zur Anpassung)
     if (this.antAnimationGroup) {
-      this.antAnimationGroup.speedRatio = speed * 0.5; // 0.5 ist ein Beispiel-Faktor
+      this.antAnimationGroup.speedRatio = speed; // 0.5 ist ein Beispiel-Faktor
     }
   }
 
