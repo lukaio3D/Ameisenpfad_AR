@@ -69,7 +69,9 @@ export default async function createAntCommunicationScene(
     crowd
   );
 
-  GameLogic(playerAnt, scene, navigationPlugin, crowd);
+  playerAnt.ready.then(() => {
+    GameLogic(playerAnt, scene, navigationPlugin, crowd);
+  });
 
   new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 }
