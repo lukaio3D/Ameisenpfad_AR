@@ -12,8 +12,8 @@ export default async function createNavigationFeatures(scene: Scene, groundMesh:
   let navigationPlugin = new RecastJSPlugin(recast);
 
   const parameters = {
-    cs: 0.2,
-    ch: 0.2,
+    cs: 0.1,
+    ch: 0.1,
     walkableSlopeAngle: 35,
     walkableHeight: 1,
     walkableClimb: 1,
@@ -25,11 +25,11 @@ export default async function createNavigationFeatures(scene: Scene, groundMesh:
     maxVertsPerPoly: 6,
     detailSampleDist: 6,
     detailSampleMaxError: 1,
+    borderSize: 1,
+    tileSize: 20,
   };
   
   navigationPlugin.createNavMesh(groundMesh, parameters);
-
-  //Zufällige Position auf NavMesh finden
 
   // Optional: NavMesh visualisieren
   if(showNavMesh) {

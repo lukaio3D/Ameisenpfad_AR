@@ -13,6 +13,7 @@ import createARFeatures from "../Features/ARFeatures";
 import FriendAnt from "../GameObjects/FriendAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
 import { GameLogic } from "../Features/GameLogic";
+import TreeStump from "../GameObjects/TreeStump";
 
 export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
@@ -44,6 +45,7 @@ export default async function createAntCommunicationScene(
   const groundMesh = [
     MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene),
   ];
+  groundMesh[0].position = new Vector3(0, 0, 5);
   let groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh[0].material = groundMaterial;
   groundMaterial.alpha = 0;
@@ -62,7 +64,7 @@ export default async function createAntCommunicationScene(
 
   //Player Box
   const playerAnt = new PlayerAnt(
-    new Vector3(0, 0, 0),
+    new Vector3(0, 0, 1),
     scene,
     navigationPlugin,
     crowd
@@ -92,5 +94,7 @@ export default async function createAntCommunicationScene(
       );
     }
   };
+
+  const startTree = new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 
 }

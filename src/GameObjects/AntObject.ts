@@ -186,7 +186,7 @@ export default class AntObject {
 
   public createRandomPointOnNavMesh() {
     let xCoords = Math.random() * 5 * (Math.random() > 0.5 ? -1 : 1);
-    let zCoords = Math.random() * 5 * (Math.random() > 0.5 ? -1 : 1);
+    let zCoords = Math.random() * 10 ;
     return this.navigationPlugin.getClosestPoint(
       new Vector3(xCoords, 0, zCoords)
     );
