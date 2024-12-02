@@ -25,11 +25,11 @@ export default class AntObject {
   readonly navigationPlugin: RecastJSPlugin;
   readonly crowd: ICrowd;
   readonly agentParams: IAgentParameters = {
-    radius: 0.2,
-    height: 0.2,
+    radius: 0.1,
+    height: 0.1,
     maxAcceleration: 4.0,
     maxSpeed: 0.7,
-    collisionQueryRange: 0.8,
+    collisionQueryRange: 0.4,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
   };

@@ -40,4 +40,6 @@ export default class ConstructionTwig extends Mesh {
   public setPosition(newPosition: Vector3) {
     this.position = newPosition;
   }
+
+  
 }

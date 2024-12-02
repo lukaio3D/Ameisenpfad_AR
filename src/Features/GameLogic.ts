@@ -40,6 +40,7 @@ export function GameLogic(
     countDown = countDown - 1;
   }, 1000);
 
+  // Funktion zum zufälligen Spawnen von Ameisen
   const spawnAntRandomly = () => {
     let randomNumber = Math.random();
     if (randomNumber > 0.5) {
@@ -61,18 +62,32 @@ export function GameLogic(
     }
   };
 
+  // Funktion zum Spawnen von Bauzweigen
   const spawnConstructionTwig = () => {
+    return(
     new ConstructionTwig(
       scene,
       playerAnt.createRandomPointOnNavMesh(),
       new Vector3(0, Math.random() * 360, 0)
-    );
+    ))
   };
 
-  // Ants spawnen
-  scene.registerBeforeRender(() => {
-  if (countDown % 60 === 0) {
-    spawnAntRandomly();
-    spawnConstructionTwig();
-  }});
+  // Start Spawner
+  let twigsCollected: number = 0;
+  let twig = spawnConstructionTwig();
+  spawnAntRandomly();
+
+  scene.onAfterRenderObservable.add(() => {
+    if(twig.intersectsMesh(playerAnt.getMesh(), true)){
+      twigsCollected++;
+      twig.dispose();
+      twig = spawnConstructionTwig();
+      spawnAntRandomly();
+      if(twigsCollected === 5){
+        uiManager.dialogzeile.text = `Alle Bauzweige gesammelt!`;
+        clearInterval(timer);
+      }
+    };
+  });
+
 }
