@@ -6,6 +6,7 @@ export default class TreeStump extends Mesh {
   constructor(scene: Scene, startPosition: Vector3, navigationPlugin: RecastJSPlugin,) {
     super("treeStump", scene);
     this.loadMesh();
+    this.scaling = new Vector3(0.5, 0.5, 0.5);
     this.position = startPosition;
     navigationPlugin.addCylinderObstacle(this.position.subtract(new Vector3(0, 1, 0)), 0.8, 2);
   }

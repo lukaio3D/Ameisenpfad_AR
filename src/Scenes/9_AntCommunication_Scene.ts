@@ -14,6 +14,7 @@ import FriendAnt from "../GameObjects/FriendAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
 import { GameLogic } from "../Features/GameLogic";
 import TreeStump from "../GameObjects/TreeStump";
+import ConstructionTwig from "../GameObjects/ConstructionTwig";
 
 export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
@@ -60,8 +61,6 @@ export default async function createAntCommunicationScene(
     false
   );
 
-  GameLogic();
-
   //Player Box
   const playerAnt = new PlayerAnt(
     new Vector3(0, 0, 1),
@@ -70,31 +69,7 @@ export default async function createAntCommunicationScene(
     crowd
   );
 
-  playerAnt.ready.then(() => {
-    spawnAntRandomly();
-  });
+  GameLogic(playerAnt, scene, navigationPlugin, crowd);
 
-  const spawnAntRandomly = () => {
-    let randomNumber = Math.random();
-    if (randomNumber > 0.5) {
-      new EnemyAnt(
-        playerAnt.createRandomPointOnNavMesh(),
-        scene,
-        navigationPlugin,
-        crowd,
-        playerAnt
-      );
-    } else {
-      new FriendAnt(
-        playerAnt.createRandomPointOnNavMesh(),
-        scene,
-        navigationPlugin,
-        crowd,
-        playerAnt
-      );
-    }
-  };
-
-  const startTree = new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
-
+  new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 }

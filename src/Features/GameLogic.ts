@@ -1,6 +1,17 @@
+import { ICrowd, RecastJSPlugin, Scene, Vector3 } from "@babylonjs/core";
 import { UIManager } from "./UIManager";
+import PlayerAnt from "../GameObjects/PlayerAnt";
+import EnemyAnt from "../GameObjects/EnemyAnt";
+import FriendAnt from "../GameObjects/FriendAnt";
+import ConstructionTwig from "../GameObjects/ConstructionTwig";
+import TreeStump from "../GameObjects/TreeStump";
 
-export function GameLogic() {
+export function GameLogic(
+  playerAnt: PlayerAnt,
+  scene: Scene,
+  navigationPlugin: RecastJSPlugin,
+  crowd: ICrowd
+) {
   const uiManager = UIManager.getInstance();
 
   // Dialogzeile erstellen
@@ -28,4 +39,40 @@ export function GameLogic() {
     uiManager.timer.text = minutes + ":" + seconds;
     countDown = countDown - 1;
   }, 1000);
+
+  const spawnAntRandomly = () => {
+    let randomNumber = Math.random();
+    if (randomNumber > 0.5) {
+      new EnemyAnt(
+        playerAnt.createRandomPointOnNavMesh(),
+        scene,
+        navigationPlugin,
+        crowd,
+        playerAnt
+      );
+    } else {
+      new FriendAnt(
+        playerAnt.createRandomPointOnNavMesh(),
+        scene,
+        navigationPlugin,
+        crowd,
+        playerAnt
+      );
+    }
+  };
+
+  const spawnConstructionTwig = () => {
+    new ConstructionTwig(
+      scene,
+      playerAnt.createRandomPointOnNavMesh(),
+      new Vector3(0, Math.random() * 360, 0)
+    );
+  };
+
+  // Ants spawnen
+  scene.registerBeforeRender(() => {
+  if (countDown % 60 === 0) {
+    spawnAntRandomly();
+    spawnConstructionTwig();
+  }});
 }
