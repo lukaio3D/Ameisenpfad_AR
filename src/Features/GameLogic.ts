@@ -4,7 +4,6 @@ import PlayerAnt from "../GameObjects/PlayerAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
 import FriendAnt from "../GameObjects/FriendAnt";
 import ConstructionTwig from "../GameObjects/ConstructionTwig";
-import TreeStump from "../GameObjects/TreeStump";
 
 export function GameLogic(
   playerAnt: PlayerAnt,
@@ -18,12 +17,12 @@ export function GameLogic(
   uiManager.dialogzeile.text = `Ich bin ein Textblock`;
 
   // Timer erstellen in Sekunden
-  let countDown: number = 600;
+  let countDown: number = 120;
 
   let timer = setInterval(() => {
     // Game Over
     if (countDown === 0) {
-      uiManager.dialogzeile.text = `Game Over`;
+      uiManager.setOverlayText("Spiel verloren! - Zeit abgelaufen");
       clearInterval(timer);
     }
 
@@ -64,30 +63,35 @@ export function GameLogic(
 
   // Funktion zum Spawnen von Bauzweigen
   const spawnConstructionTwig = () => {
-    return(
-    new ConstructionTwig(
+    return new ConstructionTwig(
       scene,
       playerAnt.createRandomPointOnNavMesh(),
       new Vector3(0, Math.random() * 360, 0)
-    ))
+    );
   };
 
   // Start Spawner
   let twigsCollected: number = 0;
+  const twigsToCollect: number = 10;
+
   let twig = spawnConstructionTwig();
   spawnAntRandomly();
 
   scene.onAfterRenderObservable.add(() => {
-    if(twig.intersectsMesh(playerAnt.getMesh(), true)){
+    if (playerAnt.getHealth() <= 0) {
+      uiManager.setOverlayText("Spiel verloren! - Kein Leben mehr");
+      clearInterval(timer);
+    }
+    if (twig.intersectsMesh(playerAnt.getMesh(), true)) {
       twigsCollected++;
+      uiManager.collectBar.value = (twigsCollected / twigsToCollect) * 100;
       twig.dispose();
       twig = spawnConstructionTwig();
       spawnAntRandomly();
-      if(twigsCollected === 5){
-        uiManager.dialogzeile.text = `Alle Bauzweige gesammelt!`;
+      if (twigsCollected === twigsToCollect) {
+        uiManager.setOverlayText("Spiel gewonnen!");
         clearInterval(timer);
       }
-    };
+    }
   });
-
 }
