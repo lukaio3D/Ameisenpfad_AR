@@ -1,4 +1,3 @@
-
 import { Scene } from "@babylonjs/core";
 import AntObject from "../GameObjects/AntObject";
 
@@ -15,6 +14,8 @@ export default function PlayerController (scene: Scene, playerObject: AntObject)
 
     scene.onPointerDown = () => {
       let clickedPosition = getGroundPosition();
+      if (clickedPosition) {
         playerObject.moveAnt(clickedPosition);
+      }
     };
 }

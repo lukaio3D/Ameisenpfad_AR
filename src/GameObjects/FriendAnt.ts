@@ -1,56 +1,41 @@
 import {
-  AbstractMesh,
   Color3,
-  Mesh,
   StandardMaterial,
   RecastJSPlugin,
   Scene,
   Vector3,
+  Material,
 } from "@babylonjs/core";
-import AntObject from "./AntObject";
 import PlayerAnt from "./PlayerAnt";
-import { UIManager } from "../Features/UIManager";
+import NonPlayerAnt from "./NonPlayerAnt";
 
-export default class FriendAnt extends AntObject {
-  private playerAnt: PlayerAnt;
-  private wasColliding: boolean = false;
+export default class FriendAnt extends NonPlayerAnt {
+  private friendMaterial: StandardMaterial;
 
   constructor(
     startPosition: Vector3,
     scene: Scene,
     navigationPlugin: RecastJSPlugin,
     crowd,
-    playerAnt: PlayerAnt
+    assignedPlayerAnt: PlayerAnt
   ) {
-    super(startPosition, scene, navigationPlugin, crowd);
-    this.playerAnt = playerAnt;
+    super(
+      "FriendAnt",
+      startPosition,
+      scene,
+      navigationPlugin,
+      crowd,
+      assignedPlayerAnt
+    );
+    this.playerAnt = assignedPlayerAnt;
     this.ready.then(() => {
-      this.initializeFriendAnt(scene, playerAnt);
+      this.initializeFriendAnt(scene, this.playerAnt);
     });
   }
 
   private initializeFriendAnt(scene: Scene, playerAnt: PlayerAnt) {
     this.randomMove();
-    this.addFriendBehaviour(scene, this.getMesh(), playerAnt.getMesh());
-  }
-
-  private addFriendBehaviour(
-    scene: Scene,
-    friendMesh: AbstractMesh,
-    playerMesh: AbstractMesh
-  ) {
-    const friendMaterial = new StandardMaterial("friendMaterial");
-    friendMaterial.diffuseColor = new Color3(0, 1, 0);
-    scene.registerBeforeRender(() => {
-      if (playerMesh.intersectsMesh(friendMesh, false)) {
-        if (!this.wasColliding) {
-          // Beginn der Kollision
-          this.wasColliding = true;
-          this.changeMaterial(friendMaterial);
-          this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
-          UIManager.getInstance().healthBar.value = this.playerAnt.getHealth();
-        }
-      }
-    });
+    this.friendMaterial = new StandardMaterial("FriendMaterial", this.scene);
+    this.friendMaterial.diffuseColor = new Color3(1, 0, 0); // Rotes Material für friend Ant
   }
 }

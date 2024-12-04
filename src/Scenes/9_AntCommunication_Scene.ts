@@ -6,6 +6,7 @@ import {
   Scene,
   StandardMaterial,
   MeshBuilder,
+  Color3,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import PlayerAnt from "../GameObjects/PlayerAnt";
@@ -61,17 +62,7 @@ export default async function createAntCommunicationScene(
     false
   );
 
-  //Player Box
-  const playerAnt = new PlayerAnt(
-    new Vector3(0, 0, 1),
-    scene,
-    navigationPlugin,
-    crowd
-  );
-
-  playerAnt.ready.then(() => {
-    GameLogic(playerAnt, scene, navigationPlugin, crowd);
-  });
+  GameLogic(scene, navigationPlugin, crowd);
 
   new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 }

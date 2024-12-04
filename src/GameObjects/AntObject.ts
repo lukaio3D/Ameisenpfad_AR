@@ -10,20 +10,18 @@ import {
   SceneLoader,
   AbstractMesh,
   AnimationGroup,
-  TransformNode,
-  PBRBaseMaterial,
   Material,
+  Mesh,
 } from "@babylonjs/core";
 
-export default class AntObject {
+export default class AntObject extends Mesh {
   public ready: Promise<void>;
-  private antMesh: AbstractMesh;
-  private antTransformNode: TransformNode;
   private antAnimationGroup: AnimationGroup;
   private antIndex: number;
-  private antMaterial: Material;
-  readonly navigationPlugin: RecastJSPlugin;
-  readonly crowd: ICrowd;
+  private antMesh: AbstractMesh;
+  protected scene: Scene;
+  navigationPlugin: RecastJSPlugin;
+  crowd: ICrowd;
   readonly agentParams: IAgentParameters = {
     radius: 0.1,
     height: 0.1,
@@ -35,29 +33,32 @@ export default class AntObject {
   };
 
   constructor(
+    antType: string,
     startPosition: Vector3,
-    scene: Scene,
+    assignedScene: Scene,
     navigationPlugin: RecastJSPlugin,
     crowd: ICrowd
   ) {
+    super(antType, assignedScene);
     this.navigationPlugin = navigationPlugin;
     this.crowd = crowd;
-    this.ready = this.initialize(startPosition, scene);
+    this.scene = assignedScene;
+    this.ready = this.initialize(startPosition);
   }
 
-  private async initialize(startPosition: Vector3, scene: Scene) {
-    await this.createAntMesh(scene);
-    this.setPosition(startPosition);
+  private async initialize(startPosition: Vector3) {
+    await this.createAntMesh(this.scene);
+    this.position.copyFrom(startPosition);
     this.addAntToCrowd(this.crowd);
-    this.antMesh.showBoundingBox = false;
-    this.antMesh.setBoundingInfo(
+    this.showBoundingBox = false;
+    this.setBoundingInfo(
       new BoundingInfo(
-        new Vector3(-0.5, -0.25, -0.5),
-        new Vector3(0.5, 0.25, 0.5)
+        new Vector3(-0.25, -0.25, -0.5),
+        new Vector3(0.25, 0.25, 0.5)
       )
     );
-    this.rotateAntOnMove(scene);
-    this.animateAntOnMove(scene);
+    this.rotateAntOnMove(this.scene);
+    this.animateAntOnMove(this.scene);
   }
 
   private async createAntMesh(scene: Scene) {
@@ -69,11 +70,12 @@ export default class AntObject {
       scene
     );
     this.antMesh = result.meshes[0];
-    this.antTransformNode = new TransformNode("antTransformNode", scene);
-    this.antMesh.parent = this.antTransformNode;
+
+    // Parent zuweisen 
+    this.antMesh.parent = this;
 
     // Skalierung einstellen
-    this.antMesh.scaling = new Vector3(0.5, 0.5, 0.5);
+    this.scaling = new Vector3(0.5, 0.5, 0.5);
 
     // Optionale Rotation
     this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
@@ -83,25 +85,23 @@ export default class AntObject {
       this.antAnimationGroup = result.animationGroups[0];
       this.antAnimationGroup.stop(true);
     }
-    //Material zuweisen
-    this.antMaterial = this.antMesh.material as PBRBaseMaterial;
   }
 
   private addAntToCrowd(crowd: ICrowd) {
     this.antIndex = crowd.addAgent(
-      this.antTransformNode.position,
+      this.position,
       this.agentParams,
-      this.antTransformNode
+      this
     );
   }
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
       if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.1) {
-        this.antTransformNode.lookAt(
+        this.lookAt(
           this.crowd
             .getAgentVelocity(this.antIndex)
-            .add(this.antTransformNode.position)
+            .add(this.position)
         );
       }
     });
@@ -128,16 +128,6 @@ export default class AntObject {
     }
   }
 
-  public getPosition(): Vector3 {
-    return this.antTransformNode.position;
-  }
-
-  public setPosition(newPosition: Vector3) {
-    if (this.antMesh) {
-      this.antTransformNode.position = newPosition;
-    }
-  }
-
   public getMesh(): AbstractMesh {
     return this.antMesh;
   }
@@ -156,7 +146,7 @@ export default class AntObject {
   }
 
   public getMaterial(): Material {
-    return this.antMaterial;
+    return this.antMesh.material;
   }
 
   public changeColor(newColor: Color3) {

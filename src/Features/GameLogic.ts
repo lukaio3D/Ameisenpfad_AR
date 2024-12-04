@@ -1,12 +1,15 @@
-import { ICrowd, RecastJSPlugin, Scene, Vector3 } from "@babylonjs/core";
+import { Color3, ICrowd, RecastJSPlugin, Scene, Vector3 } from "@babylonjs/core";
 import { UIManager } from "./UIManager";
 import PlayerAnt from "../GameObjects/PlayerAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
 import FriendAnt from "../GameObjects/FriendAnt";
 import ConstructionTwig from "../GameObjects/ConstructionTwig";
+import AntObject from "../GameObjects/AntObject";
+
+// Liste aller in der Szene vorhandenen Ameisen
+export const allAnts: AntObject[] = [];
 
 export function GameLogic(
-  playerAnt: PlayerAnt,
   scene: Scene,
   navigationPlugin: RecastJSPlugin,
   crowd: ICrowd
@@ -17,7 +20,7 @@ export function GameLogic(
   uiManager.dialogzeile.text = `Ich bin ein Textblock`;
 
   // Timer erstellen in Sekunden
-  let countDown: number = 120;
+  let countDown: number = 240;
 
   let timer = setInterval(() => {
     // Game Over
@@ -39,25 +42,35 @@ export function GameLogic(
     countDown = countDown - 1;
   }, 1000);
 
+  //Player Box
+  const playerAnt = new PlayerAnt(
+    new Vector3(0, 0, 1),
+    scene,
+    navigationPlugin,
+    crowd
+  );
+
   // Funktion zum zufälligen Spawnen von Ameisen
   const spawnAntRandomly = () => {
     let randomNumber = Math.random();
     if (randomNumber > 0.5) {
-      new EnemyAnt(
+      const enemyAnt = new EnemyAnt(
         playerAnt.createRandomPointOnNavMesh(),
         scene,
         navigationPlugin,
         crowd,
         playerAnt
       );
+      allAnts.push(enemyAnt);
     } else {
-      new FriendAnt(
+      const friendAnt = new FriendAnt(
         playerAnt.createRandomPointOnNavMesh(),
         scene,
         navigationPlugin,
         crowd,
         playerAnt
       );
+      allAnts.push(friendAnt);
     }
   };
 
@@ -75,14 +88,47 @@ export function GameLogic(
   const twigsToCollect: number = 10;
 
   let twig = spawnConstructionTwig();
-  spawnAntRandomly();
+  setTimeout(() => {
+    spawnAntRandomly();
+  }, 1000);
 
   scene.onAfterRenderObservable.add(() => {
-    if (playerAnt.getHealth() <= 0) {
-      uiManager.setOverlayText("Spiel verloren! - Kein Leben mehr");
-      clearInterval(timer);
-    }
-    if (twig.intersectsMesh(playerAnt.getMesh(), true)) {
+    // Kollisionen zwischen PlayerAnt und NonPlayerAnts verwalten
+    allAnts.forEach((ant) => {
+
+      // Kollision in Zone 2
+      if (playerAnt.intersectsMesh(ant, false)) {
+        // Kollision mit Feindlicher Ameise in Zone 2
+        if (ant instanceof EnemyAnt) {
+          console.log("Feindliche Ameise in Zone 2");
+          // Farbe ändern, wenn noch nicht identifiziert
+          if(!ant.getIsIdentified()) {
+          ant.changeColor(new Color3(1, 0, 0));
+          ant.setIsIdentified(true);
+        }
+        }
+        // Kollision mit Freundlicher Ameise in Zone 2
+        else if (ant instanceof FriendAnt) {
+          console.log("Freundliche Ameise in Zone 2");
+          // Farbe ändern, wenn noch nicht identifiziert
+          if(!ant.getIsIdentified()) {
+          ant.changeColor(new Color3(0, 1, 0));
+          ant.setIsIdentified(true);
+          }
+        }
+      }
+      // Kollision in Zone 1
+      else if (playerAnt.getCheckProximityMesh().intersectsMesh(ant, false)) {
+        if (ant instanceof EnemyAnt) {
+          console.log("Feindliche Ameise in Zone 1");
+        } else if (ant instanceof FriendAnt) {
+          console.log("Freundliche Ameise in Zone 1");
+        }
+      }
+    });
+
+    // Kollisionen zwischen PlayerAnt und Bauzweigen verwalten
+    if (twig.intersectsMesh(playerAnt, true)) {
       twigsCollected++;
       uiManager.collectBar.value = (twigsCollected / twigsToCollect) * 100;
       twig.dispose();
@@ -92,6 +138,11 @@ export function GameLogic(
         uiManager.setOverlayText("Spiel gewonnen!");
         clearInterval(timer);
       }
+    }
+    // Game Over bei Health 0
+    if (playerAnt.getHealth() <= 0) {
+      uiManager.setOverlayText("Spiel verloren! - Kein Leben mehr");
+      clearInterval(timer);
     }
   });
 }
