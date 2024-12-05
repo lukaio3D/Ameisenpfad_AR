@@ -45,7 +45,7 @@ export default async function createAntCommunicationScene(
   groundMesh[0].position = new Vector3(0, 0, 2.5);
   let groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh[0].material = groundMaterial;
-  groundMaterial.alpha = 1;
+  groundMaterial.alpha = 0;
 
   //AR Features aktivieren
   await createARFeatures(scene);
