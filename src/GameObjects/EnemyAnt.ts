@@ -38,4 +38,9 @@ export default class EnemyAnt extends NonPlayerAnt {
     this.enemyMaterial = new StandardMaterial("enemyMaterial", this.scene);
     this.enemyMaterial.diffuseColor = new Color3(1, 0, 0); // Rotes Material für Enemy Ant
   }
+
+  public attackPlayerAnt(){
+    console.log("Angriff auf Spielerameise");
+    this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
+  }
 }

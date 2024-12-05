@@ -1,26 +1,14 @@
 import AntObject from "./AntObject";
 import PlayerController from "../Features/PlayerController";
-import {
-  BoundingBox,
-  BoundingSphere,
-  Color3,
-  Mesh,
-  MeshBuilder,
-  Vector3,
-} from "@babylonjs/core";
-import { allAnts } from "../Features/GameLogic";
-import NonPlayerAnt from "./NonPlayerAnt";
-import EnemyAnt from "./EnemyAnt";
-import FriendAnt from "./FriendAnt";
+import { Mesh, MeshBuilder } from "@babylonjs/core";
 
 export default class PlayerAnt extends AntObject {
   private health: number = 100;
   private checkProximityMesh: Mesh;
-  private isBeingFollowed: boolean = false;
-  private isBeingIdentified: boolean = false;
+  private isInInteraction: boolean = false;
 
   constructor(startPosition, scene, navigationPlugin, crowd) {
-    super("PlayerAnt", startPosition, scene, navigationPlugin, crowd);
+    super("PlayerAnt", 0.7, startPosition, scene, navigationPlugin, crowd);
     PlayerController(scene, this);
     this.ready.then(() => {
       this.createCheckProximityMesh();
@@ -30,7 +18,7 @@ export default class PlayerAnt extends AntObject {
   private createCheckProximityMesh() {
     this.checkProximityMesh = MeshBuilder.CreateCylinder(
       "checkProximityMesh",
-      { diameter: 2, height: 0.3 },
+      { diameter: 5, height: 0.3 },
       this.scene
     );
     this.checkProximityMesh.parent = this;
@@ -53,19 +41,11 @@ export default class PlayerAnt extends AntObject {
     }
   }
 
-  public getIsBeingFollowed() {
-    return this.isBeingFollowed;
+  public getIsInInteraction() {
+    return this.isInInteraction;
   }
 
-  public setIsBeingFollowed(value: boolean) {
-    this.isBeingFollowed = value;
-  }
-
-  public getIsBeingIdentified() {
-    return this.isBeingIdentified;
-  }
-
-  public setIsBeingIdentified(value: boolean) {
-    this.isBeingIdentified = value;
+  public setIsInInteraction(isInInteraction: boolean) {
+    this.isInInteraction = isInInteraction;
   }
 }

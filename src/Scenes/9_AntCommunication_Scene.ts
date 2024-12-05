@@ -6,16 +6,11 @@ import {
   Scene,
   StandardMaterial,
   MeshBuilder,
-  Color3,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
-import PlayerAnt from "../GameObjects/PlayerAnt";
 import createARFeatures from "../Features/ARFeatures";
-import FriendAnt from "../GameObjects/FriendAnt";
-import EnemyAnt from "../GameObjects/EnemyAnt";
 import { GameLogic } from "../Features/GameLogic";
 import TreeStump from "../GameObjects/TreeStump";
-import ConstructionTwig from "../GameObjects/ConstructionTwig";
 
 export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,

@@ -1,10 +1,17 @@
-import { Color3, ICrowd, RecastJSPlugin, Scene, Vector3 } from "@babylonjs/core";
+import {
+  Color3,
+  ICrowd,
+  RecastJSPlugin,
+  Scene,
+  Vector3,
+} from "@babylonjs/core";
 import { UIManager } from "./UIManager";
 import PlayerAnt from "../GameObjects/PlayerAnt";
 import EnemyAnt from "../GameObjects/EnemyAnt";
 import FriendAnt from "../GameObjects/FriendAnt";
 import ConstructionTwig from "../GameObjects/ConstructionTwig";
 import AntObject from "../GameObjects/AntObject";
+import NonPlayerAnt from "../GameObjects/NonPlayerAnt";
 
 // Liste aller in der Szene vorhandenen Ameisen
 export const allAnts: AntObject[] = [];
@@ -83,50 +90,69 @@ export function GameLogic(
     );
   };
 
+  function handleAntProximity(ant: NonPlayerAnt) {
+    const playerMesh = playerAnt;
+    const antMesh = ant;
+    const proximityMesh = playerAnt.getCheckProximityMesh();
+
+    // Überprüfen, ob alle benötigten Meshes definiert sind
+    if (!playerMesh || !antMesh || !proximityMesh) {
+      return;
+    }
+
+    // Überprüfen, ob die PlayerAnt das Ant-Mesh schneidet
+    if (playerMesh.intersectsMesh(antMesh, false)) {
+      handleCloseProximity(ant);
+    }
+    // Überprüfen, ob das Proximity-Mesh das Ant-Mesh schneidet
+    else if (proximityMesh.intersectsMesh(antMesh, false)) {
+      handleFarProximity(ant);
+    } else {
+      ant.setBehaviourState("randomMove");
+    }
+  }
+
+  function handleCloseProximity(ant: NonPlayerAnt) {
+    if (ant instanceof EnemyAnt) {
+      if (!ant.getIsIdentified()) {
+        ant.setBehaviourState("identifyPlayerAnt");
+        ant.changeColor(new Color3(1, 0, 0));
+      } else {
+        ant.setBehaviourState("attackPlayerAnt");
+      }
+    } else if (ant instanceof FriendAnt) {
+      if (!ant.getIsIdentified()) {
+        ant.setBehaviourState("identifyPlayerAnt");
+        ant.changeColor(new Color3(0, 1, 0));
+      }
+    }
+  }
+
+  function handleFarProximity(ant: NonPlayerAnt) {
+    if (ant instanceof EnemyAnt) {
+      ant.setBehaviourState("followPlayerAnt");
+    } else if (ant instanceof FriendAnt) {
+      if (!ant.getIsIdentified()) {
+        ant.setBehaviourState("followPlayerAnt");
+      }
+    }
+  }
+
   // Start Spawner
   let twigsCollected: number = 0;
   const twigsToCollect: number = 10;
+  spawnAntRandomly();
 
-  let twig = spawnConstructionTwig();
-  setTimeout(() => {
-    spawnAntRandomly();
-  }, 1000);
+  let twig: ConstructionTwig = spawnConstructionTwig();
 
+  // Kollisionen verwalten
   scene.onAfterRenderObservable.add(() => {
     // Kollisionen zwischen PlayerAnt und NonPlayerAnts verwalten
     allAnts.forEach((ant) => {
-
-      // Kollision in Zone 2
-      if (playerAnt.intersectsMesh(ant, false)) {
-        // Kollision mit Feindlicher Ameise in Zone 2
-        if (ant instanceof EnemyAnt) {
-          console.log("Feindliche Ameise in Zone 2");
-          // Farbe ändern, wenn noch nicht identifiziert
-          if(!ant.getIsIdentified()) {
-          ant.changeColor(new Color3(1, 0, 0));
-          ant.setIsIdentified(true);
-        }
-        }
-        // Kollision mit Freundlicher Ameise in Zone 2
-        else if (ant instanceof FriendAnt) {
-          console.log("Freundliche Ameise in Zone 2");
-          // Farbe ändern, wenn noch nicht identifiziert
-          if(!ant.getIsIdentified()) {
-          ant.changeColor(new Color3(0, 1, 0));
-          ant.setIsIdentified(true);
-          }
-        }
-      }
-      // Kollision in Zone 1
-      else if (playerAnt.getCheckProximityMesh().intersectsMesh(ant, false)) {
-        if (ant instanceof EnemyAnt) {
-          console.log("Feindliche Ameise in Zone 1");
-        } else if (ant instanceof FriendAnt) {
-          console.log("Freundliche Ameise in Zone 1");
-        }
+      if (ant instanceof NonPlayerAnt) {
+        handleAntProximity(ant);
       }
     });
-
     // Kollisionen zwischen PlayerAnt und Bauzweigen verwalten
     if (twig.intersectsMesh(playerAnt, true)) {
       twigsCollected++;

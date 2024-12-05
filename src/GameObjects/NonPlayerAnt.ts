@@ -1,7 +1,6 @@
-import { Material, Vector3 } from "@babylonjs/core";
+import { Vector3 } from "@babylonjs/core";
 import AntObject from "./AntObject";
 import PlayerAnt from "./PlayerAnt";
-import { UIManager } from "../Features/UIManager";
 
 export default class NonPlayerAnt extends AntObject {
   protected playerAnt: PlayerAnt;
@@ -17,12 +16,10 @@ export default class NonPlayerAnt extends AntObject {
     crowd,
     playerAnt: PlayerAnt
   ) {
-    super(antType, startPosition, scene, navigationPlugin, crowd);
+    super(antType, 0.5, startPosition, scene, navigationPlugin, crowd);
     this.playerAnt = playerAnt;
     this.addNonPlayerAntBehaviour();
   }
-
-
 
   public getIsIdentified() {
     return this.isIdentified;
@@ -32,39 +29,77 @@ export default class NonPlayerAnt extends AntObject {
     this.isIdentified = isIdentified;
   }
 
+  public getBehaviourState() {
+    return this.behaviourState;
+  }
+
+  public setBehaviourState(behaviourState: string) {
+    this.behaviourState = behaviourState;
+  }
+
   public identifyPlayerAnt() {
-    this.playerAnt.setIsBeingIdentified(true);
-    this.playerAnt.moveAnt(this.position.add(new Vector3(0, 0, 2)));
-    this.moveAnt(this.position);
-    console.log("Identifiziere Spielerameise");
+    // Bewegen Sie die Ameise zur festen Position in der Nähe der Spielerameise
+    const targetPosition = this.playerAnt.position.add(new Vector3(2, 0, 0)); // Beispielversatz
+    this.moveAnt(targetPosition);
+
+    // Drehen Sie die Ameise zur Spielerameise
+    this.lookAt(this.playerAnt.position);
+
+    // Animation abspielen (falls vorhanden)
+    // if (this.antAnimationGroup) {
+    //   this.antAnimationGroup.play(true);
+    // }
+
+    // Nach Abschluss der Identifikation den Zustand ändern
+    setTimeout(() => {
+      this.setBehaviourState("randomMove");
+      this.isIdentified = true;
+    }, 5000); // Wechselt nach 5 Sekunden zurück zu "randomMove"
   }
 
   public followPlayerAnt() {
     this.moveAnt(this.playerAnt.position);
-    console.log("Folge Spielerameise");
   }
 
   public changeBehaviourState(behaviourState: string) {
     this.behaviourState = behaviourState;
   }
 
-  private addNonPlayerAntBehaviour() {
-    let lastbehaviourState;
+  public addNonPlayerAntBehaviour() {
+    let isRandomMoving = false;
+    let isIdentifying = false;
+
     this.scene.registerBeforeRender(() => {
-      // Switch case to change the behaviour of the ant
-      if (this.behaviourState !== lastbehaviourState) {
-        switch (this.behaviourState) {
-          case "randomMove":
+      switch (this.behaviourState) {
+        case "randomMove":
+          if (!isRandomMoving) {
+            console.log("Random Move");
             this.randomMove();
-            break;
-          case "followPlayerAnt":
-            this.followPlayerAnt();
-            break;
-          case "identifyPlayerAnt":
+            isRandomMoving = true;
+            isIdentifying = false;
+          }
+          break;
+
+        case "followPlayerAnt":
+          // Position der Spielerameise bei jedem Frame aktualisieren
+          this.moveAnt(this.playerAnt.position);
+          isRandomMoving = false;
+          isIdentifying = false;
+          break;
+
+        case "identifyPlayerAnt":
+          if (!isIdentifying) {
+            console.log("Identify Player Ant");
             this.identifyPlayerAnt();
-            break;
-        }
-        lastbehaviourState = this.behaviourState;
+            isIdentifying = true;
+            isRandomMoving = false;
+          }
+          // Optional: Zusätzliche Animationen oder Bewegungen einfügen
+          break;
+
+        default:
+          // Standardverhalten oder Fehlerbehandlung
+          break;
       }
     });
   }

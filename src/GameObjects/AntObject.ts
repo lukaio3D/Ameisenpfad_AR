@@ -19,14 +19,15 @@ export default class AntObject extends Mesh {
   private antAnimationGroup: AnimationGroup;
   private antIndex: number;
   private antMesh: AbstractMesh;
+  protected antSpeed: number = 0.5;
   protected scene: Scene;
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
-  readonly agentParams: IAgentParameters = {
+  protected agentParams: IAgentParameters = {
     radius: 0.1,
     height: 0.1,
     maxAcceleration: 4.0,
-    maxSpeed: 0.7,
+    maxSpeed: 0.5,
     collisionQueryRange: 0.4,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
@@ -34,21 +35,24 @@ export default class AntObject extends Mesh {
 
   constructor(
     antType: string,
+    antSpeed: number,
     startPosition: Vector3,
     assignedScene: Scene,
     navigationPlugin: RecastJSPlugin,
     crowd: ICrowd
   ) {
     super(antType, assignedScene);
+    this.antSpeed = antSpeed;
+    this.agentParams.maxSpeed = this.antSpeed;
     this.navigationPlugin = navigationPlugin;
     this.crowd = crowd;
     this.scene = assignedScene;
-    this.ready = this.initialize(startPosition);
+    this.position.copyFrom(startPosition);
+    this.ready = this.initialize();
   }
 
-  private async initialize(startPosition: Vector3) {
+  private async initialize() {
     await this.createAntMesh(this.scene);
-    this.position.copyFrom(startPosition);
     this.addAntToCrowd(this.crowd);
     this.showBoundingBox = false;
     this.setBoundingInfo(
@@ -71,8 +75,10 @@ export default class AntObject extends Mesh {
     );
     this.antMesh = result.meshes[0];
 
-    // Parent zuweisen 
+    // Parent zuweisen
     this.antMesh.parent = this;
+
+    this.antMesh.position = Vector3.Zero();
 
     // Skalierung einstellen
     this.scaling = new Vector3(0.5, 0.5, 0.5);
@@ -88,20 +94,14 @@ export default class AntObject extends Mesh {
   }
 
   private addAntToCrowd(crowd: ICrowd) {
-    this.antIndex = crowd.addAgent(
-      this.position,
-      this.agentParams,
-      this
-    );
+    this.antIndex = crowd.addAgent(this.position, this.agentParams, this);
   }
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
       if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.1) {
         this.lookAt(
-          this.crowd
-            .getAgentVelocity(this.antIndex)
-            .add(this.position)
+          this.crowd.getAgentVelocity(this.antIndex).add(this.position)
         );
       }
     });
@@ -176,7 +176,7 @@ export default class AntObject extends Mesh {
 
   public createRandomPointOnNavMesh() {
     let xCoords = Math.random() * 5 * (Math.random() > 0.5 ? -1 : 1);
-    let zCoords = Math.random() * 10 ;
+    let zCoords = Math.random() * 10;
     return this.navigationPlugin.getClosestPoint(
       new Vector3(xCoords, 0, zCoords)
     );
