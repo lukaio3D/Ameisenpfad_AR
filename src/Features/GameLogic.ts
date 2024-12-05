@@ -95,6 +95,10 @@ export function GameLogic(
     const antMesh = ant;
     const proximityMesh = playerAnt.getCheckProximityMesh();
 
+    if (ant.getBehaviourState()==="attackPlayerAnt" || ant.getBehaviourState()==="identifyPlayerAnt") {
+      return;
+    }
+
     // Überprüfen, ob alle benötigten Meshes definiert sind
     if (!playerMesh || !antMesh || !proximityMesh) {
       return;
@@ -107,24 +111,24 @@ export function GameLogic(
     // Überprüfen, ob das Proximity-Mesh das Ant-Mesh schneidet
     else if (proximityMesh.intersectsMesh(antMesh, false)) {
       handleFarProximity(ant);
-    } else {
-      ant.setBehaviourState("randomMove");
-    }
+    } 
   }
 
   function handleCloseProximity(ant: NonPlayerAnt) {
     if (ant instanceof EnemyAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
-        ant.changeColor(new Color3(1, 0, 0));
       } else {
         ant.setBehaviourState("attackPlayerAnt");
       }
     } else if (ant instanceof FriendAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
-        ant.changeColor(new Color3(0, 1, 0));
-      }
+        setTimeout(() => {
+        if(playerAnt.getHealth() < 100) {
+          ant.healPlayerAnt();
+        }}, 3500);
+      } 
     }
   }
 

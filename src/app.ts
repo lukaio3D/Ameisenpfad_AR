@@ -33,7 +33,7 @@ class App {
     await createAntCommunicationScene(canvas, scene);
 
     // show the inspector
-    Inspector.Show(scene, { overlay: true });
+    // Inspector.Show(scene, { overlay: true });
 
     // run the main render loop
     engine.runRenderLoop(() => {

@@ -24,14 +24,16 @@ export default class AntObject extends Mesh {
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
   protected agentParams: IAgentParameters = {
-    radius: 0.1,
-    height: 0.1,
+    radius: 0.05,
+    height: 0.05,
     maxAcceleration: 4.0,
     maxSpeed: 0.5,
-    collisionQueryRange: 0.4,
+    collisionQueryRange: 0.3,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
   };
+  // Deklaration der Klassenvariable
+  private randomMoveInterval;
 
   constructor(
     antType: string,
@@ -99,7 +101,7 @@ export default class AntObject extends Mesh {
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.1) {
+      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.2) {
         this.lookAt(
           this.crowd.getAgentVelocity(this.antIndex).add(this.position)
         );
@@ -139,10 +141,21 @@ export default class AntObject extends Mesh {
     );
   }
 
-  public randomMove() {
-    setInterval(() => {
-      this.moveAnt(this.createRandomPointOnNavMesh());
-    }, Math.random() * 3000 + 4000);
+  public randomMove(setEnabled: boolean = true) {
+    if (setEnabled) {
+      if (this.randomMoveInterval) {
+        // Falls bereits ein Intervall läuft, nicht erneut starten
+        return;
+      }
+      this.randomMoveInterval = setInterval(() => {
+        this.moveAnt(this.createRandomPointOnNavMesh());
+      }, Math.random() * 3000 + 4000);
+    } else {
+      if (this.randomMoveInterval) {
+        clearInterval(this.randomMoveInterval);
+        this.randomMoveInterval = null;
+      }
+    }
   }
 
   public getMaterial(): Material {
@@ -175,8 +188,8 @@ export default class AntObject extends Mesh {
   }
 
   public createRandomPointOnNavMesh() {
-    let xCoords = Math.random() * 5 * (Math.random() > 0.5 ? -1 : 1);
-    let zCoords = Math.random() * 10;
+    let xCoords = Math.random() * 2.5 * (Math.random() > 0.5 ? -1 : 1);
+    let zCoords = Math.random() * 5;
     return this.navigationPlugin.getClosestPoint(
       new Vector3(xCoords, 0, zCoords)
     );

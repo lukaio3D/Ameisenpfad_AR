@@ -40,12 +40,12 @@ export default async function createAntCommunicationScene(
 
   //GroundMesh erstellen
   const groundMesh = [
-    MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene),
+    MeshBuilder.CreateGround("ground", { width: 5, height: 5 }, scene),
   ];
-  groundMesh[0].position = new Vector3(0, 0, 5);
+  groundMesh[0].position = new Vector3(0, 0, 2.5);
   let groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh[0].material = groundMaterial;
-  groundMaterial.alpha = 0;
+  groundMaterial.alpha = 1;
 
   //AR Features aktivieren
   await createARFeatures(scene);

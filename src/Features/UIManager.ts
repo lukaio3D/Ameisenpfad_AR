@@ -156,4 +156,8 @@ export class UIManager {
     this.bigScreen.isVisible = true;
     this.overlayText.text = text;
   }
+
+  public setHealthBar(value: number) {
+    this.healthBar.value = value;
+  }
 }

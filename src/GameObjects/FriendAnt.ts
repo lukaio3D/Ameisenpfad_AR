@@ -28,6 +28,7 @@ export default class FriendAnt extends NonPlayerAnt {
       assignedPlayerAnt
     );
     this.playerAnt = assignedPlayerAnt;
+    this.identifierColor = new Color3(0, 1, 0); // Grüne Farbe für friend Ant
     this.ready.then(() => {
       this.initializeFriendAnt(scene, this.playerAnt);
     });
