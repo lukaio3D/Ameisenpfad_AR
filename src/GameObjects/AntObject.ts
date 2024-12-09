@@ -122,7 +122,7 @@ export default class AntObject extends Mesh {
     const velocity = this.crowd.getAgentVelocity(this.antIndex);
 
     // Geschwindigkeit berechnen (Betrag des Vektors)
-    const speed = velocity.length() * 1.5;
+    const speed = velocity.length() * 1.3;
 
     // speedRatio setzen (Multiplizieren Sie ggf. mit einem Faktor zur Anpassung)
     if (this.antAnimationGroup) {
