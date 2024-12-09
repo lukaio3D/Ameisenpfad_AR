@@ -83,7 +83,7 @@ export default class AntObject extends Mesh {
     this.antMesh.position = Vector3.Zero();
 
     // Skalierung einstellen
-    this.scaling = new Vector3(0.5, 0.5, 0.5);
+    this.scaling = new Vector3(0.7, 0.7, 0.7);
 
     // Optionale Rotation
     this.antMesh.rotate(Vector3.Up(), Math.PI / 2);

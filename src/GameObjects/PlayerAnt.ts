@@ -18,7 +18,7 @@ export default class PlayerAnt extends AntObject {
   private createCheckProximityMesh() {
     this.checkProximityMesh = MeshBuilder.CreateCylinder(
       "checkProximityMesh",
-      { diameter: 5, height: 0.3 },
+      { diameter: 3, height: 0.3 },
       this.scene
     );
     this.checkProximityMesh.parent = this;

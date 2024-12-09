@@ -42,7 +42,7 @@ export default async function createAntCommunicationScene(
   const groundMesh = [
     MeshBuilder.CreateGround("ground", { width: 5, height: 5 }, scene),
   ];
-  groundMesh[0].position = new Vector3(0, 0, 2.5);
+  groundMesh[0].position = new Vector3(0, -0.1, 2.5);
   let groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh[0].material = groundMaterial;
   groundMaterial.alpha = 0;
