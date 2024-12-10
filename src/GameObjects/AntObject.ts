@@ -12,6 +12,7 @@ import {
   AnimationGroup,
   Material,
   Mesh,
+  PBRMaterial,
 } from "@babylonjs/core";
 
 export default class AntObject extends Mesh {
@@ -93,6 +94,22 @@ export default class AntObject extends Mesh {
       this.antAnimationGroup = result.animationGroups[0];
       this.antAnimationGroup.stop(true);
     }
+
+       // Materialien der geladenen Meshes anpassen
+       result.meshes.forEach((childMesh) => {
+        if (childMesh.material) {
+          // Prüfen, ob das Material ein PBRMaterial ist (typisch für .glb-Dateien)
+          let pbrMaterial = childMesh.material as PBRMaterial;
+          if (pbrMaterial) {
+            // Emissive Farbe auf Weiß setzen
+            pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
+            // Optional: Emissive Textur auf die Albedo-Textur setzen, um die vorhandene Textur zum Leuchten zu bringen
+            if (pbrMaterial.albedoTexture) {
+              pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
+            }
+          }
+        }
+      });
   }
 
   private addAntToCrowd(crowd: ICrowd) {
@@ -193,5 +210,11 @@ export default class AntObject extends Mesh {
     return this.navigationPlugin.getClosestPoint(
       new Vector3(xCoords, 0, zCoords)
     );
+  }
+
+  public antDispose() {
+    this.antMesh.dispose();
+    this.dispose();
+    this.crowd.removeAgent(this.antIndex);
   }
 }

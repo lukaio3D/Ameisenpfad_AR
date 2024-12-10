@@ -68,7 +68,7 @@ export default class NonPlayerAnt extends AntObject {
     const directionToPlayer = this.playerAnt.position
       .subtract(this.position)
       .normalize();
-    const offsetDistance = 0.3; // Adjust as needed
+    const offsetDistance = 0.4; // Adjust as needed
     const newPosition = this.playerAnt.position.subtract(
       directionToPlayer.scale(offsetDistance)
     );
@@ -119,14 +119,17 @@ export default class NonPlayerAnt extends AntObject {
     }, 5000); // Dauer des Weglaufens
   }
 
-  public healPlayerAnt() { 
+  public healPlayerAnt() {
     // Ihre Heilungslogik
-    if(this.playerAnt.getHealth() < 80) {
-    this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);}
-    else {
+    if (this.playerAnt.getHealth() < 80) {
+      this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
+    } else {
       this.playerAnt.setHealth(100);
     }
     UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
+    setTimeout(() => {
+      this.antDispose();
+    }, 2000);
   }
 
   public attackPlayerAnt() {
