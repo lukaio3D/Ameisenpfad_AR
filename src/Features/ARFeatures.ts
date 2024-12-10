@@ -1,4 +1,4 @@
-import { SphereBuilder, WebXRAnchorSystem, WebXRHitTest, WebXRState } from "@babylonjs/core";
+import { SphereBuilder, WebXRAnchorSystem, WebXRDomOverlay, WebXRHitTest, WebXRState } from "@babylonjs/core";
 
     export default async function createARFeatures(scene) {
     
@@ -18,6 +18,7 @@ import { SphereBuilder, WebXRAnchorSystem, WebXRHitTest, WebXRState } from "@bab
         WebXRAnchorSystem,
         "latest"
       ) as WebXRAnchorSystem;
+      const domOverlay = new WebXRDomOverlay(scene, xr.baseExperience);
   
       // // a dot to show in the found position
       // const dot = SphereBuilder.CreateSphere(
