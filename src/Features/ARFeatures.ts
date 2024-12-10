@@ -1,16 +1,11 @@
 import {
-  WebXRAnchorSystem,
   WebXRHitTest,
-  WebXRState,
+  WebXRAnchorSystem,
   TransformNode,
   Scene,
   Vector3,
   Quaternion,
-  SphereBuilder,
-  WebXRDomOverlay,
-  WebXRSessionManager,
-  IWebXRDomOverlayOptions,
-  StandardMaterial,
+
   IWebXRHitResult,
 } from "@babylonjs/core";
 
@@ -21,117 +16,86 @@ export default async function createARFeatures(
   try {
     console.log("ARFeatures: Initialisierung gestartet.");
 
-    // AR Setup
+    // AR-Erfahrung erstellen
     const xr = await scene.createDefaultXRExperienceAsync({
       uiOptions: {
         sessionMode: "immersive-ar",
         referenceSpaceType: "local-floor",
       },
-      optionalFeatures: true, // Ermöglicht das Aktivieren mehrerer Features
+      optionalFeatures: true,
     });
 
-    const sm = new WebXRSessionManager(scene);
-
-    console.log("ARFeatures: XR-Erfahrung erstellt:", xr);
+    console.log("ARFeatures: XR-Erfahrung erstellt.");
 
     const fm = xr.baseExperience.featuresManager;
 
     // WebXR Hit-Test aktivieren
     const xrHitTest = fm.enableFeature(
       WebXRHitTest.Name,
-      "latest"
+      "latest",
+      { enableTransientHitTest: true }
     ) as WebXRHitTest;
 
     if (!xrHitTest) {
       throw new Error("ARFeatures: WebXRHitTest konnte nicht aktiviert werden.");
     }
 
-    console.log("ARFeatures: Hit-Test aktiviert:", xrHitTest);
+    console.log("ARFeatures: Hit-Test aktiviert.");
 
     // WebXR Anchor-System aktivieren
-    const anchors = fm.enableFeature(
+    const xrAnchors = fm.enableFeature(
       WebXRAnchorSystem.Name,
       "latest"
     ) as WebXRAnchorSystem;
 
-    if (!anchors) {
+    if (!xrAnchors) {
       throw new Error("ARFeatures: WebXRAnchorSystem konnte nicht aktiviert werden.");
     }
 
-    console.log("ARFeatures: Anchor-System aktiviert:", anchors);
+    console.log("ARFeatures: Anchor-System aktiviert.");
 
-    let domOverlayOptions: IWebXRDomOverlayOptions = {element: "overlay"};
-
-    // DOM Overlay (optional, z.B. UI-Elemente)
-    const domOverlay = new WebXRDomOverlay(sm, domOverlayOptions);
-
-    // Einen visuellen Indikator (Dot) für den Hit-Test erstellen
-    const dot = SphereBuilder.CreateSphere(
-      "dot",
-      {
-        diameter: 0.05,
-      },
-      scene
-    );
-    dot.isVisible = false;
-    dot.material = new StandardMaterial("dotMaterial", scene);
-
-    let hitTestResult: IWebXRHitResult | null = null;
     let scenePlaced = false;
 
     // Hit-Test-Ergebnisse überwachen
-    xrHitTest.onHitTestResultObservable.add((results) => {
-      if (results.length && !scenePlaced) {
-        hitTestResult = results[0];
+    xrHitTest.onHitTestResultObservable.add(async (results) => {
+      if (results.length > 0 && !scenePlaced) {
+        const hitTestResult = results[0] as IWebXRHitResult;
+
+        // TransformationMatrix aus dem Hit-Test-Ergebnis extrahieren
         const transformationMatrix = hitTestResult.transformationMatrix;
 
-        // Position und Rotation aus der TransformationMatrix extrahieren
         const position = new Vector3();
         const rotationQuaternion = new Quaternion();
         transformationMatrix.decompose(undefined, rotationQuaternion, position);
 
-        // Dot an der Hit-Test-Position platzieren
-        dot.position = position;
-        dot.rotationQuaternion = rotationQuaternion;
-        dot.isVisible = true;
+        // Anker an der ermittelten Position erstellen
+        const anchor = await xrAnchors.addAnchorAtPositionAndRotationAsync(
+          position,
+          rotationQuaternion
+        );
 
-        console.log("ARFeatures: Hit-Test erfolgreich:", position);
-      } else {
-        dot.isVisible = false;
-        hitTestResult = null; // Reset hitTest wenn keine Ergebnisse vorhanden sind
+        if (!anchor) {
+          console.error("ARFeatures: Anker konnte nicht erstellt werden.");
+          return;
+        }
+
+        console.log("ARFeatures: Anker erstellt.");
+
+        // Szene an den Anker binden
+        sceneParent.parent = anchor.attachedNode;
+
+        // Position und Rotation zurücksetzen
+        sceneParent.position = Vector3.Zero();
+        sceneParent.rotationQuaternion = Quaternion.Identity();
+
+        scenePlaced = true;
+
+        console.log("ARFeatures: Szene platziert und verankert.");
+
+        // Hit-Test deaktivieren
+        xrHitTest.onHitTestResultObservable.clear();
       }
     });
-
-    // Ereignisbehandlung für Pointer-Down (Touch/Click)
-    scene.onPointerDown = async (evt, pickInfo) => {
-      if (
-        !scenePlaced &&
-        hitTestResult &&
-        anchors &&
-        xr.baseExperience.state === WebXRState.IN_XR
-      ) {
-        try {
-          console.log("ARFeatures: Platzierung ausgelöst.");
-
-          // Anker an der Hit-Test-Position erstellen
-          const anchor = await anchors.addAnchorPointUsingHitTestResultAsync(hitTestResult);
-          if (!anchor) {
-            throw new Error("ARFeatures: Anker konnte nicht erstellt werden.");
-          }
-
-          console.log("ARFeatures: Anker erstellt:", anchor);
-
-          // Sichtbarkeit des SzeneParents sicherstellen
-          sceneParent.computeWorldMatrix(true);
-
-          scenePlaced = true;
-
-          console.log("ARFeatures: Szene erfolgreich platziert und verankert.");
-        } catch (error) {
-          console.error("ARFeatures: Fehler beim Platzieren der Szene:", error);
-        }
-      }
-    };
 
     console.log("ARFeatures: Initialisierung abgeschlossen.");
   } catch (error) {

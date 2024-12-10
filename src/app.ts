@@ -1,9 +1,10 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/loaders/glTF";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
-import { Color4, Engine, Scene } from "@babylonjs/core";
+import { Color4, Engine, Scene, TransformNode } from "@babylonjs/core";
 import { Inspector } from "@babylonjs/inspector";
 import { UIManager } from "./Features/UIManager";
+import createARFeatures from "./Features/ARFeatures";
 
 class App {
   constructor() {
@@ -24,13 +25,19 @@ class App {
     var scene = new Scene(engine);
 
     // Hintergrundfarbe
-    scene.clearColor = new Color4(0.95,0.95,0.95,1);
+    scene.clearColor = new Color4(0.95, 0.95, 0.95, 1);
 
     // UIManager initialisieren
     const uiManager = UIManager.getInstance();
 
-    // create the scene
+    // create the scene parent node
+    const sceneParent = new TransformNode("sceneParent", scene);
+
+    // create the scene and attach it to sceneParent
     await createAntCommunicationScene(canvas, scene);
+
+    // AR-Features einbinden
+    await createARFeatures(scene, sceneParent);
 
     // show the inspector
     // Inspector.Show(scene, { overlay: true });
@@ -38,6 +45,8 @@ class App {
     // run the main render loop
     engine.runRenderLoop(() => {
       scene.render();
+      //Show FPS
+      uiManager.timer.text = "FPS: " + engine.getFps().toFixed();
     });
   }
 }

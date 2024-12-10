@@ -36,8 +36,8 @@ export class UIManager {
 
     // Container erstellen und konfigurieren
     let containerTopLeft = new GUI.Rectangle();
-    containerTopLeft.height = "50px";
-    containerTopLeft.width = "80px";
+    containerTopLeft.height = "100px";
+    containerTopLeft.width = "200px";
     containerTopLeft.thickness = 0; // Rahmen entfernen
     containerTopLeft.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     containerTopLeft.horizontalAlignment =
@@ -49,11 +49,11 @@ export class UIManager {
 
     // Timer-TextBlock erstellen und konfigurieren
     this.timer = new GUI.TextBlock();
-    this.timer.text = "0:00";
-    this.timer.color = "white";
-    this.timer.fontSize = 16;
-    this.timer.height = "50px";
-    this.timer.width = "100px";
+    this.timer.text = "";
+    this.timer.color = "orange";
+    this.timer.fontSize = 32;
+    this.timer.height = "100px";
+    this.timer.width = "200px";
 
     // **Schwarzen Umriss hinzufügen**
     this.timer.outlineWidth = 2;
