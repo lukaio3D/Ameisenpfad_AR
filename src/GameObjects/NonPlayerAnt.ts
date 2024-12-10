@@ -123,13 +123,11 @@ export default class NonPlayerAnt extends AntObject {
     // Ihre Heilungslogik
     if (this.playerAnt.getHealth() < 80) {
       this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
+      this.antDispose();
     } else {
       this.playerAnt.setHealth(100);
     }
     UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
-    setTimeout(() => {
-      this.antDispose();
-    }, 2000);
   }
 
   public attackPlayerAnt() {

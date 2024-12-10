@@ -57,13 +57,20 @@ export function GameLogic(
     crowd
   );
 
-  // Funktion zum zufälligen Spawnen von Ameisen
+  // Funktion zum zufälligen Spawnen von Ameisen innerhalb eines bestimmten Bereichs
   const spawnAntRandomly = (maxEnemyAnts: number = 2) => {
     let enemyAntCount = allAnts.filter(ant => ant instanceof EnemyAnt).length;
     let randomNumber = Math.random();
+
+    // Zufällige x-Koordinate zwischen -2.5 und 2.5
+    const spawnX = Math.random() * (2.5 - (-2.5)) + (-2.5);
+    const spawnY = 0;
+    const spawnZ = 5;
+    const spawnPoint = new Vector3(spawnX, spawnY, spawnZ);
+
     if (randomNumber > 0.5 && enemyAntCount < maxEnemyAnts) {
       const enemyAnt = new EnemyAnt(
-        playerAnt.createRandomPointOnNavMesh(),
+        spawnPoint,
         scene,
         navigationPlugin,
         crowd,
@@ -72,7 +79,7 @@ export function GameLogic(
       allAnts.push(enemyAnt);
     } else {
       const friendAnt = new FriendAnt(
-        playerAnt.createRandomPointOnNavMesh(),
+        spawnPoint,
         scene,
         navigationPlugin,
         crowd,
