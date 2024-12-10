@@ -19,13 +19,17 @@ export class UIManager {
     this.dialogzeile = new GUI.TextBlock();
     this.dialogzeile.text = "";
     this.dialogzeile.color = "white";
-    this.dialogzeile.fontSize = 16;
+    this.dialogzeile.fontSize = 32;
     this.dialogzeile.height = "50px";
     this.dialogzeile.width = "100%";
     this.dialogzeile.paddingBottom = "24px";
     this.dialogzeile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     this.dialogzeile.textHorizontalAlignment =
       GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+
+    // **Schwarzen Umriss hinzufügen**
+    this.dialogzeile.outlineWidth = 2;
+    this.dialogzeile.outlineColor = "black";
 
     // TextBlock zur GUI hinzufügen
     this.advancedTexture.addControl(this.dialogzeile);
@@ -43,7 +47,7 @@ export class UIManager {
     // TextBlock zur GUI hinzufügen
     this.advancedTexture.addControl(this.dialogzeile);
 
-    // Dialogzeile erstellen und konfigurieren
+    // Timer-TextBlock erstellen und konfigurieren
     this.timer = new GUI.TextBlock();
     this.timer.text = "0:00";
     this.timer.color = "white";
@@ -51,13 +55,17 @@ export class UIManager {
     this.timer.height = "50px";
     this.timer.width = "100px";
 
+    // **Schwarzen Umriss hinzufügen**
+    this.timer.outlineWidth = 2;
+    this.timer.outlineColor = "black";
+
     // TextBlock zur GUI hinzufügen
     containerTopLeft.addControl(this.timer);
 
     // Container erstellen und konfigurieren
     let containerTopRight = new GUI.Rectangle();
-    containerTopRight.height = "100px";
-    containerTopRight.width = "200px";
+    containerTopRight.height = "200px";
+    containerTopRight.width = "400px";
     containerTopRight.paddingTop = "20px";
     containerTopRight.paddingRight = "20px";
     containerTopRight.thickness = 0; // Rahmen entfernen
@@ -80,9 +88,12 @@ export class UIManager {
     let legendHealth = new GUI.TextBlock();
     legendHealth.text = "Leben";
     legendHealth.color = "white";
-    legendHealth.fontSize = 16;
-    legendHealth.height = "50px";
-    legendHealth.width = "100px";
+    legendHealth.fontSize = 32;
+    legendHealth.height = "40px";
+    legendHealth.width = "200px";
+    // **Schwarzen Umriss hinzufügen**
+    legendHealth.outlineWidth = 2;
+    legendHealth.outlineColor = "black";
     grid.addControl(legendHealth, 0, 0);
 
     // Lebensbalken konfigurieren und hinzufügen
@@ -92,7 +103,7 @@ export class UIManager {
     this.healthBar.color = "green";
     this.healthBar.background = "white";
     this.healthBar.value = 100;
-    this.healthBar.height = "20px";
+    this.healthBar.height = "40px";
     this.healthBar.width = "100%";
     this.healthBar.displayThumb = false;
     this.healthBar.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -100,11 +111,14 @@ export class UIManager {
 
     // Beschriftung Lebensbalken erstellen und konfigurieren
     let legendCollected = new GUI.TextBlock();
-    legendCollected.text = "Zweige";
+    legendCollected.text = "Früchte";
     legendCollected.color = "white";
-    legendCollected.fontSize = 16;
-    legendCollected.height = "50px";
-    legendCollected.width = "100px";
+    legendCollected.fontSize = 32;
+    legendCollected.height = "40px";
+    legendCollected.width = "200px";
+    // **Schwarzen Umriss hinzufügen**
+    legendCollected.outlineWidth = 2;
+    legendCollected.outlineColor = "black";
     grid.addControl(legendCollected, 1, 0);
 
     // Sammelbalken konfigurieren und hinzufügen
@@ -114,14 +128,14 @@ export class UIManager {
     this.collectBar.color = "orange";
     this.collectBar.background = "white";
     this.collectBar.value = 0;
-    this.collectBar.height = "20px";
+    this.collectBar.height = "40px";
     this.collectBar.width = "100%";
     this.collectBar.displayThumb = false;
     this.collectBar.horizontalAlignment =
       GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     grid.addControl(this.collectBar, 2, 2);
 
-    // Big Screen Overlay 
+    // Big Screen Overlay
     this.bigScreen = new GUI.Rectangle();
     this.bigScreen.width = "100%";
     this.bigScreen.height = "100%";
@@ -141,7 +155,6 @@ export class UIManager {
     this.overlayText.textHorizontalAlignment =
       GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     this.bigScreen.addControl(this.overlayText);
-
   }
 
   // Singleton-Instanz abrufen
