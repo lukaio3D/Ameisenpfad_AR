@@ -6,6 +6,7 @@ import {
   Scene,
   StandardMaterial,
   MeshBuilder,
+  TransformNode
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -48,7 +49,8 @@ export default async function createAntCommunicationScene(
   groundMaterial.alpha = 0;
 
   //AR Features aktivieren
-  await createARFeatures(scene);
+  let sceneParent: TransformNode = new TransformNode ("sceneParent", scene);
+  await createARFeatures(scene, sceneParent);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
