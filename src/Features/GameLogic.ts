@@ -145,7 +145,7 @@ export function GameLogic(
   // Start Spawner
   let twigsCollected: number = 0;
   const twigsToCollect: number = 5;
-  spawnAntRandomly();
+  // spawnAntRandomly();
 
   let twig: ConstructionTwig = spawnConstructionTwig();
 

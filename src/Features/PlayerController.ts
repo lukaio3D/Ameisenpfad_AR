@@ -5,9 +5,9 @@ export default function PlayerController(scene: Scene, playerObject: AntObject) 
   let isControlEnabled = true; // Flag, um die Steuerung zu aktivieren oder zu deaktivieren
 
   // Methode, um die Mausposition auf einem Mesh in der Szene zu erhalten
-  let getGroundPosition = function (event: PointerEvent) {
-    let pickinfo = scene.pick(event.clientX, event.clientY);
-    if (pickinfo && pickinfo.hit) {
+  let getGroundPosition = function() {
+    let pickinfo = scene.pick(scene.pointerX, scene.pointerY);
+    if (pickinfo?.hit) {
       return pickinfo.pickedPoint;
     }
     return null;
@@ -17,7 +17,7 @@ export default function PlayerController(scene: Scene, playerObject: AntObject) 
   const onPointerDown = (event: PointerEvent) => {
     if (!isControlEnabled) return; // Wenn die Steuerung deaktiviert ist, nichts tun
 
-    let clickedPosition = getGroundPosition(event);
+    let clickedPosition = getGroundPosition();
     if (clickedPosition) {
       playerObject.moveAnt(clickedPosition);
     }
