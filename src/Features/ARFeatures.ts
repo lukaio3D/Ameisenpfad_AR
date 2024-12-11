@@ -1,13 +1,17 @@
 import {
-  WebXRHitTest,
-  WebXRAnchorSystem,
-  TransformNode,
   Scene,
+  TransformNode,
   Vector3,
   Quaternion,
-
   IWebXRHitResult,
+  WebXRHitTest,
+  WebXRAnchorSystem,
+  WebXRBackgroundRemover,
+  MeshBuilder,
+  WebXRFeaturesManager,
+  WebXRState,
 } from "@babylonjs/core";
+import { UIManager } from "./UIManager"; // Passen Sie den Pfad entsprechend an
 
 export default async function createARFeatures(
   scene: Scene,
@@ -29,76 +33,105 @@ export default async function createARFeatures(
 
     const fm = xr.baseExperience.featuresManager;
 
-    // WebXR Hit-Test aktivieren
+    // WebXR-Hit-Test aktivieren
     const xrHitTest = fm.enableFeature(
       WebXRHitTest.Name,
-      "latest",
-      { enableTransientHitTest: true }
+      "latest"
     ) as WebXRHitTest;
 
-    if (!xrHitTest) {
-      throw new Error("ARFeatures: WebXRHitTest konnte nicht aktiviert werden.");
-    }
-
-    console.log("ARFeatures: Hit-Test aktiviert.");
-
-    // WebXR Anchor-System aktivieren
+    // WebXR-Anchor-System aktivieren
     const xrAnchors = fm.enableFeature(
       WebXRAnchorSystem.Name,
       "latest"
     ) as WebXRAnchorSystem;
 
-    if (!xrAnchors) {
-      throw new Error("ARFeatures: WebXRAnchorSystem konnte nicht aktiviert werden.");
-    }
+    // WebXR-Background-Remover aktivieren (optional)
+    const xrBackgroundRemover = fm.enableFeature(
+      WebXRBackgroundRemover.Name
+    );
 
-    console.log("ARFeatures: Anchor-System aktiviert.");
+    // Visueller Marker für den Hit-Test
+    const marker = MeshBuilder.CreateTorus(
+      "marker",
+      { diameter: 0.15, thickness: 0.05 },
+      scene
+    );
+    marker.isVisible = false;
+    marker.rotationQuaternion = new Quaternion();
 
-    let scenePlaced = false;
+    let hitTestResult: IWebXRHitResult | null = null;
 
     // Hit-Test-Ergebnisse überwachen
-    xrHitTest.onHitTestResultObservable.add(async (results) => {
-      if (results.length > 0 && !scenePlaced) {
-        const hitTestResult = results[0] as IWebXRHitResult;
+    xrHitTest.onHitTestResultObservable.add((results) => {
+      if (results.length) {
+        marker.isVisible = true;
+        hitTestResult = results[0];
 
         // TransformationMatrix aus dem Hit-Test-Ergebnis extrahieren
         const transformationMatrix = hitTestResult.transformationMatrix;
-
-        const position = new Vector3();
-        const rotationQuaternion = new Quaternion();
-        transformationMatrix.decompose(undefined, rotationQuaternion, position);
-
-        // Anker an der ermittelten Position erstellen
-        const anchor = await xrAnchors.addAnchorAtPositionAndRotationAsync(
-          position,
-          rotationQuaternion
+        transformationMatrix.decompose(
+          undefined,
+          marker.rotationQuaternion,
+          marker.position
         );
-
-        if (!anchor) {
-          console.error("ARFeatures: Anker konnte nicht erstellt werden.");
-          return;
-        }
-
-        console.log("ARFeatures: Anker erstellt.");
-
-        // Szene an den Anker binden
-        sceneParent.parent = anchor.attachedNode;
-
-        // Position und Rotation zurücksetzen
-        sceneParent.position = Vector3.Zero();
-        sceneParent.rotationQuaternion = Quaternion.Identity();
-
-        scenePlaced = true;
-
-        console.log("ARFeatures: Szene platziert und verankert.");
-
-        // Hit-Test deaktivieren
-        xrHitTest.onHitTestResultObservable.clear();
+      } else {
+        marker.isVisible = false;
+        hitTestResult = null;
       }
     });
+
+    // Anker hinzufügen, wenn verfügbar
+    if (xrAnchors) {
+      console.log("ARFeatures: Anchor-System aktiviert.");
+
+      xrAnchors.onAnchorAddedObservable.add((anchor) => {
+        console.log("ARFeatures: Anker hinzugefügt:", anchor);
+
+        // Szene an den Anker anhängen
+        const attachedNode = sceneParent.clone("sceneClone", sceneParent);
+        attachedNode.parent = anchor.attachedNode;
+
+        // Position und Rotation zurücksetzen
+        attachedNode.position = Vector3.Zero();
+        attachedNode.rotationQuaternion = Quaternion.Identity();
+
+        console.log("ARFeatures: Szene an Anker gebunden.");
+      });
+
+      xrAnchors.onAnchorRemovedObservable.add((anchor) => {
+        console.log("ARFeatures: Anker entfernt:", anchor);
+        if (anchor.attachedNode) {
+          anchor.attachedNode.dispose();
+        }
+      });
+    }
+
+    // Pointer-Down-Ereignis überwachen
+    scene.onPointerDown = (evt, pickInfo) => {
+      if (
+        hitTestResult &&
+        xrAnchors &&
+        xr.baseExperience.state === WebXRState.IN_XR
+      ) {
+        xrAnchors
+          .addAnchorPointUsingHitTestResultAsync(hitTestResult)
+          .then(() => {
+            console.log("ARFeatures: Anker hinzugefügt.");
+          })
+          .catch((error) => {
+            console.error("ARFeatures: Fehler beim Hinzufügen des Ankers:", error);
+            // Fehler über UIManager ausgeben
+            const uiManager = UIManager.getInstance();
+            uiManager.displayMessage(error.message);
+          });
+      }
+    };
 
     console.log("ARFeatures: Initialisierung abgeschlossen.");
   } catch (error) {
     console.error("ARFeatures: Fehler während der Initialisierung:", error);
+    // Fehler über UIManager ausgeben
+    const uiManager = UIManager.getInstance();
+    uiManager.displayMessage(error.message);
   }
 }

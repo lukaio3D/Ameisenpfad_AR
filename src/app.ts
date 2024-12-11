@@ -30,14 +30,8 @@ class App {
     // UIManager initialisieren
     const uiManager = UIManager.getInstance();
 
-    // create the scene parent node
-    const sceneParent = new TransformNode("sceneParent", scene);
-
     // create the scene and attach it to sceneParent
     await createAntCommunicationScene(canvas, scene);
-
-    // AR-Features einbinden
-    await createARFeatures(scene, sceneParent);
 
     // show the inspector
     // Inspector.Show(scene, { overlay: true });
