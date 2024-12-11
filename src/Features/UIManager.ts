@@ -158,23 +158,6 @@ export class UIManager {
       GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     this.bigScreen.addControl(this.overlayText);
 
-    // Dialogelemente initialisieren
-    this.dialogContainer = new GUI.StackPanel();
-    this.dialogContainer.width = "100%";
-    this.dialogContainer.height = "150px";
-    this.dialogContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    this.dialogContainer.isVisible = false; // Anfänglich unsichtbar
-    this.advancedTexture.addControl(this.dialogContainer);
-
-    this.dialogText = new GUI.TextBlock();
-    this.dialogText.text = "";
-    this.dialogText.color = "white";
-    this.dialogText.fontSize = 24;
-    this.dialogText.height = "100px";
-    this.dialogText.width = "100%";
-    this.dialogText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    this.dialogText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    this.dialogContainer.addControl(this.dialogText);
   }
 
   // Singleton-Instanz abrufen
@@ -187,12 +170,12 @@ export class UIManager {
 
   // Neue Methode zum Anzeigen von Nachrichten in der Dialogzeile
   public displayMessage(text: string) {
-    this.dialogText.text = text;
-    this.dialogContainer.isVisible = true;
+    this.dialogzeile.text = text;
+    this.dialogzeile.isVisible = true;
 
     // Optional: Dialog nach einer bestimmten Zeit ausblenden
     setTimeout(() => {
-      this.dialogContainer.isVisible = false;
+      this.dialogzeile.isVisible = false;
     }, 5000); // Nach 5 Sekunden ausblenden
   }
 
