@@ -172,11 +172,6 @@ export class UIManager {
   public displayMessage(text: string) {
     this.dialogzeile.text = text;
     this.dialogzeile.isVisible = true;
-
-    // Optional: Dialog nach einer bestimmten Zeit ausblenden
-    setTimeout(() => {
-      this.dialogzeile.isVisible = false;
-    }, 5000); // Nach 5 Sekunden ausblenden
   }
 
   public setOverlayText(text: string) {
