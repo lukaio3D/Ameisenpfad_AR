@@ -25,25 +25,25 @@ export default async function createARFeatures(
     });
     uiManager.displayMessage("XR-Erfahrung erfolgreich erstellt.");
 
-    // // Anchor-System aktivieren
-    // const featuresManager = xrHelper.baseExperience.featuresManager;
-    // const anchorSystem = featuresManager.enableFeature(
-    //   WebXRAnchorSystem,
-    //   "latest"
-    // ) as WebXRAnchorSystem;
+    // Anchor-System aktivieren
+    const featuresManager = xrHelper.baseExperience.featuresManager;
+    const anchorSystem = featuresManager.enableFeature(
+      WebXRAnchorSystem,
+      "latest"
+    ) as WebXRAnchorSystem;
 
-    // if (anchorSystem) {
-    //   uiManager.displayMessage("Anchor-System aktiviert.");
-    // } else {
-    //   uiManager.displayMessage("Fehler beim Aktivieren des Anchor-Systems.");
-    // }
+    if (anchorSystem) {
+      uiManager.displayMessage("Anchor-System aktiviert.");
+    } else {
+      uiManager.displayMessage("Fehler beim Aktivieren des Anchor-Systems.");
+    }
 
-    // const hitTest = featuresManager.enableFeature(WebXRHitTest, "latest");
-    // if (hitTest) {
-    //   uiManager.displayMessage("Hit-Test aktiviert.");
-    // } else {
-    //   uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
-    // }
+    const hitTest = featuresManager.enableFeature(WebXRHitTest, "latest");
+    if (hitTest) {
+      uiManager.displayMessage("Hit-Test aktiviert.");
+    } else {
+      uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
+    }
 
     // // Hit-Test-Ergebnis überwachen
     // (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
