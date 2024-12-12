@@ -14,15 +14,22 @@ module.exports = (env) => {
         output: {
             path: path.resolve(__dirname, `dist/${outputSubDir}`), // Zielverzeichnis
             filename: "js/app.js",
+            publicPath: "/",
             clean: true,
         },
         resolve: {
             extensions: [".tsx", ".ts", ".js"],
         },
         devServer: {
-            static: {
-                directory: path.join(__dirname, "dist"),
-            },
+            static: [
+                {
+                    directory: path.join(__dirname, "public"),
+                },
+                {
+                    directory: path.join(__dirname, "src/assets"),
+                    publicPath: "/assets",
+                },
+            ],
             compress: true,
             port: 5500,
         },
@@ -39,14 +46,10 @@ module.exports = (env) => {
                 },
                 {
                     test: /\.(glb|gltf)$/,
-                    use: [
-                        {
-                            loader: "file-loader",
-                            options: {
-                                outputPath: "assets",
-                            },
-                        },
-                    ],
+                    type: "asset/resource",
+                    generator: {
+                        filename: "assets/[name][ext]",
+                    },
                 },
             ],
         },
