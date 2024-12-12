@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Repository auschecken
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Node.js installieren
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Setze die gewünschte Node.js-Version
+
+      # Abhängigkeiten installieren
+      - name: Install dependencies
+        run: npm install
+
+      # Build für "main"-Branch
+      - name: Build for production
+        if: github.ref == 'refs/heads/main'
+        run: npm run build:prod
+
+      # Build für "dev"-Branch
+      - name: Build for development
+        if: github.ref == 'refs/heads/dev'
+        run: npm run build:dev
+
+      # Deployment zu GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Stelle sicher, dass der korrekte Pfad zur Ausgabe verwendet wird
