@@ -14,8 +14,8 @@ class App {
   async initialize() {
     // create the canvas html element and attach it to the webpage
     var canvas = document.createElement("canvas");
-    canvas.style.width = "100vw";
-    canvas.style.height = "100vh";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
 
@@ -35,6 +35,10 @@ class App {
 
     // show the inspector
     // Inspector.Show(scene, { overlay: true });
+
+    window.addEventListener("resize", function () {
+      engine.resize();
+    });
 
     // run the main render loop
     engine.runRenderLoop(() => {
