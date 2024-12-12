@@ -15,6 +15,8 @@ import {
   PBRMaterial,
 } from "@babylonjs/core";
 
+import antModel from "../assets/240920_AntAnim.glb";
+
 export default class AntObject extends Mesh {
   public ready: Promise<void>;
   private antAnimationGroup: AnimationGroup;
@@ -69,13 +71,7 @@ export default class AntObject extends Mesh {
   }
 
   private async createAntMesh(scene: Scene) {
-    //Box erstellen
-    const result = await SceneLoader.ImportMeshAsync(
-      null,
-      "assets/",
-      "240920_AntAnim.glb",
-      scene
-    );
+    const result = await SceneLoader.ImportMeshAsync("", antModel, "", scene);
     this.antMesh = result.meshes[0];
 
     // Parent zuweisen
@@ -89,27 +85,27 @@ export default class AntObject extends Mesh {
     // Optionale Rotation
     this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
 
-    //Animation zuweisen
+    // Animation zuweisen
     if (result.animationGroups.length > 0) {
       this.antAnimationGroup = result.animationGroups[0];
       this.antAnimationGroup.stop(true);
     }
 
-       // Materialien der geladenen Meshes anpassen
-       result.meshes.forEach((childMesh) => {
-        if (childMesh.material) {
-          // Prüfen, ob das Material ein PBRMaterial ist (typisch für .glb-Dateien)
-          let pbrMaterial = childMesh.material as PBRMaterial;
-          if (pbrMaterial) {
-            // Emissive Farbe auf Weiß setzen
-            pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
-            // Optional: Emissive Textur auf die Albedo-Textur setzen, um die vorhandene Textur zum Leuchten zu bringen
-            if (pbrMaterial.albedoTexture) {
-              pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
-            }
+    // Materialien der geladenen Meshes anpassen
+    result.meshes.forEach((childMesh) => {
+      if (childMesh.material) {
+        // Prüfen, ob das Material ein PBRMaterial ist (typisch für .glb-Dateien)
+        let pbrMaterial = childMesh.material as PBRMaterial;
+        if (pbrMaterial) {
+          // Emissive Farbe auf Weiß setzen
+          pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
+          // Optional: Emissive Textur auf die Albedo-Textur setzen, um die vorhandene Textur zum Leuchten zu bringen
+          if (pbrMaterial.albedoTexture) {
+            pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
           }
         }
-      });
+      }
+    });
   }
 
   private addAntToCrowd(crowd: ICrowd) {

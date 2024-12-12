@@ -8,21 +8,20 @@ import {
   Color3,
 } from "@babylonjs/core";
 
+import strawberry from "../assets/Strawberry.glb";
+
 export default class ConstructionTwig extends Mesh {
   constructor(scene: Scene, startPosition: Vector3, startRotation: Vector3) {
     super("ConstructionTwig", scene);
-    this.loadMesh();
+    this.loadMesh(scene);
     this.scaling = new Vector3(0.25, 0.25, 0.25);
     this.position = startPosition;
     this.rotationQuaternion = startRotation.toQuaternion();
   }
 
-  private loadMesh() {
+  private loadMesh(scene: Scene) {
     let loadedMeshes = SceneLoader.ImportMeshAsync(
-      "",
-      "assets/",
-      "Strawberry.glb",
-      this.getScene()
+      "" , strawberry, "", scene
     );
 
     loadedMeshes.then((result) => {

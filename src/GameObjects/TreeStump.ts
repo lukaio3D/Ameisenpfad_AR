@@ -8,6 +8,8 @@ import {
   PBRMaterial,
 } from "@babylonjs/core";
 
+import treeStump from "../assets/TreeStump.glb";
+
 export default class TreeStump extends Mesh {
   constructor(
     scene: Scene,
@@ -17,7 +19,7 @@ export default class TreeStump extends Mesh {
     super("treeStump", scene);
     this.position = startPosition;
     this.scaling = new Vector3(0.5, 0.5, 0.5);
-    this.loadMesh();
+    this.loadMesh(scene);
     navigationPlugin.addCylinderObstacle(
       this.position.subtract(new Vector3(0, 1, 0)),
       0.8,
@@ -25,12 +27,12 @@ export default class TreeStump extends Mesh {
     );
   }
 
-  private loadMesh() {
+  private loadMesh(scene: Scene) {
     SceneLoader.ImportMeshAsync(
       "",
-      "assets/",
-      "TreeStump.glb",
-      this.getScene()
+      treeStump,
+      "",
+      scene
     ).then((result) => {
       let mesh = result.meshes[0];
       mesh.parent = this;
