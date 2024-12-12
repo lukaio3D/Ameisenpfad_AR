@@ -4,7 +4,8 @@
   "description": "Prototype for an interactive AR experience for ants",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build:dev": "webpack --env production=false --config webpack.config.js",
+    "build:prod": "webpack --env production=true --config webpack.config.js",
     "start": "webpack-dev-server --port 8080"
   },
   "author": "",

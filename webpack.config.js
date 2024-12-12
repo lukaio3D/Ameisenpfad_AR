@@ -1,61 +1,60 @@
 const path = require("path");
-const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const appDirectory = fs.realpathSync(process.cwd());
 
-module.exports = {
-    entry: path.resolve(appDirectory, "src/app.ts"), //path to the main .ts file
-    output: {
-        filename: "js/bundleName.js", //name for the js file that is created/compiled in memory
-        clean: true,
-    },
-    resolve: {
-        extensions: [".tsx", ".ts", ".js"],
-    },
-    devServer: {
-        host: "0.0.0.0",
-        port: 8080,
-        static: [{
-            directory: path.join(__dirname, 'public'),
-            publicPath: "/public",
-        },{
-            directory: path.join(__dirname, 'assets'),
-            publicPath: "/assets",
-        },{
-            directory: path.join(__dirname, 'src'),
-            publicPath: "/src",
-        }],
-        hot: true,
-        devMiddleware: {
-            publicPath: "/",
-        }
-    },
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: "ts-loader",
-                exclude: /node_modules/,
+module.exports = (env) => {
+    // Produktionsmodus oder Entwicklungsmodus?
+    const isProd = env.production === "true";
+    const outputSubDir = isProd ? "" : "dev"; // In "dev" oder direkt in "dist"
+
+    console.log(`Building for: ${isProd ? "production" : "development"}`);
+    console.log(`Output directory: dist/${outputSubDir}`);
+
+    return {
+        entry: path.resolve(__dirname, "src/app.ts"),
+        output: {
+            path: path.resolve(__dirname, `dist/${outputSubDir}`), // Zielverzeichnis
+            filename: "js/app.js",
+            clean: true,
+        },
+        resolve: {
+            extensions: [".tsx", ".ts", ".js"],
+        },
+        devServer: {
+            static: {
+                directory: path.join(__dirname, "dist"),
             },
-            {
-                test: /\.(glb|gltf)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            outputPath: 'assets',
-                            publicPath: 'assets',
+            compress: true,
+            port: 5500,
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    use: "ts-loader",
+                    exclude: /node_modules/,
+                },
+                {
+                    test: /\.css$/i,
+                    use: ["style-loader", "css-loader"],
+                },
+                {
+                    test: /\.(glb|gltf)$/,
+                    use: [
+                        {
+                            loader: "file-loader",
+                            options: {
+                                outputPath: "assets",
+                            },
                         },
-                    },
-                ],
-            }
+                    ],
+                },
+            ],
+        },
+        plugins: [
+            new HtmlWebpackPlugin({
+                template: path.resolve(__dirname, "public/index.html"),
+            }),
         ],
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            inject: true,
-            template: path.resolve(appDirectory, "public/index.html"),
-        })
-    ],
-    mode: "development",
+        mode: isProd ? "production" : "development",
+    };
 };
