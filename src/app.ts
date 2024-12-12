@@ -39,8 +39,6 @@ class App {
     // run the main render loop
     engine.runRenderLoop(() => {
       scene.render();
-      //Show FPS
-      uiManager.timer.text = "FPS: " + engine.getFps().toFixed();
     });
   }
 }
