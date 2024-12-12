@@ -14,7 +14,6 @@ module.exports = (env) => {
         output: {
             path: path.resolve(__dirname, `dist/${outputSubDir}`), // Zielverzeichnis
             filename: "js/app.js",
-            publicPath: "/",
             clean: true,
         },
         resolve: {
