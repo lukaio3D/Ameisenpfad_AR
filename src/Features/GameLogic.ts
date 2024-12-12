@@ -24,7 +24,7 @@ export function GameLogic(
   const uiManager = UIManager.getInstance();
 
   // Dialogzeile erstellen
-  uiManager.dialogzeile.text = `Ich bin ein Textblock`;
+  uiManager.dialogzeile.text = `Sammle die Früchte ein!`;
 
   // Timer erstellen in Sekunden
   // let countDown: number = 240;
