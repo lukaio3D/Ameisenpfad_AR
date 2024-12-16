@@ -78,6 +78,9 @@ export default async function createARFeatures(
     //     uiManager.displayMessage("Kein gültiges Hit-Test-Ergebnis.");
     //   }
     // });
+
+    return xrHelper;
+
   } catch (error) {
     console.error("Fehler in createARFeatures:", error);
     uiManager.displayMessage("Fehler: " + error.message);

@@ -70,10 +70,9 @@ export default async function createAntCommunicationScene(
 
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  await createARFeatures(scene, sceneParent);
+  let xrHelper = await createARFeatures(scene, sceneParent);
 
   // Überwachung des AR-Modus
-  const xrHelper = await scene.createDefaultXRExperienceAsync();
   xrHelper.baseExperience.sessionManager.onXRSessionInit.add(() => {
     groundMaterial.alpha = 0; // Transparent im AR-Modus
   });
