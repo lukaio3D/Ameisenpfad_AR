@@ -1,6 +1,5 @@
 import {
   DeviceOrientationCamera,
-  DirectionalLight,
   HemisphericLight,
   Vector3,
   Scene,
@@ -8,6 +7,7 @@ import {
   MeshBuilder,
   TransformNode,
   VideoTexture,
+  DirectionalLight,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -18,26 +18,24 @@ export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
   scene: Scene
 ) {
-  // Kamera einrichten
-  const camera = new DeviceOrientationCamera("camera", new Vector3(0, 1.5, -0.5), scene);
-  camera.setTarget(new Vector3(0, 0, 1));
-
-  // Kamerabewegung glätten
-  camera.inertia = 0.9; // Höherer Wert glättet die Bewegung
-
   // Überprüfung, ob das Gerät mobil ist
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   );
 
+  let camera;
+
   if (isMobile) {
-    // Auf mobilen Geräten die Kamera-Steuerung aktivieren
+    // Kamera für mobile Geräte
+    camera = new DeviceOrientationCamera("camera", new Vector3(0, 1.5, -0.5), scene);
+    camera.setTarget(new Vector3(0, 0, 1));
+    camera.inertia = 0.9; // Glättet die Bewegung
     camera.attachControl(canvas, true);
 
-    // Zugriff auf die Kamera erhalten
+    // Live-Kamera als Hintergrund
     const video = document.createElement('video');
     video.autoplay = true;
-    video.playsInline = true; // Wichtig für mobile Geräte
+    video.playsInline = true;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -47,27 +45,25 @@ export default async function createAntCommunicationScene(
       return;
     }
 
-    // Video-Textur erstellen
     const videoTexture = new VideoTexture("videoTexture", video, scene, true, true);
-
-    // Hintergrundmaterial erstellen
     const backgroundMaterial = new StandardMaterial("backgroundMaterial", scene);
     backgroundMaterial.diffuseTexture = videoTexture;
     backgroundMaterial.emissiveTexture = videoTexture;
     backgroundMaterial.backFaceCulling = false;
 
-    // Hintergrund-Ebene erstellen
     const backgroundPlane = MeshBuilder.CreatePlane(
       "backgroundPlane",
       { width: 20, height: 20 },
       scene
     );
-    backgroundPlane.position.z = camera.position.z + 0.1; // Ebene vor der Kamera platzieren
-    backgroundPlane.parent = camera; // Ebene an die Kamera anhängen
+    backgroundPlane.position.z = camera.position.z + 0.1;
+    backgroundPlane.parent = camera;
     backgroundPlane.material = backgroundMaterial;
   } else {
-    // Auf Desktop-Geräten die Kamera-Steuerung deaktivieren
-    camera.inputs.clear();
+    // Kamera für Desktop
+    camera = new DeviceOrientationCamera("camera", new Vector3(0, 5, -2), scene);
+    camera.setTarget(new Vector3(0, 2, 0));
+    camera.inputs.clear(); // Deaktiviert Bewegung auf Desktop
   }
 
   // Licht einrichten
