@@ -21,28 +21,28 @@ export default function createCamera(canvas, scene) {
     // Kamera für mobile Geräte
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 1.5, -0.5),
+      new Vector3(0, 2, -0.5),
       scene
     );
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
     camera.inertia = 0.95; // Höherer Wert für glattere Bewegung
-    camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
-    camera.attachControl(canvas, true);
+    // camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
+    // camera.attachControl(canvas, true);
 
-    // Glättung der Kamerarotation
-    let filteredQuaternion = camera.rotationQuaternion.clone();
-    const smoothFactor = 0.5; // Wert zwischen 0 und 1
+    // // Glättung der Kamerarotation
+    // let filteredQuaternion = camera.rotationQuaternion.clone();
+    // const smoothFactor = 0.5; // Wert zwischen 0 und 1
 
-    scene.onBeforeRenderObservable.add(() => {
-      Quaternion.SlerpToRef(
-        filteredQuaternion,
-        camera.rotationQuaternion,
-        smoothFactor,
-        filteredQuaternion
-      );
-      camera.rotationQuaternion.copyFrom(filteredQuaternion);
-    });
+    // scene.onBeforeRenderObservable.add(() => {
+    //   Quaternion.SlerpToRef(
+    //     filteredQuaternion,
+    //     camera.rotationQuaternion,
+    //     smoothFactor,
+    //     filteredQuaternion
+    //   );
+    //   camera.rotationQuaternion.copyFrom(filteredQuaternion);
+    // });
 
     // // Live-Kamera als Hintergrund
     // const video = document.createElement("video");
