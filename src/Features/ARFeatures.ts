@@ -27,6 +27,16 @@ export default async function createARFeatures(
     uiOptions: { sessionMode: "immersive-ar" },
     optionalFeatures: ["anchors", "hit-test"],
   });
+
+  // xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+  //   if (state === WebXRState.IN_XR) {
+  //     groundToHide.setEnabled(false); // Transparent im AR-Modus
+  //   } else if (state === WebXRState.NOT_IN_XR) {
+  //     groundToHide.setEnabled(true); // Wieder sichtbar, wenn AR-Modus beendet
+  //   }
+  // });
+
+
   uiManager.displayMessage("XR-Erfahrung erfolgreich erstellt.");
 
   // Anchor-System aktivieren
@@ -49,13 +59,7 @@ export default async function createARFeatures(
     uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
   }
 
-  xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-    if (state === WebXRState.IN_XR) {
-      groundToHide.setEnabled(false); // Transparent im AR-Modus
-    } else if (state === WebXRState.NOT_IN_XR) {
-      groundToHide.setEnabled(true); // Wieder sichtbar, wenn AR-Modus beendet
-    }
-  });
+
 
   // // Hit-Test-Ergebnis überwachen
   // (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
