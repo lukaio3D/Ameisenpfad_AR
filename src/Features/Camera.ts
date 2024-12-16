@@ -32,7 +32,7 @@ export default function createCamera(canvas, scene) {
 
     // Glättung der Kamerarotation
     let filteredQuaternion = camera.rotationQuaternion.clone();
-    const smoothFactor = 0.1; // Wert zwischen 0 und 1
+    const smoothFactor = 0.5; // Wert zwischen 0 und 1
 
     scene.onBeforeRenderObservable.add(() => {
       Quaternion.SlerpToRef(
