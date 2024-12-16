@@ -21,12 +21,12 @@ export default function createCamera(canvas, scene) {
     // Kamera für mobile Geräte
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 2, -0.5),
+      new Vector3(0, 3, -0.5),
       scene
     );
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
-    camera.inertia = 3; // Höherer Wert für glattere Bewegung
+    camera.inertia = 1; // Höherer Wert für glattere Bewegung
     // camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
     // camera.attachControl(canvas, true);
 
