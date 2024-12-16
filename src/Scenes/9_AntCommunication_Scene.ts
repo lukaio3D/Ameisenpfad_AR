@@ -12,6 +12,7 @@ import {
   Texture,
   Color3,
   PhotoDome,
+  WebXRState,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -71,15 +72,16 @@ export default async function createAntCommunicationScene(
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
   let xrHelper = await createARFeatures(scene, sceneParent);
-
-  // Überwachung des AR-Modus
-  xrHelper.baseExperience.sessionManager.onXRSessionInit.add(() => {
-    groundMaterial.alpha = 0; // Transparent im AR-Modus
+  
+  xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+    if (state === WebXRState.IN_XR) {
+      groundMaterial.alpha = 0; // Transparent im AR-Modus
+    } else if (state === WebXRState.NOT_IN_XR) {
+      groundMaterial.alpha = 1; // Wieder sichtbar, wenn AR-Modus beendet
+    }
   });
 
-  xrHelper.baseExperience.sessionManager.onXRSessionEnded.add(() => {
-    groundMaterial.alpha = 1; // Wieder sichtbar, wenn AR-Modus beendet
-  });
+
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
