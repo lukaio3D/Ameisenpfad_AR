@@ -75,9 +75,9 @@ export default async function createAntCommunicationScene(
   
   xrHelper.baseExperience.onStateChangedObservable.add((state) => {
     if (state === WebXRState.IN_XR) {
-      groundMaterial.alpha = 0; // Transparent im AR-Modus
+      grassMaterial.alpha = 0; // Transparent im AR-Modus
     } else if (state === WebXRState.NOT_IN_XR) {
-      groundMaterial.alpha = 1; // Wieder sichtbar, wenn AR-Modus beendet
+      grassMaterial.alpha = 1; // Wieder sichtbar, wenn AR-Modus beendet
     }
   });
 
