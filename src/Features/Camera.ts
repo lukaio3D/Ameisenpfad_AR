@@ -7,7 +7,7 @@ import {
   VideoTexture,
 } from "@babylonjs/core";
 
-export default async function createCamera(canvas, scene) {
+export default function createCamera(canvas, scene) {
   // Überprüfung, ob das Gerät mobil ist
   const isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -25,7 +25,7 @@ export default async function createCamera(canvas, scene) {
     );
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
-    camera.inertia = 0.95; // Höherer Wert für glattere Bewegung
+    // camera.inertia = 0.95; // Höherer Wert für glattere Bewegung
     camera.attachControl(canvas, true);
 
     // // Live-Kamera als Hintergrund
