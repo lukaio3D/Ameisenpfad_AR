@@ -28,42 +28,42 @@ export default async function createCamera(canvas, scene) {
     camera.inertia = 0.95; // Höherer Wert für glattere Bewegung
     camera.attachControl(canvas, true);
 
-    // Live-Kamera als Hintergrund
-    const video = document.createElement("video");
-    video.autoplay = true;
-    video.playsInline = true;
+    // // Live-Kamera als Hintergrund
+    // const video = document.createElement("video");
+    // video.autoplay = true;
+    // video.playsInline = true;
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      video.srcObject = stream;
-    } catch (error) {
-      console.error("Fehler beim Zugriff auf die Kamera:", error);
-      return;
-    }
+    // try {
+    //   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    //   video.srcObject = stream;
+    // } catch (error) {
+    //   console.error("Fehler beim Zugriff auf die Kamera:", error);
+    //   return;
+    // }
 
-    const videoTexture = new VideoTexture(
-      "videoTexture",
-      video,
-      scene,
-      true,
-      true
-    );
-    const backgroundMaterial = new StandardMaterial(
-      "backgroundMaterial",
-      scene
-    );
-    backgroundMaterial.diffuseTexture = videoTexture;
-    backgroundMaterial.emissiveTexture = videoTexture;
-    backgroundMaterial.backFaceCulling = false;
+    // const videoTexture = new VideoTexture(
+    //   "videoTexture",
+    //   video,
+    //   scene,
+    //   true,
+    //   true
+    // );
+    // const backgroundMaterial = new StandardMaterial(
+    //   "backgroundMaterial",
+    //   scene
+    // );
+    // backgroundMaterial.diffuseTexture = videoTexture;
+    // backgroundMaterial.emissiveTexture = videoTexture;
+    // backgroundMaterial.backFaceCulling = false;
 
-    const backgroundPlane = MeshBuilder.CreatePlane(
-      "backgroundPlane",
-      { width: 20, height: 20 },
-      scene
-    );
-    backgroundPlane.position.z = camera.position.z + 0.1;
-    backgroundPlane.parent = camera;
-    backgroundPlane.material = backgroundMaterial;
+    // const backgroundPlane = MeshBuilder.CreatePlane(
+    //   "backgroundPlane",
+    //   { width: 20, height: 20 },
+    //   scene
+    // );
+    // backgroundPlane.position.z = camera.position.z + 0.1;
+    // backgroundPlane.parent = camera;
+    // backgroundPlane.material = backgroundMaterial;
   } else {
     // Kamera für Desktop
     camera = new DeviceOrientationCamera(
