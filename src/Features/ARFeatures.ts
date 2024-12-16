@@ -5,13 +5,14 @@ import {
   Quaternion,
   WebXRHitTest,
   WebXRAnchorSystem,
+  WebXRDefaultExperience,
   MeshBuilder,
   StandardMaterial,
   Color3,
   Mesh,
   WebXRState,
 } from "@babylonjs/core";
-import { UIManager } from "./UIManager"; // Passen Sie den Pfad entsprechend an
+import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass UIManager korrekt importiert ist
 
 export default async function createARFeatures(
   scene: Scene,
