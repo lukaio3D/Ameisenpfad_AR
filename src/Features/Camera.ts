@@ -24,8 +24,8 @@ export default async function createCamera(canvas, scene) {
     );
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
-    camera.angularSensibility = 10;
-    camera.moveSensibility = 10;
+    camera.angularSensibility = 1;
+    camera.moveSensibility = 1;
     camera.attachControl(canvas, true);
 
     // Live-Kamera als Hintergrund
