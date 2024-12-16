@@ -8,12 +8,15 @@ import {
   MeshBuilder,
   StandardMaterial,
   Color3,
+  Mesh,
+  WebXRState,
 } from "@babylonjs/core";
 import { UIManager } from "./UIManager"; // Passen Sie den Pfad entsprechend an
 
 export default async function createARFeatures(
   scene: Scene,
-  sceneParent: TransformNode
+  sceneParent: TransformNode,
+  groundToHide: Mesh
 ) {
   const uiManager = UIManager.getInstance();
 
@@ -44,6 +47,14 @@ export default async function createARFeatures(
     } else {
       uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
     }
+
+    xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+      if (state === WebXRState.IN_XR) {
+        groundToHide.isVisible = false; // Transparent im AR-Modus
+      } else if (state === WebXRState.NOT_IN_XR) {
+        groundToHide.isVisible = true; // Wieder sichtbar, wenn AR-Modus beendet
+      }
+    });
 
     // // Hit-Test-Ergebnis überwachen
     // (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
@@ -80,7 +91,6 @@ export default async function createARFeatures(
     // });
 
     return xrHelper;
-
   } catch (error) {
     console.error("Fehler in createARFeatures:", error);
     uiManager.displayMessage("Fehler: " + error.message);

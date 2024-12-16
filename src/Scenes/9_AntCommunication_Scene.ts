@@ -71,17 +71,7 @@ export default async function createAntCommunicationScene(
 
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  let xrHelper = await createARFeatures(scene, sceneParent);
-  
-  xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-    if (state === WebXRState.IN_XR) {
-      grassMaterial.alpha = 0; // Transparent im AR-Modus
-    } else if (state === WebXRState.NOT_IN_XR) {
-      grassMaterial.alpha = 1; // Wieder sichtbar, wenn AR-Modus beendet
-    }
-  });
-
-
+  let xrHelper = await createARFeatures(scene, sceneParent, grass);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
