@@ -11,13 +11,14 @@ import {
   Color3,
   Mesh,
   WebXRState,
+  PhotoDome,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass UIManager korrekt importiert ist
 
 export default async function createARFeatures(
   scene: Scene,
   sceneParent: TransformNode,
-  groundToHide: Mesh
+  groundToHide: PhotoDome
 ) {
   const uiManager = UIManager.getInstance();
 
@@ -50,9 +51,9 @@ export default async function createARFeatures(
 
   xrHelper.baseExperience.onStateChangedObservable.add((state) => {
     if (state === WebXRState.IN_XR) {
-      groundToHide.isVisible = false; // Transparent im AR-Modus
+      groundToHide.setEnabled(false); // Transparent im AR-Modus
     } else if (state === WebXRState.NOT_IN_XR) {
-      groundToHide.isVisible = true; // Wieder sichtbar, wenn AR-Modus beendet
+      groundToHide.setEnabled(true); // Wieder sichtbar, wenn AR-Modus beendet
     }
   });
 

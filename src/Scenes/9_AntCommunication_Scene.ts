@@ -53,25 +53,9 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  // Größeres GroundMesh erstellen und grün färben
-  const grass = MeshBuilder.CreateGround(
-    "grass",
-    { width: 50, height: 50 },
-    scene
-  );
-  grass.position = new Vector3(0, -0.1, 0);
-  const grassMaterial = new StandardMaterial("grassMaterial", scene);
-  const woodsGroundTexture = new Texture(woodsGround, scene);
-  woodsGroundTexture.uScale = 10; // Skalierung der Textur in U-Richtung
-  woodsGroundTexture.vScale = 10; // Skalierung der Textur in V-Richtung
-  grassMaterial.diffuseTexture = woodsGroundTexture;
-  grassMaterial.specularColor = new Color3(0, 0, 0); // Kein Glanz
-  grassMaterial.diffuseColor = new Color3(0.4, 0.4, 0.4); // Dunkleres Grün
-  grass.material = grassMaterial;
-
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  let xrHelper = await createARFeatures(scene, sceneParent, grass);
+  await createARFeatures(scene, sceneParent, skybox);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
