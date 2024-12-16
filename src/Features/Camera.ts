@@ -1,5 +1,6 @@
 import {
   DeviceOrientationCamera,
+  FreeCamera,
   MeshBuilder,
   StandardMaterial,
   Vector3,
@@ -13,7 +14,7 @@ export default async function createCamera(canvas, scene) {
       navigator.userAgent
     );
 
-  let camera;
+  let camera: FreeCamera;
 
   if (isMobile) {
     // Kamera für mobile Geräte
@@ -24,8 +25,7 @@ export default async function createCamera(canvas, scene) {
     );
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
-    camera.angularSensibility = 1;
-    camera.moveSensibility = 1;
+    camera.angularSensibility = 2000;
     camera.attachControl(canvas, true);
 
     // Live-Kamera als Hintergrund
