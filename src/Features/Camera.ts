@@ -27,6 +27,7 @@ export default function createCamera(canvas, scene) {
     camera.setTarget(new Vector3(0, 0, 1));
     // Sets the sensitivity of the camera to movement and rotation
     camera.inertia = 0.95; // Höherer Wert für glattere Bewegung
+    camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
     camera.attachControl(canvas, true);
 
     // Glättung der Kamerarotation
