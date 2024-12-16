@@ -1,12 +1,12 @@
 import {
-  ArcRotateCamera,
+  DeviceOrientationCamera,
   DirectionalLight,
   HemisphericLight,
   Vector3,
   Scene,
   StandardMaterial,
   MeshBuilder,
-  TransformNode
+  TransformNode,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -18,15 +18,21 @@ export default async function createAntCommunicationScene(
   scene: Scene
 ) {
   // Kamera einrichten
-  const camera = new ArcRotateCamera(
-    "camera",
-    -Math.PI / 2,
-    Math.PI / 2.5,
-    10,
-    Vector3.Zero(),
-    scene
+  const camera = new DeviceOrientationCamera("camera", new Vector3(0, 5, -2), scene);
+  camera.setTarget(new Vector3(0, 0, 2.5));
+
+  // Überprüfung, ob das Gerät mobil ist
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
   );
-  camera.attachControl(canvas, true);
+
+  if (isMobile) {
+    // Auf mobilen Geräten die Kamera-Steuerung aktivieren
+    camera.attachControl(canvas, true);
+  } else {
+    // Auf Desktop-Geräten die Kamera-Steuerung deaktivieren
+    camera.inputs.clear();
+  }
 
   // Licht einrichten
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
