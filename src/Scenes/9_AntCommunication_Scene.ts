@@ -13,6 +13,7 @@ import {
   Color3,
   PhotoDome,
   WebXRState,
+  Quaternion,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -26,16 +27,51 @@ export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
   scene: Scene
 ) {
-  // createCamera(canvas, scene);
+  // DeviceOrientation Berechtigungen anfordern
+  if (typeof DeviceOrientationEvent !== 'undefined' && 
+      typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+    try {
+      const permission = await (DeviceOrientationEvent as any).requestPermission();
+      if (permission !== 'granted') {
+        console.error('DeviceOrientation Berechtigung nicht erteilt');
+        return;
+      }
+    } catch (error) {
+      console.error('Fehler beim Anfordern der DeviceOrientation Berechtigung:', error);
+      return;
+    }
+  }
 
+  // Kamera erstellen
   const camera = new DeviceOrientationCamera(
     "camera",
-    new Vector3(0, 3, -0.5),
+    new Vector3(0, 1.6, -0.5), // Augenhöhe
     scene
   );
-  camera.setTarget(new Vector3(0, 0, 1));
-  // Sets the sensitivity of the camera to movement and rotation
-  camera.inertia = 1; // Höherer Wert für glattere Bewegung
+
+  // Kamera-Einstellungen
+  camera.inertia = 0.5;
+  camera.angularSensibility = 2000;
+  camera.setTarget(new Vector3(0, 1.6, 1));
+  
+  // Touch Controls aktivieren
+  camera.attachControl(canvas, true);
+
+  // Bewegungsglättung
+  let filteredQuaternion = camera.rotationQuaternion?.clone();
+  const smoothFactor = 0.1;
+
+  scene.onBeforeRenderObservable.add(() => {
+    if (camera.rotationQuaternion && filteredQuaternion) {
+      Quaternion.SlerpToRef(
+        filteredQuaternion,
+        camera.rotationQuaternion,
+        smoothFactor,
+        filteredQuaternion
+      );
+      camera.rotationQuaternion.copyFrom(filteredQuaternion);
+    }
+  });
 
   // Licht einrichten
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
