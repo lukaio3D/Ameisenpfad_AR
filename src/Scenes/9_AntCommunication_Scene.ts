@@ -26,7 +26,16 @@ export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
   scene: Scene
 ) {
-  createCamera(canvas, scene);
+  // createCamera(canvas, scene);
+
+  const camera = new DeviceOrientationCamera(
+    "camera",
+    new Vector3(0, 3, -0.5),
+    scene
+  );
+  camera.setTarget(new Vector3(0, 0, 1));
+  // Sets the sensitivity of the camera to movement and rotation
+  camera.inertia = 1; // Höherer Wert für glattere Bewegung
 
   // Licht einrichten
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
