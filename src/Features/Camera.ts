@@ -1,92 +1,57 @@
 import {
   DeviceOrientationCamera,
   FreeCamera,
-  MeshBuilder,
-  Quaternion,
-  StandardMaterial,
   Vector3,
-  VideoTexture,
+  Quaternion,
+  Scene,
 } from "@babylonjs/core";
 
-export default function createCamera(canvas, scene) {
-  // Überprüfung, ob das Gerät mobil ist
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
+export default function createCamera(canvas, scene: Scene) {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 
   let camera: FreeCamera;
 
   if (isMobile) {
-    // Kamera für mobile Geräte
+    // Mobile Kamera-Setup
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 3, -0.5),
+      new Vector3(0, 1.6, -0.5), // Augenhöhe eines durchschnittlichen Menschen
       scene
     );
-    // Sets the sensitivity of the camera to movement and rotation
-    camera.inertia = 1; // Höherer Wert für glattere Bewegung
-    // camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
-    // camera.attachControl(canvas, true);
 
-    // // Glättung der Kamerarotation
-    // let filteredQuaternion = camera.rotationQuaternion.clone();
-    // const smoothFactor = 0.5; // Wert zwischen 0 und 1
+    // Kamera-Einstellungen
+    camera.inertia = 0.5; // Trägheit für smoothere Bewegung
+    camera.angularSensibility = 2000; // Rotationsempfindlichkeit
+    camera.speed = 0.5; // Bewegungsgeschwindigkeit
+    
+    // Aktiviere Touch-Kontrollen
+    camera.attachControl(canvas, true);
 
-    // scene.onBeforeRenderObservable.add(() => {
-    //   Quaternion.SlerpToRef(
-    //     filteredQuaternion,
-    //     camera.rotationQuaternion,
-    //     smoothFactor,
-    //     filteredQuaternion
-    //   );
-    //   camera.rotationQuaternion.copyFrom(filteredQuaternion);
-    // });
+    // Bewegungsglättung
+    let filteredQuaternion = camera.rotationQuaternion.clone();
+    const smoothFactor = 0.1; // Niedriger Wert = smoothere Bewegung
 
-    // // Live-Kamera als Hintergrund
-    // const video = document.createElement("video");
-    // video.autoplay = true;
-    // video.playsInline = true;
+    scene.onBeforeRenderObservable.add(() => {
+      if (camera.rotationQuaternion) {
+        Quaternion.SlerpToRef(
+          filteredQuaternion,
+          camera.rotationQuaternion,
+          smoothFactor,
+          filteredQuaternion
+        );
+        camera.rotationQuaternion.copyFrom(filteredQuaternion);
+      }
+    });
 
-    // try {
-    //   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //   video.srcObject = stream;
-    // } catch (error) {
-    //   console.error("Fehler beim Zugriff auf die Kamera:", error);
-    //   return;
-    // }
-
-    // const videoTexture = new VideoTexture(
-    //   "videoTexture",
-    //   video,
-    //   scene,
-    //   true,
-    //   true
-    // );
-    // const backgroundMaterial = new StandardMaterial(
-    //   "backgroundMaterial",
-    //   scene
-    // );
-    // backgroundMaterial.diffuseTexture = videoTexture;
-    // backgroundMaterial.emissiveTexture = videoTexture;
-    // backgroundMaterial.backFaceCulling = false;
-
-    // const backgroundPlane = MeshBuilder.CreatePlane(
-    //   "backgroundPlane",
-    //   { width: 20, height: 20 },
-    //   scene
-    // );
-    // backgroundPlane.position.z = camera.position.z + 0.1;
-    // backgroundPlane.parent = camera;
-    // backgroundPlane.material = backgroundMaterial;
+    // Setze initiale Blickrichtung
+    camera.setTarget(new Vector3(0, 1.6, 1));
   } else {
-    // Kamera für Desktop
-    camera = new DeviceOrientationCamera(
-      "camera",
-      new Vector3(0, 5, -2),
-      scene
-    );
-    camera.setTarget(new Vector3(0, 2, 0));
-    camera.inputs.clear(); // Deaktiviert Bewegung auf Desktop
+    // Desktop-Kamera-Setup
+    camera = new FreeCamera("camera", new Vector3(0, 10, -10), scene);
+    camera.setTarget(Vector3.Zero());
   }
+
+  return camera;
 }
