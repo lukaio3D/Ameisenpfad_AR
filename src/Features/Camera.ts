@@ -18,68 +18,58 @@ export default function createCamera(canvas, scene) {
   let camera: FreeCamera;
 
   if (isMobile) {
-    // Kamera für mobile Geräte
-    camera = new DeviceOrientationCamera(
+    // DeviceOrientation Berechtigungen anfordern
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof (DeviceOrientationEvent as any).requestPermission === "function"
+    ) {
+      try {
+        const permission = (
+          DeviceOrientationEvent as any
+        ).requestPermission();
+        if (permission !== "granted") {
+          console.error("DeviceOrientation Berechtigung nicht erteilt");
+          return;
+        }
+      } catch (error) {
+        console.error(
+          "Fehler beim Anfordern der DeviceOrientation Berechtigung:",
+          error
+        );
+        return;
+      }
+    }
+
+    // Kamera erstellen
+    const camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 3, -0.5),
+      new Vector3(0, 1.6, -0.5), // Augenhöhe
       scene
     );
-    camera.setTarget(new Vector3(0, 0, 1));
-    // Sets the sensitivity of the camera to movement and rotation
-    camera.inertia = 1; // Höherer Wert für glattere Bewegung
-    // camera.angularSensibility = 8000; // Höherer Wert für smoothereRotation
-    // camera.attachControl(canvas, true);
 
-    // // Glättung der Kamerarotation
-    // let filteredQuaternion = camera.rotationQuaternion.clone();
-    // const smoothFactor = 0.5; // Wert zwischen 0 und 1
+    // Kamera-Einstellungen
+    camera.inertia = 0.5;
+    camera.angularSensibility = 2000;
+    camera.setTarget(new Vector3(0, 1.6, 1));
 
-    // scene.onBeforeRenderObservable.add(() => {
-    //   Quaternion.SlerpToRef(
-    //     filteredQuaternion,
-    //     camera.rotationQuaternion,
-    //     smoothFactor,
-    //     filteredQuaternion
-    //   );
-    //   camera.rotationQuaternion.copyFrom(filteredQuaternion);
-    // });
+    // Touch Controls aktivieren
+    camera.attachControl(canvas, true);
 
-    // // Live-Kamera als Hintergrund
-    // const video = document.createElement("video");
-    // video.autoplay = true;
-    // video.playsInline = true;
+    // Bewegungsglättung
+    let filteredQuaternion = camera.rotationQuaternion?.clone();
+    const smoothFactor = 0.1;
 
-    // try {
-    //   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //   video.srcObject = stream;
-    // } catch (error) {
-    //   console.error("Fehler beim Zugriff auf die Kamera:", error);
-    //   return;
-    // }
-
-    // const videoTexture = new VideoTexture(
-    //   "videoTexture",
-    //   video,
-    //   scene,
-    //   true,
-    //   true
-    // );
-    // const backgroundMaterial = new StandardMaterial(
-    //   "backgroundMaterial",
-    //   scene
-    // );
-    // backgroundMaterial.diffuseTexture = videoTexture;
-    // backgroundMaterial.emissiveTexture = videoTexture;
-    // backgroundMaterial.backFaceCulling = false;
-
-    // const backgroundPlane = MeshBuilder.CreatePlane(
-    //   "backgroundPlane",
-    //   { width: 20, height: 20 },
-    //   scene
-    // );
-    // backgroundPlane.position.z = camera.position.z + 0.1;
-    // backgroundPlane.parent = camera;
-    // backgroundPlane.material = backgroundMaterial;
+    scene.onBeforeRenderObservable.add(() => {
+      if (camera.rotationQuaternion && filteredQuaternion) {
+        Quaternion.SlerpToRef(
+          filteredQuaternion,
+          camera.rotationQuaternion,
+          smoothFactor,
+          filteredQuaternion
+        );
+        camera.rotationQuaternion.copyFrom(filteredQuaternion);
+      }
+    });
   } else {
     // Kamera für Desktop
     camera = new DeviceOrientationCamera(
