@@ -57,7 +57,7 @@ export default async function createAntCommunicationScene(
 
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  // await createARFeatures(scene, sceneParent, skybox);
+  await createARFeatures(scene, sceneParent);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(

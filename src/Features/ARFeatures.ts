@@ -18,7 +18,7 @@ import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass U
 export default async function createARFeatures(
   scene: Scene,
   sceneParent: TransformNode,
-  groundToHide: PhotoDome
+  // groundToHide: PhotoDome
 ) {
   const uiManager = UIManager.getInstance();
 
