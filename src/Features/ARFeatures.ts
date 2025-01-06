@@ -8,6 +8,8 @@ import {
   Color3,
   Quaternion,
   Vector3,
+  WebXRState,
+  IWebXRHitResult,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass UIManager korrekt importiert ist
 
@@ -20,7 +22,10 @@ export default async function createARFeatures(
 
   // XR Experience erstellen
   const xrHelper = await scene.createDefaultXRExperienceAsync({
-    uiOptions: { sessionMode: "immersive-ar" },
+    uiOptions: {
+      sessionMode: "immersive-ar",
+      referenceSpaceType: "local-floor",
+    },
     optionalFeatures: ["anchors", "hit-test"],
   });
 
@@ -47,44 +52,43 @@ export default async function createARFeatures(
     uiManager.displayMessage("Fehler beim Aktivieren des Anchor-Systems.");
   }
 
-  const hitTest = featuresManager.enableFeature(WebXRHitTest, "latest");
+  const hitTest = featuresManager.enableFeature(
+    WebXRHitTest,
+    "latest"
+  ) as WebXRHitTest;
   if (hitTest) {
     uiManager.displayMessage("Hit-Test aktiviert.");
   } else {
     uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
   }
 
-  // Hit-Test-Ergebnis überwachen
-  (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
+  const marker = MeshBuilder.CreatePlane("marker", { size: 0.1 }, scene);
+
+  let currentHitTestResult: IWebXRHitResult | null = null;
+
+  hitTest.onHitTestResultObservable.add((results) => {
     if (results.length) {
-      const hit = results[0];
-
-      // Anchor erstellen
-      const tempNode = new TransformNode("temp", scene);
-      const position = new Vector3();
-      const rotationQuaternion = new Quaternion();
-      hit.transformationMatrix.decompose(undefined, rotationQuaternion, position);
-
-      const anchor = await anchorSystem.addAnchorAtPositionAndRotationAsync(
-        position,
-        rotationQuaternion
+      marker.isVisible = true;
+      currentHitTestResult = results[0];
+      currentHitTestResult.transformationMatrix.decompose(
+        undefined,
+        marker.rotationQuaternion,
+        marker.position
       );
-
-      if (anchor) {
-        uiManager.displayMessage("Anker erfolgreich erstellt.");
-
-        // Verknüpftes Objekt hinzufügen
-        const box = MeshBuilder.CreateBox("box", { size: 0.2 }, scene);
-        box.material = new StandardMaterial("material", scene);
-        (box.material as StandardMaterial).diffuseColor = new Color3(1, 0, 0); // Rot
-        box.parent = anchor.attachedNode; // Verknüpfen
-
-        uiManager.displayMessage("Objekt erfolgreich platziert.");
-      } else {
-        uiManager.displayMessage("Fehler beim Erstellen des Ankers.");
-      }
     } else {
-      uiManager.displayMessage("Kein gültiges Hit-Test-Ergebnis.");
+      marker.isVisible = false;
+      currentHitTestResult = null;
+      scene.onPointerDown = (evt, pickInfo) => {
+        if (
+          currentHitTestResult &&
+          anchorSystem &&
+          xrHelper.baseExperience.state === WebXRState.IN_XR
+        ) {
+          anchorSystem.addAnchorPointUsingHitTestResultAsync(
+            currentHitTestResult
+          );
+        }
+      };
     }
   });
 }
