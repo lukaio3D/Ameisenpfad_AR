@@ -82,10 +82,25 @@ export default async function createARFeatures(
   scene.onPointerDown = (evt, pickInfo) => {
     if (
       hitTest &&
-      anchorSystem &&
       xrHelper.baseExperience.state === WebXRState.IN_XR
     ) {
-      anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+      // Neue Kopie des Markers erstellen
+      const markerClone = marker.clone("markerClone");
+      if (markerClone) {
+        markerClone.isVisible = true;
+  
+        // Position und Rotation der Kopie setzen
+        hitTestResult.transformationMatrix.decompose(
+          undefined,
+          markerClone.rotationQuaternion,
+          markerClone.position
+        );
+  
+        // Optionale Materialanpassung für die Kopie
+        const cloneMaterial = new StandardMaterial("cloneMaterial", scene);
+        cloneMaterial.diffuseColor = new Color3(1, 0, 0); // Rot für die Kopie
+        markerClone.material = cloneMaterial;
+      }
     }
   };
 }
