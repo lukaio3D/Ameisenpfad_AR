@@ -59,7 +59,10 @@ export default async function createAntCommunicationScene(
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
   if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+    console.log("AR wird unterstützt");
     await createARFeatures(scene, sceneParent);
+  } else {
+    console.log("AR wird nicht unterstützt");
   }
 
   // NavigationFeatures erstellen und Crowd erhalten
