@@ -14,6 +14,7 @@ import {
   PhotoDome,
   WebXRState,
   Quaternion,
+  WebXRSessionManager,
 } from "@babylonjs/core";
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
@@ -57,7 +58,9 @@ export default async function createAntCommunicationScene(
 
   //AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  await createARFeatures(scene, sceneParent);
+  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+    await createARFeatures(scene, sceneParent);
+  }
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
