@@ -1,4 +1,5 @@
 import {
+  ArcRotateCamera,
   DeviceOrientationCamera,
   FreeCamera,
   MeshBuilder,
@@ -24,9 +25,7 @@ export default function createCamera(canvas, scene) {
       typeof (DeviceOrientationEvent as any).requestPermission === "function"
     ) {
       try {
-        const permission = (
-          DeviceOrientationEvent as any
-        ).requestPermission();
+        const permission = (DeviceOrientationEvent as any).requestPermission();
         if (permission !== "granted") {
           console.error("DeviceOrientation Berechtigung nicht erteilt");
           return;
@@ -71,13 +70,14 @@ export default function createCamera(canvas, scene) {
       }
     });
   } else {
-    // Kamera für Desktop
-    camera = new DeviceOrientationCamera(
+    const camera = new ArcRotateCamera(
       "camera",
-      new Vector3(0, 5, -2),
+      -Math.PI / 2,
+      Math.PI / 4,
+      10,
+      new Vector3(0, 0, 2.5),
       scene
     );
-    camera.setTarget(new Vector3(0, 2, 0));
-    camera.inputs.clear(); // Deaktiviert Bewegung auf Desktop
+    camera.attachControl(canvas, true);
   }
 }
