@@ -63,32 +63,29 @@ export default async function createARFeatures(
   }
 
   const marker = MeshBuilder.CreatePlane("marker", { size: 0.1 }, scene);
-
-  let currentHitTestResult: IWebXRHitResult | null = null;
+  let hitTestResult: IWebXRHitResult;
 
   hitTest.onHitTestResultObservable.add((results) => {
     if (results.length) {
       marker.isVisible = true;
-      currentHitTestResult = results[0];
-      currentHitTestResult.transformationMatrix.decompose(
+      hitTestResult = results[0];
+      hitTestResult.transformationMatrix.decompose(
         undefined,
         marker.rotationQuaternion,
         marker.position
       );
     } else {
       marker.isVisible = false;
-      currentHitTestResult = null;
-      scene.onPointerDown = (evt, pickInfo) => {
-        if (
-          currentHitTestResult &&
-          anchorSystem &&
-          xrHelper.baseExperience.state === WebXRState.IN_XR
-        ) {
-          anchorSystem.addAnchorPointUsingHitTestResultAsync(
-            currentHitTestResult
-          );
-        }
-      };
     }
   });
+
+  scene.onPointerDown = (evt, pickInfo) => {
+    if (
+      hitTest &&
+      anchorSystem &&
+      xrHelper.baseExperience.state === WebXRState.IN_XR
+    ) {
+      anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+    }
+  };
 }
