@@ -1,23 +1,19 @@
 import {
   Scene,
   TransformNode,
-  Vector3,
-  Quaternion,
   WebXRHitTest,
   WebXRAnchorSystem,
-  WebXRDefaultExperience,
   MeshBuilder,
   StandardMaterial,
   Color3,
-  Mesh,
-  WebXRState,
-  PhotoDome,
+  Quaternion,
+  Vector3,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass UIManager korrekt importiert ist
 
 export default async function createARFeatures(
   scene: Scene,
-  sceneParent: TransformNode,
+  sceneParent: TransformNode
   // groundToHide: PhotoDome
 ) {
   const uiManager = UIManager.getInstance();
@@ -35,7 +31,6 @@ export default async function createARFeatures(
   //     groundToHide.setEnabled(true); // Wieder sichtbar, wenn AR-Modus beendet
   //   }
   // });
-
 
   uiManager.displayMessage("XR-Erfahrung erfolgreich erstellt.");
 
@@ -59,39 +54,37 @@ export default async function createARFeatures(
     uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
   }
 
+  // Hit-Test-Ergebnis überwachen
+  (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
+    if (results.length) {
+      const hit = results[0];
 
+      // Anchor erstellen
+      const tempNode = new TransformNode("temp", scene);
+      const position = new Vector3();
+      const rotationQuaternion = new Quaternion();
+      hit.transformationMatrix.decompose(undefined, rotationQuaternion, position);
 
-  // // Hit-Test-Ergebnis überwachen
-  // (hitTest as WebXRHitTest).onHitTestResultObservable.add(async (results) => {
-  //   if (results.length) {
-  //     const hit = results[0];
+      const anchor = await anchorSystem.addAnchorAtPositionAndRotationAsync(
+        position,
+        rotationQuaternion
+      );
 
-  //     // Anchor erstellen
-  //     const tempNode = new TransformNode("temp", scene);
-  //     const position = new Vector3();
-  //     const rotationQuaternion = new Quaternion();
-  //     hit.transformationMatrix.decompose(undefined, rotationQuaternion, position);
+      if (anchor) {
+        uiManager.displayMessage("Anker erfolgreich erstellt.");
 
-  //     const anchor = await anchorSystem.addAnchorAtPositionAndRotationAsync(
-  //       position,
-  //       rotationQuaternion
-  //     );
+        // Verknüpftes Objekt hinzufügen
+        const box = MeshBuilder.CreateBox("box", { size: 0.2 }, scene);
+        box.material = new StandardMaterial("material", scene);
+        (box.material as StandardMaterial).diffuseColor = new Color3(1, 0, 0); // Rot
+        box.parent = anchor.attachedNode; // Verknüpfen
 
-  //     if (anchor) {
-  //       uiManager.displayMessage("Anker erfolgreich erstellt.");
-
-  //       // Verknüpftes Objekt hinzufügen
-  //       const box = MeshBuilder.CreateBox("box", { size: 0.2 }, scene);
-  //       box.material = new StandardMaterial("material", scene);
-  //       (box.material as StandardMaterial).diffuseColor = new Color3(1, 0, 0); // Rot
-  //       box.parent = anchor.attachedNode; // Verknüpfen
-
-  //       uiManager.displayMessage("Objekt erfolgreich platziert.");
-  //     } else {
-  //       uiManager.displayMessage("Fehler beim Erstellen des Ankers.");
-  //     }
-  //   } else {
-  //     uiManager.displayMessage("Kein gültiges Hit-Test-Ergebnis.");
-  //   }
-  // });
+        uiManager.displayMessage("Objekt erfolgreich platziert.");
+      } else {
+        uiManager.displayMessage("Fehler beim Erstellen des Ankers.");
+      }
+    } else {
+      uiManager.displayMessage("Kein gültiges Hit-Test-Ergebnis.");
+    }
+  });
 }
