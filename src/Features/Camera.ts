@@ -12,7 +12,7 @@ import {
 export default function createCamera(canvas, scene) {
   // Überprüfung, ob das Gerät mobil ist
   const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
     );
 
