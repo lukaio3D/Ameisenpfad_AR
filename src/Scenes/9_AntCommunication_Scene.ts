@@ -57,8 +57,14 @@ export default async function createAntCommunicationScene(
   groundMaterial.alpha = 0;
 
   //AR Features aktivieren
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
-  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+
+  if (isIOS) {
+    console.log("iOS erkannt, AR wird erzwungen");
+    await createARFeatures(scene, sceneParent);
+  } else if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
     console.log("AR wird unterstützt");
     await createARFeatures(scene, sceneParent);
   } else {
