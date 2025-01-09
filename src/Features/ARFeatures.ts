@@ -100,6 +100,7 @@ export default async function createARFeatures(
 scene.onPointerDown = (evt, pickInfo) => {
     if (hitTest && anchorSystem && xrHelper.baseExperience.state === WebXRState.IN_XR) {
         anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+        console.log('adding anchor');
     }
 }
 }
