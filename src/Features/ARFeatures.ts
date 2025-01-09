@@ -80,32 +80,26 @@ export default async function createARFeatures(
   });
 
   // Neuen Anker mithilfe der Transformation des HitTests erstellen:
-  scene.onPointerDown = async (evt, pickInfo) => {
-      if (hitTest && xrHelper.baseExperience.state === WebXRState.IN_XR) {
-        const markerClone = marker.clone("markerClone");
-        if (markerClone) {
-          markerClone.isVisible = true;
-          // Position + Rotation aus letztem HitTest
-          hitTestResult.transformationMatrix.decompose(
-            undefined,
-            markerClone.rotationQuaternion,
-            markerClone.position
-          );
-  
-          // AR-Anker erzeugen, damit das Objekt stabil im Raum bleibt
-          const anchor = await anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
-          if (anchor) {
-            // Weisen Sie das Klon-Objekt diesem Anker zu
-            if (!anchor.attachedNode) {
-              anchor.attachedNode = new TransformNode("anchorTransformNode", scene);
-            }
-            markerClone.setParent(anchor.attachedNode);
-          }
-  
-          const cloneMaterial = new StandardMaterial("cloneMaterial", scene);
-          cloneMaterial.diffuseColor = new Color3(1, 0, 0);
-          markerClone.material = cloneMaterial;
+  if (anchorSystem) {
+    console.log('anchors attached');
+    anchorSystem.onAnchorAddedObservable.add(anchor => {
+        console.log('attaching', anchor);
+        marker.isVisible = true;
+        anchor.attachedNode = marker.clone();
+        marker.isVisible = false;
+    })
+
+    anchorSystem.onAnchorRemovedObservable.add(anchor => {
+        console.log('disposing', anchor);
+        if (anchor) {
+            anchor.attachedNode.dispose();
         }
-      }
-    };
+    });
+}
+
+scene.onPointerDown = (evt, pickInfo) => {
+    if (hitTest && anchorSystem && xrHelper.baseExperience.state === WebXRState.IN_XR) {
+        anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+    }
+}
 }
