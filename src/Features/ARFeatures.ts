@@ -88,17 +88,21 @@ export default async function createARFeatures(scene: Scene, sceneParent: Transf
     scene.onPointerObservable.add((pointerInfo) => {
       if (pointerInfo.type === PointerEventTypes.POINTERDOWN && !anchorCreated) {
         if (hitTestResult && anchorSystem && xrHelper.baseExperience.state === WebXRState.IN_XR) {
+          // Marker sofort unsichtbar machen und Flagge setzen
+          marker.isVisible = false;
+          anchorCreated = true;
+
           anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult).then((anchor) => {
             if (anchor) {
               console.log("Anker erstellt:", anchor);
               const markerClone = marker.clone("markerClone");
               markerClone.isVisible = true;
               anchor.attachedNode = markerClone;
-              marker.isVisible = false;
-              anchorCreated = true; // Flagge setzen, um weitere Anker zu verhindern
             }
           }).catch((error) => {
             console.error("Fehler beim Hinzufügen des Ankers:", error);
+            // Falls ein Fehler auftritt, Flagge zurücksetzen
+            anchorCreated = false;
           });
         }
       }
