@@ -62,7 +62,7 @@ export default async function createARFeatures(
     uiManager.displayMessage("Fehler beim Aktivieren des Hit-Tests.");
   }
 
-  const marker = MeshBuilder.CreatePlane("marker", { size: 0.1 }, scene);
+  const marker = MeshBuilder.CreateBox("marker", { size: 0.1 }, scene);
   let hitTestResult: IWebXRHitResult;
 
   hitTest.onHitTestResultObservable.add((results) => {
@@ -79,28 +79,33 @@ export default async function createARFeatures(
     }
   });
 
-  scene.onPointerDown = (evt, pickInfo) => {
-    if (
-      hitTest &&
-      xrHelper.baseExperience.state === WebXRState.IN_XR
-    ) {
-      // Neue Kopie des Markers erstellen
-      const markerClone = marker.clone("markerClone");
-      if (markerClone) {
-        markerClone.isVisible = true;
+  // Neuen Anker mithilfe der Transformation des HitTests erstellen:
+  scene.onPointerDown = async (evt, pickInfo) => {
+      if (hitTest && xrHelper.baseExperience.state === WebXRState.IN_XR) {
+        const markerClone = marker.clone("markerClone");
+        if (markerClone) {
+          markerClone.isVisible = true;
+          // Position + Rotation aus letztem HitTest
+          hitTestResult.transformationMatrix.decompose(
+            undefined,
+            markerClone.rotationQuaternion,
+            markerClone.position
+          );
   
-        // Position und Rotation der Kopie setzen
-        hitTestResult.transformationMatrix.decompose(
-          undefined,
-          markerClone.rotationQuaternion,
-          markerClone.position
-        );
+          // AR-Anker erzeugen, damit das Objekt stabil im Raum bleibt
+          const anchor = await anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+          if (anchor) {
+            // Weisen Sie das Klon-Objekt diesem Anker zu
+            if (!anchor.attachedNode) {
+              anchor.attachedNode = new TransformNode("anchorTransformNode", scene);
+            }
+            markerClone.setParent(anchor.attachedNode);
+          }
   
-        // Optionale Materialanpassung für die Kopie
-        const cloneMaterial = new StandardMaterial("cloneMaterial", scene);
-        cloneMaterial.diffuseColor = new Color3(1, 0, 0); // Rot für die Kopie
-        markerClone.material = cloneMaterial;
+          const cloneMaterial = new StandardMaterial("cloneMaterial", scene);
+          cloneMaterial.diffuseColor = new Color3(1, 0, 0);
+          markerClone.material = cloneMaterial;
+        }
       }
-    }
-  };
+    };
 }
