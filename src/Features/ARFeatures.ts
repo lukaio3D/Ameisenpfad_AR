@@ -10,6 +10,7 @@ import {
   Vector3,
   WebXRState,
   IWebXRHitResult,
+  PointerEventTypes,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager"; // Stellen Sie sicher, dass UIManager korrekt importiert ist
 
@@ -97,10 +98,16 @@ export default async function createARFeatures(
     });
 }
 
-scene.onPointerDown = (evt, pickInfo) => {
+scene.onPointerObservable.add((pointerInfo) => {
+  console.log('Pointer event detected');
+  if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+    console.log('Pointer down event detected');
     if (hitTest && anchorSystem && xrHelper.baseExperience.state === WebXRState.IN_XR) {
-        anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
-        console.log('adding anchor');
+      console.log('Conditions met, adding anchor');
+      anchorSystem.addAnchorPointUsingHitTestResultAsync(hitTestResult);
+    } else {
+      console.log('Conditions not met');
     }
-}
+  }
+});
 }
