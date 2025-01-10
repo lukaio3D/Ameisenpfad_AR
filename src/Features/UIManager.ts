@@ -29,8 +29,8 @@ export class UIManager {
 
     // Startbutton erstellen und konfigurieren
     this.startButton = GUI.Button.CreateSimpleButton("startButton", "Start");
-    this.startButton.width = "200px";
-    this.startButton.height = "100px";
+    this.startButton.width = "20%";
+    this.startButton.height = "10%";
     this.startButton.color = "white";
     this.startButton.background = "green";
     this.startButton.fontSize = 24;
@@ -48,8 +48,8 @@ export class UIManager {
     this.dialogzeile = new GUI.TextBlock();
     this.dialogzeile.text = "";
     this.dialogzeile.color = "white";
-    this.dialogzeile.fontSize = 32;
-    this.dialogzeile.height = "50px";
+    this.dialogzeile.fontSize = 24;
+    this.dialogzeile.height = "5%";
     this.dialogzeile.width = "100%";
     this.dialogzeile.paddingBottom = "24px";
     this.dialogzeile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -65,8 +65,8 @@ export class UIManager {
 
     // Container erstellen und konfigurieren
     let containerTopLeft = new GUI.Rectangle();
-    containerTopLeft.height = "100px";
-    containerTopLeft.width = "200px";
+    containerTopLeft.height = "10%";
+    containerTopLeft.width = "20%";
     containerTopLeft.thickness = 0; // Rahmen entfernen
     containerTopLeft.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     containerTopLeft.horizontalAlignment =
@@ -80,9 +80,9 @@ export class UIManager {
     this.timer = new GUI.TextBlock();
     this.timer.text = "";
     this.timer.color = "orange";
-    this.timer.fontSize = 32;
-    this.timer.height = "100px";
-    this.timer.width = "200px";
+    this.timer.fontSize = 24;
+    this.timer.height = "10%";
+    this.timer.width = "20%";
 
     // **Schwarzen Umriss hinzufügen**
     this.timer.outlineWidth = 2;
@@ -93,8 +93,8 @@ export class UIManager {
 
     // Container erstellen und konfigurieren
     let containerTopRight = new GUI.Rectangle();
-    containerTopRight.height = "200px";
-    containerTopRight.width = "400px";
+    containerTopRight.height = "10%";
+    containerTopRight.width = "20%";
     containerTopRight.paddingTop = "20px";
     containerTopRight.paddingRight = "20px";
     containerTopRight.thickness = 0; // Rahmen entfernen
@@ -117,9 +117,9 @@ export class UIManager {
     let legendHealth = new GUI.TextBlock();
     legendHealth.text = "Leben";
     legendHealth.color = "white";
-    legendHealth.fontSize = 32;
-    legendHealth.height = "40px";
-    legendHealth.width = "200px";
+    legendHealth.fontSize = 24;
+    legendHealth.height = "50%";
+    legendHealth.width = "100%";
     // **Schwarzen Umriss hinzufügen**
     legendHealth.outlineWidth = 2;
     legendHealth.outlineColor = "black";
@@ -132,7 +132,7 @@ export class UIManager {
     this.healthBar.color = "green";
     this.healthBar.background = "white";
     this.healthBar.value = 100;
-    this.healthBar.height = "40px";
+    this.healthBar.height = "50%";
     this.healthBar.width = "100%";
     this.healthBar.displayThumb = false;
     this.healthBar.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -142,9 +142,9 @@ export class UIManager {
     let legendCollected = new GUI.TextBlock();
     legendCollected.text = "Früchte";
     legendCollected.color = "white";
-    legendCollected.fontSize = 32;
-    legendCollected.height = "40px";
-    legendCollected.width = "200px";
+    legendCollected.fontSize = 24;
+    legendCollected.height = "50%";
+    legendCollected.width = "100%";
     // **Schwarzen Umriss hinzufügen**
     legendCollected.outlineWidth = 2;
     legendCollected.outlineColor = "black";
@@ -157,7 +157,7 @@ export class UIManager {
     this.collectBar.color = "orange";
     this.collectBar.background = "white";
     this.collectBar.value = 0;
-    this.collectBar.height = "40px";
+    this.collectBar.height = "50%";
     this.collectBar.width = "100%";
     this.collectBar.displayThumb = false;
     this.collectBar.horizontalAlignment =
@@ -177,7 +177,7 @@ export class UIManager {
     this.overlayText = new GUI.TextBlock();
     this.overlayText.text = "";
     this.overlayText.color = "white";
-    this.overlayText.fontSize = 48;
+    this.overlayText.fontSize = 24;
     this.overlayText.height = "100px";
     this.overlayText.width = "100%";
     this.overlayText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
