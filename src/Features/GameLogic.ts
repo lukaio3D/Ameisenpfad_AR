@@ -58,7 +58,7 @@ export function GameLogic(
   );
 
   // Funktion zum zufälligen Spawnen von Ameisen innerhalb eines bestimmten Bereichs
-  const spawnAntRandomly = (maxEnemyAnts: number = 2) => {
+  const spawnAntRandomly = (maxEnemyAnts: number = 1) => {
     let enemyAntCount = allAnts.filter(ant => ant instanceof EnemyAnt).length;
     let randomNumber = Math.random();
 
