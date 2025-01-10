@@ -49,7 +49,7 @@ export default function createCamera(canvas, scene) {
     // Kamera-Einstellungen
     camera.fov = 0.9;
     camera.minZ = 0.1;
-    camera.inertia = 0.5;
+    camera.inertia = 0.3;
     camera.angularSensibility = 2000;
     camera.setTarget(new Vector3(0, 1.6, 1));
 
