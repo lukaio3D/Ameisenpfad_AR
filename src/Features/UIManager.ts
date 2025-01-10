@@ -12,10 +12,37 @@ export class UIManager {
   public bigScreen: GUI.Rectangle;
   public dialogContainer: GUI.StackPanel;
   public dialogText: GUI.TextBlock;
+  public startScreen: GUI.Rectangle;
+  public startButton: GUI.Button;
 
   private constructor() {
     // AdvancedTexture erstellen
     this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+    // Startscreen erstellen und konfigurieren
+    this.startScreen = new GUI.Rectangle();
+    this.startScreen.width = "100%";
+    this.startScreen.height = "100%";
+    this.startScreen.background = "black";
+    this.startScreen.thickness = 0;
+    this.advancedTexture.addControl(this.startScreen);
+
+    // Startbutton erstellen und konfigurieren
+    this.startButton = GUI.Button.CreateSimpleButton("startButton", "Start");
+    this.startButton.width = "200px";
+    this.startButton.height = "100px";
+    this.startButton.color = "white";
+    this.startButton.background = "green";
+    this.startButton.fontSize = 24;
+    this.startButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    this.startButton.horizontalAlignment =
+      GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    this.startScreen.addControl(this.startButton);
+
+    // Event Listener für den Startbutton
+    this.startButton.onPointerUpObservable.add(() => {
+      this.startScreen.isVisible = false;
+    });
 
     // Dialogzeile erstellen und konfigurieren
     this.dialogzeile = new GUI.TextBlock();
@@ -157,7 +184,6 @@ export class UIManager {
     this.overlayText.textHorizontalAlignment =
       GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     this.bigScreen.addControl(this.overlayText);
-
   }
 
   // Singleton-Instanz abrufen
