@@ -94,7 +94,7 @@ export class UIManager {
     // Container erstellen und konfigurieren
     let containerTopRight = new GUI.Rectangle();
     containerTopRight.height = "10%";
-    containerTopRight.width = "20%";
+    containerTopRight.width = "40%";
     containerTopRight.paddingTop = "20px";
     containerTopRight.paddingRight = "20px";
     containerTopRight.thickness = 0; // Rahmen entfernen
