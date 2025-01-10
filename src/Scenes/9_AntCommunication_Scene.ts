@@ -42,9 +42,6 @@ export default async function createAntCommunicationScene(
   );
   dirLight.position = new Vector3(0, 5, -5);
 
-  // Skybox erstellen
-  const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
-
   //GroundMesh erstellen
   const groundMesh = MeshBuilder.CreateGround(
     "ground",

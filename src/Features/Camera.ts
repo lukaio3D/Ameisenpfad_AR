@@ -3,18 +3,20 @@ import {
   DeviceOrientationCamera,
   FreeCamera,
   MeshBuilder,
+  PhotoDome,
   Quaternion,
   StandardMaterial,
   Vector3,
   VideoTexture,
 } from "@babylonjs/core";
 
+import treeSkybox from "../assets/SkyBox_GrassAndTrees.jpg";
+
 export default function createCamera(canvas, scene) {
   // Überprüfung, ob das Gerät mobil ist
-  const isMobile =
-    /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
+  const isMobile = /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 
   let camera: FreeCamera;
 
@@ -52,6 +54,9 @@ export default function createCamera(canvas, scene) {
     camera.inertia = 0.3;
     camera.angularSensibility = 2000;
     camera.setTarget(new Vector3(0, 1.6, 1));
+
+    // Skybox erstellen
+    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
