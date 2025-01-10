@@ -28,9 +28,6 @@ export default async function createAntCommunicationScene(
   canvas: HTMLCanvasElement,
   scene: Scene
 ) {
-  //Kamera erstellen
-  createCamera(canvas, scene);
-
   // Licht einrichten
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
   light.intensity = 0.7;
@@ -42,7 +39,7 @@ export default async function createAntCommunicationScene(
   );
   dirLight.position = new Vector3(0, 5, -5);
 
-  //GroundMesh erstellen
+  // GroundMesh erstellen
   const groundMesh = MeshBuilder.CreateGround(
     "ground",
     { width: 5, height: 5 },
@@ -53,7 +50,7 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  //AR Features aktivieren
+  // AR Features aktivieren
   let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
 
   if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
@@ -61,6 +58,8 @@ export default async function createAntCommunicationScene(
     await createARFeatures(scene, sceneParent);
   } else {
     console.log("AR wird nicht unterstützt");
+    // Kamera erstellen für Geräte, die AR nicht unterstützen
+    createCamera(canvas, scene);
   }
 
   // NavigationFeatures erstellen und Crowd erhalten

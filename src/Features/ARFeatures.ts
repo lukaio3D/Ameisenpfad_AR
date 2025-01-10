@@ -23,6 +23,8 @@ export default async function createARFeatures(scene: Scene, sceneParent: Transf
       uiOptions: { sessionMode: "immersive-ar" },
       optionalFeatures: ["anchors", "hit-test"],
     });
+    await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
+    console.log("AR-Session gestartet!");
   } catch (error) {
     console.error("Fehler in createARFeatures:", error);
     uiManager.displayMessage("Fehler: " + error.message);
