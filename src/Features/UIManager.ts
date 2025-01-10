@@ -48,7 +48,7 @@ export class UIManager {
     this.dialogzeile = new GUI.TextBlock();
     this.dialogzeile.text = "";
     this.dialogzeile.color = "white";
-    this.dialogzeile.fontSize = 24;
+    this.dialogzeile.fontSize = "2%";
     this.dialogzeile.height = "5%";
     this.dialogzeile.width = "100%";
     this.dialogzeile.paddingBottom = "24px";
@@ -117,7 +117,7 @@ export class UIManager {
     let legendHealth = new GUI.TextBlock();
     legendHealth.text = "Leben";
     legendHealth.color = "white";
-    legendHealth.fontSize = 24;
+    legendHealth.fontSize = "40%";
     legendHealth.height = "50%";
     legendHealth.width = "100%";
     // **Schwarzen Umriss hinzufügen**
@@ -142,7 +142,7 @@ export class UIManager {
     let legendCollected = new GUI.TextBlock();
     legendCollected.text = "Früchte";
     legendCollected.color = "white";
-    legendCollected.fontSize = 24;
+    legendCollected.fontSize = "40%";
     legendCollected.height = "50%";
     legendCollected.width = "100%";
     // **Schwarzen Umriss hinzufügen**
@@ -177,7 +177,7 @@ export class UIManager {
     this.overlayText = new GUI.TextBlock();
     this.overlayText.text = "";
     this.overlayText.color = "white";
-    this.overlayText.fontSize = 24;
+    this.overlayText.fontSize = "2%";
     this.overlayText.height = "100px";
     this.overlayText.width = "100%";
     this.overlayText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
