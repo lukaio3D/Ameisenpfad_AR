@@ -10,7 +10,7 @@ import {
   VideoTexture,
 } from "@babylonjs/core";
 
-import treeSkybox from "../assets/SkyBox_GrassAndTrees.jpg";
+import treeSkybox from "../assets/woods_4k.jpg";
 
 export default function createCamera(canvas, scene) {
   // Überprüfung, ob das Gerät mobil ist
