@@ -11,60 +11,58 @@ class App {
   }
 
   createStartButton() {
-    // create the start button
-    var startButton = document.createElement("button");
+    // Vollbild-DIV als Startscreen
+    const startScreen = document.createElement("div");
+    startScreen.style.position = "absolute";
+    startScreen.style.top = "0";
+    startScreen.style.left = "0";
+    startScreen.style.width = "100%";
+    startScreen.style.height = "100%";
+    startScreen.style.backgroundColor = "black";
+    document.body.appendChild(startScreen);
+
+    // Titel (H1)
+    const title = document.createElement("h2");
+    title.innerText = "Ameisenpfad AR";
+    title.style.color = "white";
+    title.style.fontFamily = "sans-serif";
+    title.style.textAlign = "center";
+    title.style.marginTop = "20%";
+    startScreen.appendChild(title);
+
+    // Start-Button
+    const startButton = document.createElement("button");
     startButton.innerText = "Start";
-    startButton.style.position = "absolute";
-    startButton.style.top = "50%";
-    startButton.style.left = "50%";
-    startButton.style.transform = "translate(-50%, -50%)";
+    startButton.style.display = "block";
+    startButton.style.margin = "20px auto";
     startButton.style.padding = "10px 20px";
     startButton.style.fontSize = "20px";
-    document.body.appendChild(startButton);
+    startScreen.appendChild(startButton);
 
-    // add event listener to the start button
+    // Klick-Event für den Start-Button
     startButton.addEventListener("click", async () => {
-      // remove the start button
-      startButton.remove();
-
-      // initialize the application
+      startScreen.remove();
       await this.initialize();
     });
   }
 
   async initialize() {
-    // create the canvas html element and attach it to the webpage
-    var canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas");
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
 
-    // initialize babylon scene and engine
-    var engine = new Engine(canvas, true);
-    // This creates a basic Babylon Scene object (non-mesh)
-    var scene = new Scene(engine);
-
-    // Hintergrundfarbe
+    const engine = new Engine(canvas, true);
+    const scene = new Scene(engine);
     scene.clearColor = new Color4(0.95, 0.95, 0.95, 1);
 
-    // UIManager initialisieren
     const uiManager = UIManager.getInstance();
-
-    // create the scene and attach it to sceneParent
     await createAntCommunicationScene(canvas, scene);
 
-    // show the inspector
-    // Inspector.Show(scene, { overlay: true });
-
-    window.addEventListener("resize", function () {
-      engine.resize();
-    });
-
-    // run the main render loop
-    engine.runRenderLoop(() => {
-      scene.render();
-    });
+    window.addEventListener("resize", () => engine.resize());
+    engine.runRenderLoop(() => scene.render());
   }
 }
+
 new App();
