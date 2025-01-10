@@ -8,13 +8,15 @@ import {
   StandardMaterial,
   Vector3,
   VideoTexture,
+  Color3,
+  Scene,
 } from "@babylonjs/core";
 
 import treeSkybox from "../assets/woods_4k.jpg";
 
-export default function createCamera(canvas, scene) {
+export default async function createCamera(canvas: HTMLCanvasElement, scene: Scene) {
   // Überprüfung, ob das Gerät mobil ist
-  const isMobile = /Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   );
 
@@ -27,7 +29,7 @@ export default function createCamera(canvas, scene) {
       typeof (DeviceOrientationEvent as any).requestPermission === "function"
     ) {
       try {
-        const permission = (DeviceOrientationEvent as any).requestPermission();
+        const permission = await (DeviceOrientationEvent as any).requestPermission();
         if (permission !== "granted") {
           console.error("DeviceOrientation Berechtigung nicht erteilt");
           return;
@@ -42,7 +44,7 @@ export default function createCamera(canvas, scene) {
     }
 
     // Kamera erstellen
-    const camera = new DeviceOrientationCamera(
+    camera = new DeviceOrientationCamera(
       "camera",
       new Vector3(0, 1.6, -0.5), // Augenhöhe
       scene
@@ -77,14 +79,10 @@ export default function createCamera(canvas, scene) {
       }
     });
   } else {
-    const camera = new ArcRotateCamera(
-      "camera",
-      -Math.PI / 2,
-      Math.PI / 4,
-      10,
-      new Vector3(0, 0, 2.5),
-      scene
-    );
-    camera.attachControl(canvas, true);
+    // Desktop-Kamera-Setup
+    camera = new FreeCamera("camera", new Vector3(0, 10, -10), scene);
+    camera.setTarget(Vector3.Zero());
   }
+
+  return camera;
 }
