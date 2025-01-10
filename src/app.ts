@@ -1,14 +1,35 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/loaders/glTF";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
-import { Color4, Engine, Scene, TransformNode } from "@babylonjs/core";
-import { Inspector } from "@babylonjs/inspector";
+import { Color4, Engine, Scene } from "@babylonjs/core";
 import { UIManager } from "./Features/UIManager";
-import createARFeatures from "./Features/ARFeatures";
+import createCamera from "./Features/Camera";
 
 class App {
   constructor() {
-    this.initialize();
+    this.createStartButton();
+  }
+
+  createStartButton() {
+    // create the start button
+    var startButton = document.createElement("button");
+    startButton.innerText = "Start";
+    startButton.style.position = "absolute";
+    startButton.style.top = "50%";
+    startButton.style.left = "50%";
+    startButton.style.transform = "translate(-50%, -50%)";
+    startButton.style.padding = "10px 20px";
+    startButton.style.fontSize = "20px";
+    document.body.appendChild(startButton);
+
+    // add event listener to the start button
+    startButton.addEventListener("click", async () => {
+      // remove the start button
+      startButton.remove();
+
+      // initialize the application
+      await this.initialize();
+    });
   }
 
   async initialize() {

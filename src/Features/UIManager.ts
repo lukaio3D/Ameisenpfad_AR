@@ -19,31 +19,6 @@ export class UIManager {
     // AdvancedTexture erstellen
     this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-    // Startscreen erstellen und konfigurieren
-    this.startScreen = new GUI.Rectangle();
-    this.startScreen.width = "100%";
-    this.startScreen.height = "100%";
-    this.startScreen.background = "black";
-    this.startScreen.thickness = 0;
-    this.advancedTexture.addControl(this.startScreen);
-
-    // Startbutton erstellen und konfigurieren
-    this.startButton = GUI.Button.CreateSimpleButton("startButton", "Start");
-    this.startButton.width = "20%";
-    this.startButton.height = "10%";
-    this.startButton.color = "white";
-    this.startButton.background = "green";
-    this.startButton.fontSize = 24;
-    this.startButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    this.startButton.horizontalAlignment =
-      GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    this.startScreen.addControl(this.startButton);
-
-    // Event Listener für den Startbutton
-    this.startButton.onPointerUpObservable.add(() => {
-      this.startScreen.isVisible = false;
-    });
-
     // Dialogzeile erstellen und konfigurieren
     this.dialogzeile = new GUI.TextBlock();
     this.dialogzeile.text = "";
