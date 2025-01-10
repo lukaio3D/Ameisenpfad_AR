@@ -51,7 +51,7 @@ export class UIManager {
     this.dialogzeile.fontSize = "2%";
     this.dialogzeile.height = "5%";
     this.dialogzeile.width = "100%";
-    this.dialogzeile.paddingBottom = "24px";
+    this.dialogzeile.paddingBottom = "10%";
     this.dialogzeile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     this.dialogzeile.textHorizontalAlignment =
       GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -94,7 +94,7 @@ export class UIManager {
     // Container erstellen und konfigurieren
     let containerTopRight = new GUI.Rectangle();
     containerTopRight.height = "10%";
-    containerTopRight.width = "40%";
+    containerTopRight.width = "60%";
     containerTopRight.paddingTop = "20px";
     containerTopRight.paddingRight = "20px";
     containerTopRight.thickness = 0; // Rahmen entfernen
