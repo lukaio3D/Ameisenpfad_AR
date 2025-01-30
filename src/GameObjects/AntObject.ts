@@ -15,14 +15,16 @@ import {
   PBRMaterial,
 } from "@babylonjs/core";
 
-import antModel from "../assets/240920_AntAnim.glb";
+import antModel from "../assets/Phase_01_January27_CombinedActions.glb";
 
 export default class AntObject extends Mesh {
   public ready: Promise<void>;
-  private antAnimationGroup: AnimationGroup;
   private antIndex: number;
   private antMesh: AbstractMesh;
   protected antSpeed: number = 0.5;
+  protected antScale: number = 0.05;
+  protected animationGroups: AnimationGroup[];
+  protected currentAnimation: AnimationGroup;
   protected scene: Scene;
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
@@ -59,11 +61,11 @@ export default class AntObject extends Mesh {
   private async initialize() {
     await this.createAntMesh(this.scene);
     this.addAntToCrowd(this.crowd);
-    this.showBoundingBox = false;
+    this.showBoundingBox = true;
     this.setBoundingInfo(
       new BoundingInfo(
-        new Vector3(-0.25, -0.25, -0.5),
-        new Vector3(0.25, 0.25, 0.5)
+        new Vector3(-3, -3, -6),
+        new Vector3(3, 3, 6)
       )
     );
     this.rotateAntOnMove(this.scene);
@@ -80,15 +82,15 @@ export default class AntObject extends Mesh {
     this.antMesh.position = Vector3.Zero();
 
     // Skalierung einstellen
-    this.scaling = new Vector3(0.7, 0.7, 0.7);
+    this.scaling = new Vector3(this.antScale, this.antScale, this.antScale);
 
     // Optionale Rotation
-    this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
+    // this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
 
     // Animation zuweisen
     if (result.animationGroups.length > 0) {
-      this.antAnimationGroup = result.animationGroups[0];
-      this.antAnimationGroup.stop(true);
+      this.animationGroups = result.animationGroups;
+      this.currentAnimation = this.animationGroups[1];
     }
 
     // Materialien der geladenen Meshes anpassen
@@ -122,25 +124,37 @@ export default class AntObject extends Mesh {
     });
   }
 
-  private animateAntOnMove(scene: Scene) {
+  private async animateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-      this.antAnimationGroup.start(true);
-      this.antAnimationGroup.loopAnimation = true;
-      this.updateAnimationSpeed();
+      // Stellen Sie sicher, dass genug AnimationGroups vorhanden sind
+      if (!this.animationGroups || this.animationGroups.length < 5) {
+        console.error("AnimationGroups nicht korrekt geladen");
+        return; // Kein Zugriff auf [1] oder [4] möglich
+      }
+
+      const velocity = this.crowd.getAgentVelocity(this.antIndex);
+      const speed = velocity.length() * 3.5;
+
+      // Idle if speed < 0.1
+      if (speed < 0.1) {
+        if (this.currentAnimation !== this.animationGroups[1]) {
+          this.currentAnimation?.stop();
+          this.currentAnimation = this.animationGroups[1];
+          this.currentAnimation.start(true);
+          this.currentAnimation.loopAnimation = true;
+        }
+        this.currentAnimation.speedRatio = 1;
+      } else {
+        // Run if speed >= 0.1
+        if (this.currentAnimation !== this.animationGroups[4]) {
+          this.currentAnimation?.stop();
+          this.currentAnimation = this.animationGroups[4];
+          this.currentAnimation.start(true);
+          this.currentAnimation.loopAnimation = true;
+        }
+        this.currentAnimation.speedRatio = speed;
+      }
     });
-  }
-
-  private updateAnimationSpeed() {
-    // Agentengeschwindigkeit abrufen
-    const velocity = this.crowd.getAgentVelocity(this.antIndex);
-
-    // Geschwindigkeit berechnen (Betrag des Vektors)
-    const speed = velocity.length() * 1.3;
-
-    // speedRatio setzen (Multiplizieren Sie ggf. mit einem Faktor zur Anpassung)
-    if (this.antAnimationGroup) {
-      this.antAnimationGroup.speedRatio = speed; // 0.5 ist ein Beispiel-Faktor
-    }
   }
 
   public getMesh(): AbstractMesh {
