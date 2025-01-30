@@ -82,6 +82,7 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     // Desktop-Kamera-Setup
     camera = new FreeCamera("camera", new Vector3(0, 10, -10), scene);
     camera.setTarget(Vector3.Zero());
+    camera.attachControl(canvas, true);
   }
 
   return camera;
