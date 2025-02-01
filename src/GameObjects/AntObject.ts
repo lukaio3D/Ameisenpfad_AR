@@ -13,6 +13,7 @@ import {
   Material,
   Mesh,
   PBRMaterial,
+  AsyncCoroutine,
 } from "@babylonjs/core";
 
 import antModel from "../assets/Phase_01_January27_CombinedActions.glb";
@@ -25,6 +26,8 @@ export default class AntObject extends Mesh {
   protected antScale: number = 0.05;
   protected animationGroups: AnimationGroup[];
   protected currentAnimation: AnimationGroup;
+  private idle: AnimationGroup;
+  private run: AnimationGroup;
   protected scene: Scene;
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
@@ -61,7 +64,7 @@ export default class AntObject extends Mesh {
   private async initialize() {
     await this.createAntMesh(this.scene);
     this.addAntToCrowd(this.crowd);
-    this.showBoundingBox = true;
+    this.showBoundingBox = false;
     this.setBoundingInfo(
       new BoundingInfo(
         new Vector3(-3, -3, -6),
@@ -70,6 +73,8 @@ export default class AntObject extends Mesh {
     );
     this.rotateAntOnMove(this.scene);
     this.animateAntOnMove(this.scene);
+    this.idle = this.animationGroups[1];
+    this.run = this.animationGroups[4];
   }
 
   private async createAntMesh(scene: Scene) {
@@ -90,7 +95,8 @@ export default class AntObject extends Mesh {
     // Animation zuweisen
     if (result.animationGroups.length > 0) {
       this.animationGroups = result.animationGroups;
-      this.currentAnimation = this.animationGroups[1];
+      this.animationGroups[0].stop();
+      this.animationGroups[1].start(true);
     }
 
     // Materialien der geladenen Meshes anpassen
@@ -137,24 +143,36 @@ export default class AntObject extends Mesh {
 
       // Idle if speed < 0.1
       if (speed < 0.1) {
-        if (this.currentAnimation !== this.animationGroups[1]) {
-          this.currentAnimation?.stop();
-          this.currentAnimation = this.animationGroups[1];
-          this.currentAnimation.start(true);
-          this.currentAnimation.loopAnimation = true;
+        if (this.currentAnimation !== this.idle) {
+          this.currentAnimation = this.idle
+          this.scene.onBeforeRenderObservable.runCoroutineAsync(this.blendToAnimation(this.idle, this.run));
         }
         this.currentAnimation.speedRatio = 1;
       } else {
         // Run if speed >= 0.1
-        if (this.currentAnimation !== this.animationGroups[4]) {
-          this.currentAnimation?.stop();
-          this.currentAnimation = this.animationGroups[4];
-          this.currentAnimation.start(true);
-          this.currentAnimation.loopAnimation = true;
+        if (this.currentAnimation !== this.run) {
+          this.currentAnimation = this.run;
+          this.scene.onBeforeRenderObservable.runCoroutineAsync(this.blendToAnimation(this.run, this.idle));
         }
         this.currentAnimation.speedRatio = speed;
       }
     });
+  }
+
+  *blendToAnimation(toAnim: AnimationGroup, fromAnim: AnimationGroup): AsyncCoroutine<void> {
+    let currentWeight = 1;
+    let newWeight = 0;
+
+    toAnim.play(true);
+
+    while (newWeight < 1) {
+      currentWeight -= 0.05;
+      newWeight += 0.05;
+      toAnim.setWeightForAllAnimatables(newWeight);
+      fromAnim.setWeightForAllAnimatables(currentWeight);
+      yield;
+    }
+    
   }
 
   public getMesh(): AbstractMesh {
