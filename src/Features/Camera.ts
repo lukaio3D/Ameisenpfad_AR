@@ -80,8 +80,8 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     });
   } else {
     // Desktop-Kamera-Setup
-    camera = new FreeCamera("camera", new Vector3(0, 10, -10), scene);
-    camera.setTarget(Vector3.Zero());
+    camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
+    camera.setTarget(new Vector3(0, 0, 2.5));
     camera.attachControl(canvas, true);
   }
 
