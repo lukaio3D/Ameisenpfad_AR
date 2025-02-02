@@ -37,6 +37,7 @@ export default class FriendAnt extends NonPlayerAnt {
   private initializeFriendAnt(scene: Scene, playerAnt: PlayerAnt) {
     this.randomMove();
     this.friendMaterial = new StandardMaterial("FriendMaterial", this.scene);
-    this.friendMaterial.diffuseColor = new Color3(1, 0, 0); // Rotes Material für friend Ant
+    this.friendMaterial.diffuseColor = new Color3(1, 0, 0); // Rotes Material für Friend Ant
+    this.friendMaterial.specularColor = new Color3(0, 0, 0); // Kein Glanz für mattes Material
   }
 }

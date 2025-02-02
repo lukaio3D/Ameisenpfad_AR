@@ -1,5 +1,6 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/loaders/glTF";
+import "@babylonjs/inspector";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
 import { Color4, Engine, Scene } from "@babylonjs/core";
 import { UIManager } from "./Features/UIManager";
@@ -59,6 +60,8 @@ class App {
 
     const uiManager = UIManager.getInstance();
     await createAntCommunicationScene(canvas, scene);
+
+    //scene.debugLayer.show();
 
     window.addEventListener("resize", () => engine.resize());
     engine.runRenderLoop(() => scene.render());

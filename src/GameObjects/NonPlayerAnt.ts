@@ -91,7 +91,7 @@ export default class NonPlayerAnt extends AntObject {
       PlayerController(this.scene, this.playerAnt).enableControl();
       this.isIdentified = true;
       this.isIdentifying = false;
-    }, 5000); // Wechselt nach 3,5 Sekunden zu "runAway"
+    }, 6000); // Wechselt nach 3,5 Sekunden zu "runAway"
   }
 
   public followPlayerAnt() {
@@ -133,16 +133,20 @@ export default class NonPlayerAnt extends AntObject {
   public attackPlayerAnt() {
     if (!this.isAttacking) {
       this.fireAntAction("attack");
+      // Ant attack animation initiated; freeze movement at current position
+      this.moveAnt(this.position);
+      
+      // Apply damage and update the health bar
       this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
       UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
+      this.isAttacking = true;
+      
+      // After the stand duration, change to "runAway" state
+      setTimeout(() => {
+        this.changeBehaviourState("runAway");
+        this.isAttacking = false;
+      }, 2000);
     }
-    this.isAttacking = true;
-    // Ihre bestehende Angriffslogik
-
-    // Nach dem Angriff zum "runAway"-Zustand wechseln
-    setTimeout(() => {
-      this.changeBehaviourState("runAway"), 1000;
-    });
   }
 
   private previousBehaviourState: string = "";

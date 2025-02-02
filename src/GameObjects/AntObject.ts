@@ -14,6 +14,7 @@ import {
   Mesh,
   PBRMaterial,
   AsyncCoroutine,
+  Quaternion,
 } from "@babylonjs/core";
 
 import antModel from "../assets/250131_AntAnimated_Phase2.glb";
@@ -119,10 +120,29 @@ export default class AntObject extends Mesh {
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.2 && !this.actionIsFired) {
-        this.lookAt(
-          this.crowd.getAgentVelocity(this.antIndex).add(this.position)
-        );
+      const velocity = this.crowd.getAgentVelocity(this.antIndex);
+      if (velocity.length() > 0.2 && !this.actionIsFired) {
+        // Bestimme das Ziel basierend auf der Bewegungsrichtung
+        const targetPosition = this.position.add(velocity);
+        const direction = targetPosition.subtract(this.position).normalize();
+        // Erzeuge die Zielrotation basierend auf der Richtungsvektor
+        let targetRotation = Quaternion.FromLookDirectionLH(direction, Vector3.Up());
+        // Korrigiere die Rotation um 180° (pi) um das Modell richtig auszurichten
+        const correction = Quaternion.RotationAxis(Vector3.Up(), Math.PI);
+        targetRotation = targetRotation.multiply(correction);
+        
+        // Falls noch keine RotationQuaternion existiert, initialisiere sie
+        if (!this.rotationQuaternion) {
+          this.rotationQuaternion = targetRotation;
+        } else {
+          // Führe eine Slerp-Interpolation für einen weichen Übergang durch
+          Quaternion.SlerpToRef(
+            this.rotationQuaternion,
+            targetRotation,
+            0.1, // Smoothness-Faktor, anpassbar
+            this.rotationQuaternion
+          );
+        }
       }
     });
   }

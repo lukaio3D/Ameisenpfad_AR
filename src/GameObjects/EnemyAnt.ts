@@ -37,6 +37,7 @@ export default class EnemyAnt extends NonPlayerAnt {
   private initializeEnemyAnt(scene: Scene, playerAnt: PlayerAnt) {
     this.randomMove();
     this.enemyMaterial = new StandardMaterial("enemyMaterial", this.scene);
-    this.enemyMaterial.diffuseColor = new Color3(1, 0, 0); // Rotes Material für Enemy Ant
+    this.enemyMaterial.diffuseColor = new Color3(1, 0, 0); // Rote Farbe
+    this.enemyMaterial.specularColor = new Color3(0, 0, 0); // Kein Glanz für ein mattes Material
   }
 }
