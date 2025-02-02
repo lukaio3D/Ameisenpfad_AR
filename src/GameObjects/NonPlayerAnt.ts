@@ -61,8 +61,9 @@ export default class NonPlayerAnt extends AntObject {
 
   public identifyPlayerAnt() {
     // Bewegen Sie die Ameise zur festen Position in der Nähe der Spielerameise
-
     PlayerController(this.scene, this.playerAnt).disableControl();
+    this.fireAntAction("betrillernNPC");
+    this.playerAnt.fireAntAction("betrillernPlayer");
 
     // Position the NonPlayerAnt directly in front of the PlayerAnt
     const directionToPlayer = this.playerAnt.position
@@ -82,7 +83,7 @@ export default class NonPlayerAnt extends AntObject {
 
     setTimeout(() => {
       this.changeColor(this.identifierColor);
-    }, 3000); // Farbe ändern
+    }, 4300); // Farbe ändern
 
     // Nach Ablauf der Zeit den Zustand ändern
     setTimeout(() => {
@@ -90,7 +91,7 @@ export default class NonPlayerAnt extends AntObject {
       PlayerController(this.scene, this.playerAnt).enableControl();
       this.isIdentified = true;
       this.isIdentifying = false;
-    }, 3500); // Wechselt nach 3,5 Sekunden zu "runAway"
+    }, 5000); // Wechselt nach 3,5 Sekunden zu "runAway"
   }
 
   public followPlayerAnt() {
@@ -123,7 +124,6 @@ export default class NonPlayerAnt extends AntObject {
     // Ihre Heilungslogik
     if (this.playerAnt.getHealth() < 80) {
       this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
-      this.antDispose();
     } else {
       this.playerAnt.setHealth(100);
     }
@@ -132,6 +132,7 @@ export default class NonPlayerAnt extends AntObject {
 
   public attackPlayerAnt() {
     if (!this.isAttacking) {
+      this.fireAntAction("attack");
       this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
       UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
     }
@@ -183,6 +184,7 @@ export default class NonPlayerAnt extends AntObject {
         case "attackPlayerAnt":
           // Soll nur einmal ausgeführt werden, wenn der Zustand auf "attackPlayerAnt" geändert wird
           if (!this.isAttacking) {
+            
             this.attackPlayerAnt();
             this.randomMove(false); // Falls nötig
             this.isRandomMoving = false; // Falls nötig

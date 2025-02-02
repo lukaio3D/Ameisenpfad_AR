@@ -16,7 +16,7 @@ import {
   AsyncCoroutine,
 } from "@babylonjs/core";
 
-import antModel from "../assets/Phase_01_January27_CombinedActions.glb";
+import antModel from "../assets/250131_AntAnimated_Phase2.glb";
 
 export default class AntObject extends Mesh {
   public ready: Promise<void>;
@@ -28,15 +28,16 @@ export default class AntObject extends Mesh {
   protected currentAnimation: AnimationGroup;
   private idle: AnimationGroup;
   private run: AnimationGroup;
+  private actionIsFired: boolean = false;
   protected scene: Scene;
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
   protected agentParams: IAgentParameters = {
-    radius: 0.05,
+    radius: 0.1,
     height: 0.05,
     maxAcceleration: 4.0,
     maxSpeed: 0.5,
-    collisionQueryRange: 0.3,
+    collisionQueryRange: 0.5,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
   };
@@ -66,21 +67,18 @@ export default class AntObject extends Mesh {
     this.addAntToCrowd(this.crowd);
     this.showBoundingBox = false;
     this.setBoundingInfo(
-      new BoundingInfo(
-        new Vector3(-3, -3, -6),
-        new Vector3(3, 3, 6)
-      )
+      new BoundingInfo(new Vector3(-3, -3, -6), new Vector3(3, 3, 6))
     );
     this.rotateAntOnMove(this.scene);
     this.animateAntOnMove(this.scene);
-    this.idle = this.animationGroups[1];
-    this.run = this.animationGroups[4];
+    this.idle = this.animationGroups[3];
+    this.run = this.animationGroups[6];
   }
 
   private async createAntMesh(scene: Scene) {
     const result = await SceneLoader.ImportMeshAsync("", antModel, "", scene);
     this.antMesh = result.meshes[0];
-
+    console.log(result);
     // Parent zuweisen
     this.antMesh.parent = this;
 
@@ -96,7 +94,6 @@ export default class AntObject extends Mesh {
     if (result.animationGroups.length > 0) {
       this.animationGroups = result.animationGroups;
       this.animationGroups[0].stop();
-      this.animationGroups[1].start(true);
     }
 
     // Materialien der geladenen Meshes anpassen
@@ -122,7 +119,7 @@ export default class AntObject extends Mesh {
 
   private rotateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
-      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.2) {
+      if (this.crowd.getAgentVelocity(this.antIndex).length() > 0.2 && !this.actionIsFired) {
         this.lookAt(
           this.crowd.getAgentVelocity(this.antIndex).add(this.position)
         );
@@ -133,8 +130,7 @@ export default class AntObject extends Mesh {
   private async animateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
       // Stellen Sie sicher, dass genug AnimationGroups vorhanden sind
-      if (!this.animationGroups || this.animationGroups.length < 5) {
-        console.error("AnimationGroups nicht korrekt geladen");
+      if (!this.animationGroups || this.actionIsFired) {
         return; // Kein Zugriff auf [1] oder [4] möglich
       }
 
@@ -144,24 +140,65 @@ export default class AntObject extends Mesh {
       // Idle if speed < 0.1
       if (speed < 0.1) {
         if (this.currentAnimation !== this.idle) {
-          this.currentAnimation = this.idle
-          this.scene.onBeforeRenderObservable.runCoroutineAsync(this.blendToAnimation(this.idle, this.run));
+          this.currentAnimation = this.idle;
+          this.scene.onBeforeRenderObservable.runCoroutineAsync(
+            this.blendToAnimation(this.idle, this.run)
+          );
         }
         this.currentAnimation.speedRatio = 1;
       } else {
         // Run if speed >= 0.1
         if (this.currentAnimation !== this.run) {
           this.currentAnimation = this.run;
-          this.scene.onBeforeRenderObservable.runCoroutineAsync(this.blendToAnimation(this.run, this.idle));
+          this.scene.onBeforeRenderObservable.runCoroutineAsync(
+            this.blendToAnimation(this.run, this.idle)
+          );
         }
         this.currentAnimation.speedRatio = speed;
       }
     });
   }
 
-  *blendToAnimation(toAnim: AnimationGroup, fromAnim: AnimationGroup): AsyncCoroutine<void> {
+  public fireAntAction(action: string) {
+    this.actionIsFired = true;
+    this.currentAnimation.stop();
+
+    const animationFire = (animationIndex: number) => {
+      this.animationGroups[animationIndex].start();
+      this.animationGroups[animationIndex].onAnimationEndObservable.addOnce(
+        () => {
+          this.animationGroups[animationIndex].stop();
+          this.actionIsFired = false;
+        }
+      );
+    };
+
+    switch (action) {
+      case "betrillernNPC":
+        animationFire(0);
+        break;
+      case "betrillernPlayer":
+        animationFire(1);
+        break;
+      case "feeding":
+        animationFire(10);
+        break;
+      case "attack":
+        animationFire(8);
+        break;
+    }
+  }
+
+  *blendToAnimation(
+    toAnim: AnimationGroup,
+    fromAnim: AnimationGroup
+  ): AsyncCoroutine<void> {
     let currentWeight = 1;
     let newWeight = 0;
+
+    this.animationGroups.forEach((anim) => {
+      anim.stop();
+    });
 
     toAnim.play(true);
 
@@ -172,7 +209,6 @@ export default class AntObject extends Mesh {
       fromAnim.setWeightForAllAnimatables(currentWeight);
       yield;
     }
-    
   }
 
   public getMesh(): AbstractMesh {
