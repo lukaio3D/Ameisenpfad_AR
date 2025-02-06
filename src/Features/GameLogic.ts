@@ -58,9 +58,13 @@ export function GameLogic(
   );
 
   // Funktion zum zufälligen Spawnen von Ameisen innerhalb eines bestimmten Bereichs
-  const spawnAntRandomly = (maxEnemyAnts: number = 1) => {
-    let enemyAntCount = allAnts.filter((ant) => ant instanceof EnemyAnt).length;
-    let randomNumber = Math.random();
+  const spawnAntRandomly = (
+    maxEnemyAnts: number = 1,
+    maxFriendAnts: number = 2
+  ) => {
+    const enemyAntCount = allAnts.filter((ant) => ant instanceof EnemyAnt).length;
+    const friendAntCount = allAnts.filter((ant) => ant instanceof FriendAnt).length;
+    const randomNumber = Math.random();
 
     // Zufällige x-Koordinate zwischen -2.5 und 2.5
     const spawnX = Math.random() * (2.5 - -2.5) + -2.5;
@@ -68,6 +72,7 @@ export function GameLogic(
     const spawnZ = 5;
     const spawnPoint = new Vector3(spawnX, spawnY, spawnZ);
 
+    // Feindliche Ameise (EnemyAnt) spawnen, wenn Platz ist
     if (randomNumber > 0.5 && enemyAntCount < maxEnemyAnts) {
       const enemyAnt = new EnemyAnt(
         spawnPoint,
@@ -77,7 +82,9 @@ export function GameLogic(
         playerAnt
       );
       allAnts.push(enemyAnt);
-    } else {
+    }
+    // Freundliche Ameise (FriendAnt) spawnen, wenn Platz ist
+    else if (friendAntCount < maxFriendAnts) {
       const friendAnt = new FriendAnt(
         spawnPoint,
         scene,
@@ -133,11 +140,12 @@ export function GameLogic(
           ant.setBehaviourState("attackPlayerAnt");
       }
     } else if (ant instanceof FriendAnt) {
-      if (!ant.getIsIdentified()) {
+      if (!ant.getIsIdentified() ) {
         ant.setBehaviourState("identifyPlayerAnt");
       }
-      else if(playerAnt.getHealth() < 100) {
-        ant.healPlayerAnt();
+      else if(playerAnt.getHealth() < 100 && !ant.getIsFeeding()) {
+        console.log("Feeding");
+        ant.setBehaviourState("feedPlayerAnt");
       }
     }
   }

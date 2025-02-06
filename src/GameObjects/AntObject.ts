@@ -38,7 +38,7 @@ export default class AntObject extends Mesh {
     height: 0.05,
     maxAcceleration: 4.0,
     maxSpeed: 0.5,
-    collisionQueryRange: 0.5,
+    collisionQueryRange: 0.3,
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
   };
@@ -79,7 +79,6 @@ export default class AntObject extends Mesh {
   private async createAntMesh(scene: Scene) {
     const result = await SceneLoader.ImportMeshAsync("", antModel, "", scene);
     this.antMesh = result.meshes[0];
-    console.log(result);
     // Parent zuweisen
     this.antMesh.parent = this;
 
@@ -182,14 +181,15 @@ export default class AntObject extends Mesh {
   public fireAntAction(action: string) {
     this.actionIsFired = true;
     this.currentAnimation.stop();
+    console.log("Action fired: " + action);
 
     const animationFire = (animationIndex: number) => {
-      console.log("Firing animation: ", this.animationGroups[animationIndex]);
       this.animationGroups[animationIndex].start();
       this.animationGroups[animationIndex].loopAnimation = false;
-      this.animationGroups[animationIndex].onAnimationEndObservable.addOnce(
+      this.animationGroups[animationIndex].onAnimationGroupEndObservable.addOnce(
         () => {
           this.actionIsFired = false;
+          console.log("Animation ended");
         }
       );
     };

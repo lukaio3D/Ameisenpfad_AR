@@ -13,6 +13,7 @@ export default class NonPlayerAnt extends AntObject {
   private isRandomMoving: boolean = false;
   private isIdentifying: boolean = false;
   private isAttacking: boolean = false;
+  private isFeeding: boolean = false;
 
   constructor(
     antType: string = "NonPlayerAnt",
@@ -59,6 +60,10 @@ export default class NonPlayerAnt extends AntObject {
     this.isAttacking = isAttacking;
   }
 
+  public getIsFeeding() {
+    return this.isFeeding;
+  }
+
   public identifyPlayerAnt() {
     // Bewegen Sie die Ameise zur festen Position in der Nähe der Spielerameise
     PlayerController(this.scene, this.playerAnt).disableControl();
@@ -91,7 +96,7 @@ export default class NonPlayerAnt extends AntObject {
       PlayerController(this.scene, this.playerAnt).enableControl();
       this.isIdentified = true;
       this.isIdentifying = false;
-    }, 11000); // Wechselt nach 3,5 Sekunden zu "runAway"
+    }, 11500); // Wechselt nach 3,5 Sekunden zu "runAway"
   }
 
   public followPlayerAnt() {
@@ -117,19 +122,21 @@ export default class NonPlayerAnt extends AntObject {
     setTimeout(() => {
       this.changeBehaviourState("randomMove");
       this.isAttacking = false;
+      this.isFeeding = false;
     }, 5000); // Dauer des Weglaufens
   }
 
   public healPlayerAnt() {
     // Ihre Heilungslogik
     PlayerController(this.scene, this.playerAnt).disableControl();
+    this.isFeeding = true;
     this.fireAntAction("feeding");
     this.playerAnt.fireAntAction("receiveFood");
     // Position the NonPlayerAnt directly in front of the PlayerAnt
     const directionToPlayer = this.playerAnt.position
       .subtract(this.position)
       .normalize();
-    const offsetDistance = 0.3; // Adjust as needed
+    const offsetDistance = 0.35; // Adjust as needed
     const newPosition = this.playerAnt.position.subtract(
       directionToPlayer.scale(offsetDistance)
     );
@@ -139,7 +146,6 @@ export default class NonPlayerAnt extends AntObject {
     // Rotate the PlayerAnt to face the NonPlayerAnt
     this.playerAnt.moveAnt(this.playerAnt.position);
     this.playerAnt.lookAt(this.position);
-    this.isIdentifying = true;
 
     // After the stand duration, change to "runAway" state
     setTimeout(() => {
@@ -151,10 +157,9 @@ export default class NonPlayerAnt extends AntObject {
       }
       UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
       this.changeBehaviourState("runAway");
-      this.isAttacking = false;
       PlayerController(this.scene, this.playerAnt).enableControl();
-    }, 8000);
-    UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
+    }, 10500);
+    
   }
 
   public attackPlayerAnt() {
@@ -218,6 +223,14 @@ export default class NonPlayerAnt extends AntObject {
             this.attackPlayerAnt();
             this.randomMove(false); // Falls nötig
             this.isRandomMoving = false; // Falls nötig
+          }
+          break;
+
+        case "feedPlayerAnt":
+          if(!this.isFeeding) {
+            this.healPlayerAnt();
+            this.randomMove(false); // Falls nötig
+            this.isRandomMoving = false; // Falls nötig 
           }
           break;
 
