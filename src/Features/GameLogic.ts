@@ -59,11 +59,11 @@ export function GameLogic(
 
   // Funktion zum zufälligen Spawnen von Ameisen innerhalb eines bestimmten Bereichs
   const spawnAntRandomly = (maxEnemyAnts: number = 1) => {
-    let enemyAntCount = allAnts.filter(ant => ant instanceof EnemyAnt).length;
+    let enemyAntCount = allAnts.filter((ant) => ant instanceof EnemyAnt).length;
     let randomNumber = Math.random();
 
     // Zufällige x-Koordinate zwischen -2.5 und 2.5
-    const spawnX = Math.random() * (2.5 - (-2.5)) + (-2.5);
+    const spawnX = Math.random() * (2.5 - -2.5) + -2.5;
     const spawnY = 0;
     const spawnZ = 5;
     const spawnPoint = new Vector3(spawnX, spawnY, spawnZ);
@@ -103,7 +103,10 @@ export function GameLogic(
     const antMesh = ant;
     const proximityMesh = playerAnt.getCheckProximityMesh();
 
-    if (ant.getBehaviourState()==="attackPlayerAnt" || ant.getBehaviourState()==="identifyPlayerAnt") {
+    if (
+      ant.getBehaviourState() === "attackPlayerAnt" ||
+      ant.getBehaviourState() === "identifyPlayerAnt"
+    ) {
       return;
     }
 
@@ -119,24 +122,23 @@ export function GameLogic(
     // Überprüfen, ob das Proximity-Mesh das Ant-Mesh schneidet
     else if (proximityMesh.intersectsMesh(antMesh, false)) {
       handleFarProximity(ant);
-    } 
+    }
   }
 
   function handleCloseProximity(ant: NonPlayerAnt) {
     if (ant instanceof EnemyAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
-      } else {
-        ant.setBehaviourState("attackPlayerAnt");
+      } else if (ant.getBehaviourState() !== "runAway") {
+          ant.setBehaviourState("attackPlayerAnt");
       }
     } else if (ant instanceof FriendAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
-        setTimeout(() => {
-        if(playerAnt.getHealth() < 100) {
-          ant.healPlayerAnt();
-        }}, 3500);
-      } 
+      }
+      else if(playerAnt.getHealth() < 100) {
+        ant.healPlayerAnt();
+      }
     }
   }
 

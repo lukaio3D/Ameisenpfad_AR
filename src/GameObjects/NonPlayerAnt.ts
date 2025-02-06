@@ -83,7 +83,7 @@ export default class NonPlayerAnt extends AntObject {
 
     setTimeout(() => {
       this.changeColor(this.identifierColor);
-    }, 4300); // Farbe ändern
+    }, 8000); // Farbe ändern
 
     // Nach Ablauf der Zeit den Zustand ändern
     setTimeout(() => {
@@ -91,7 +91,7 @@ export default class NonPlayerAnt extends AntObject {
       PlayerController(this.scene, this.playerAnt).enableControl();
       this.isIdentified = true;
       this.isIdentifying = false;
-    }, 6000); // Wechselt nach 3,5 Sekunden zu "runAway"
+    }, 11000); // Wechselt nach 3,5 Sekunden zu "runAway"
   }
 
   public followPlayerAnt() {
@@ -122,30 +122,58 @@ export default class NonPlayerAnt extends AntObject {
 
   public healPlayerAnt() {
     // Ihre Heilungslogik
-    if (this.playerAnt.getHealth() < 80) {
-      this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
-    } else {
-      this.playerAnt.setHealth(100);
-    }
+    PlayerController(this.scene, this.playerAnt).disableControl();
+    this.fireAntAction("feeding");
+    this.playerAnt.fireAntAction("receiveFood");
+    // Position the NonPlayerAnt directly in front of the PlayerAnt
+    const directionToPlayer = this.playerAnt.position
+      .subtract(this.position)
+      .normalize();
+    const offsetDistance = 0.3; // Adjust as needed
+    const newPosition = this.playerAnt.position.subtract(
+      directionToPlayer.scale(offsetDistance)
+    );
+    this.moveAnt(newPosition);
+    this.lookAt(this.playerAnt.position);
+
+    // Rotate the PlayerAnt to face the NonPlayerAnt
+    this.playerAnt.moveAnt(this.playerAnt.position);
+    this.playerAnt.lookAt(this.position);
+    this.isIdentifying = true;
+
+    // After the stand duration, change to "runAway" state
+    setTimeout(() => {
+      // Apply damage and update the health bar
+      if (this.playerAnt.getHealth() < 80) {
+        this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
+      } else {
+        this.playerAnt.setHealth(100);
+      }
+      UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
+      this.changeBehaviourState("runAway");
+      this.isAttacking = false;
+      PlayerController(this.scene, this.playerAnt).enableControl();
+    }, 8000);
     UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
   }
 
   public attackPlayerAnt() {
     if (!this.isAttacking) {
+      this.lookAt(this.playerAnt.position);
       this.fireAntAction("attack");
+
       // Ant attack animation initiated; freeze movement at current position
       this.moveAnt(this.position);
-      
-      // Apply damage and update the health bar
-      this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
-      UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
       this.isAttacking = true;
-      
+
       // After the stand duration, change to "runAway" state
       setTimeout(() => {
+        // Apply damage and update the health bar
+        this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
+        UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
         this.changeBehaviourState("runAway");
         this.isAttacking = false;
-      }, 2000);
+      }, 3000);
     }
   }
 
@@ -153,7 +181,6 @@ export default class NonPlayerAnt extends AntObject {
 
   public addNonPlayerAntBehaviour() {
     this.scene.registerBeforeRender(() => {
-      console.log(this.behaviourState);
       switch (this.behaviourState) {
         case "randomMove":
           // randomMove sollte nur einmal gestartet werden
@@ -188,7 +215,6 @@ export default class NonPlayerAnt extends AntObject {
         case "attackPlayerAnt":
           // Soll nur einmal ausgeführt werden, wenn der Zustand auf "attackPlayerAnt" geändert wird
           if (!this.isAttacking) {
-            
             this.attackPlayerAnt();
             this.randomMove(false); // Falls nötig
             this.isRandomMoving = false; // Falls nötig

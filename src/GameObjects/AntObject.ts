@@ -17,7 +17,7 @@ import {
   Quaternion,
 } from "@babylonjs/core";
 
-import antModel from "../assets/250131_AntAnimated_Phase2.glb";
+import antModel from "../assets/240206_AnimatedAnt_final.glb";
 
 export default class AntObject extends Mesh {
   public ready: Promise<void>;
@@ -72,8 +72,8 @@ export default class AntObject extends Mesh {
     );
     this.rotateAntOnMove(this.scene);
     this.animateAntOnMove(this.scene);
-    this.idle = this.animationGroups[3];
-    this.run = this.animationGroups[6];
+    this.idle = this.animationGroups[0];
+    this.run = this.animationGroups[2];
   }
 
   private async createAntMesh(scene: Scene) {
@@ -184,10 +184,11 @@ export default class AntObject extends Mesh {
     this.currentAnimation.stop();
 
     const animationFire = (animationIndex: number) => {
+      console.log("Firing animation: ", this.animationGroups[animationIndex]);
       this.animationGroups[animationIndex].start();
+      this.animationGroups[animationIndex].loopAnimation = false;
       this.animationGroups[animationIndex].onAnimationEndObservable.addOnce(
         () => {
-          this.animationGroups[animationIndex].stop();
           this.actionIsFired = false;
         }
       );
@@ -195,13 +196,16 @@ export default class AntObject extends Mesh {
 
     switch (action) {
       case "betrillernNPC":
-        animationFire(0);
+        animationFire(10);
         break;
       case "betrillernPlayer":
-        animationFire(1);
+        animationFire(9);
         break;
       case "feeding":
-        animationFire(10);
+        animationFire(11);
+        break;
+      case "receiveFood":
+        animationFire(12);
         break;
       case "attack":
         animationFire(8);
