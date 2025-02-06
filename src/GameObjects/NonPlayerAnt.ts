@@ -136,7 +136,7 @@ export default class NonPlayerAnt extends AntObject {
     const directionToPlayer = this.playerAnt.position
       .subtract(this.position)
       .normalize();
-    const offsetDistance = 0.35; // Adjust as needed
+    const offsetDistance = 0.37; // Adjust as needed
     const newPosition = this.playerAnt.position.subtract(
       directionToPlayer.scale(offsetDistance)
     );

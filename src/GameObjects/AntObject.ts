@@ -146,6 +146,8 @@ export default class AntObject extends Mesh {
     });
   }
 
+
+
   private async animateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
       // Stellen Sie sicher, dass genug AnimationGroups vorhanden sind
