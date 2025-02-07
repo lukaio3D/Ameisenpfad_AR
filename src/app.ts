@@ -20,6 +20,7 @@ class App {
     startScreen.style.width = "100%";
     startScreen.style.height = "100%";
     startScreen.style.backgroundColor = "black";
+    startScreen.style.zIndex = "100";
     document.body.appendChild(startScreen);
 
     // Titel (H1)
@@ -40,10 +41,12 @@ class App {
     startButton.style.fontSize = "20px";
     startScreen.appendChild(startButton);
 
+    this.initialize();
+
     // Klick-Event für den Start-Button
     startButton.addEventListener("click", async () => {
       startScreen.remove();
-      await this.initialize();
+      
     });
   }
 
