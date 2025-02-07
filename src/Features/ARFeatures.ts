@@ -18,8 +18,6 @@ import { UIManager } from "../Features/UIManager";
 export default async function createARFeatures(scene: Scene) {
   const uiManager = UIManager.getInstance();
 
-  const skybox = scene.getMeshByName("Skybox") as Mesh;
-
   let xrHelper: WebXRDefaultExperience;
   try {
     xrHelper = await scene.createDefaultXRExperienceAsync({
@@ -27,6 +25,7 @@ export default async function createARFeatures(scene: Scene) {
       optionalFeatures: ["anchors", "hit-test"],
     });
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
+    const skybox = scene.getMeshByName("Skybox") as Mesh;
     skybox.isVisible = false;
     console.log("AR-Session gestartet!");
   } catch (error) {
