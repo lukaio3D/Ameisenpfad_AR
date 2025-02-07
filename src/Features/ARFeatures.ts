@@ -11,11 +11,14 @@ import {
   Vector3,
   PointerEventTypes,
   IWebXRHitResult,
+  Mesh,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager";
 
 export default async function createARFeatures(scene: Scene) {
   const uiManager = UIManager.getInstance();
+
+  const skybox = scene.getMeshByName("Skybox") as Mesh;
 
   let xrHelper: WebXRDefaultExperience;
   try {
@@ -24,8 +27,6 @@ export default async function createARFeatures(scene: Scene) {
       optionalFeatures: ["anchors", "hit-test"],
     });
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
-    let skybox = scene.getMeshById("Skybox");
-    console.log(skybox);
     skybox.isVisible = false;
     console.log("AR-Session gestartet!");
   } catch (error) {

@@ -50,7 +50,7 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  createCamera(canvas, scene);
+  let skybox = createCamera(canvas, scene);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
