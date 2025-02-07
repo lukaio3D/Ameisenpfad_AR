@@ -61,7 +61,7 @@ export default async function createAntCommunicationScene(
 
   GameLogic(scene, navigationPlugin, crowd);
 
-  new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
+  // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 
   // AR über Start Button auslösen
   const startButton = document.getElementById(

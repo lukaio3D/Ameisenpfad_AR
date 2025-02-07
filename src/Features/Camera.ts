@@ -10,6 +10,7 @@ import {
   VideoTexture,
   Color3,
   Scene,
+  WebXRSessionManager,
 } from "@babylonjs/core";
 
 import treeSkybox from "../assets/woods_4k.jpg";
@@ -58,7 +59,8 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera.setTarget(new Vector3(0, 1.6, 1));
 
     // Skybox erstellen
-    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
+    if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);}
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
