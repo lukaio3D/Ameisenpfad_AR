@@ -14,7 +14,7 @@ import {
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager";
 
-export default async function createARFeatures(scene: Scene, sceneParent: TransformNode) {
+export default async function createARFeatures(scene: Scene) {
   const uiManager = UIManager.getInstance();
 
   let xrHelper: WebXRDefaultExperience;

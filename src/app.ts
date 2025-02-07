@@ -2,9 +2,10 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/inspector";
 import createAntCommunicationScene from "./Scenes/9_AntCommunication_Scene";
-import { Color4, Engine, Scene } from "@babylonjs/core";
+import { Color4, Engine, Scene, WebXRSessionManager } from "@babylonjs/core";
 import { UIManager } from "./Features/UIManager";
 import createCamera from "./Features/Camera";
+import createARFeatures from "./Features/ARFeatures";
 
 class App {
   constructor() {
@@ -46,7 +47,6 @@ class App {
     // Klick-Event für den Start-Button
     startButton.addEventListener("click", async () => {
       startScreen.remove();
-      
     });
   }
 
@@ -63,6 +63,14 @@ class App {
 
     const uiManager = UIManager.getInstance();
     await createAntCommunicationScene(canvas, scene);
+      if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+        console.log("AR wird unterstützt");
+        await createARFeatures(scene);
+      } else {
+        console.log("AR wird nicht unterstützt");
+        // Kamera erstellen für Geräte, die AR nicht unterstützen
+        createCamera(canvas, scene);
+      }
 
     //scene.debugLayer.show();
 
