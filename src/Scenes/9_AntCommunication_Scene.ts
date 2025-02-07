@@ -50,7 +50,7 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  let skybox = createCamera(canvas, scene);
+  let camera = createCamera(canvas, scene);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
@@ -62,6 +62,8 @@ export default async function createAntCommunicationScene(
   GameLogic(scene, navigationPlugin, crowd);
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
+  
+  const skybox = scene.getMeshByName("Skybox");
 
   // AR über Start Button auslösen
   const startButton = document.getElementById(
@@ -72,7 +74,9 @@ export default async function createAntCommunicationScene(
     if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
       console.log("AR wird unterstützt");
       // Nun AR-Features initialisieren
-      await createARFeatures(scene);
+      await createARFeatures(scene).then(() => {
+        skybox.isVisible = false;
+      });
     }
   });
 }
