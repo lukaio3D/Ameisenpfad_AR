@@ -50,7 +50,7 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  let camera = createCamera(canvas, scene);
+  let {camera, skybox} = await createCamera(canvas, scene);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
@@ -63,7 +63,7 @@ export default async function createAntCommunicationScene(
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
   
-  const skybox = scene.getMeshByName("Skybox");
+  console.log(skybox);
 
   // AR über Start Button auslösen
   const startButton = document.getElementById(
@@ -75,7 +75,7 @@ export default async function createAntCommunicationScene(
       console.log("AR wird unterstützt");
       // Nun AR-Features initialisieren
       await createARFeatures(scene).then(() => {
-        skybox.isVisible = false;
+        skybox.dispose();
       });
     }
   });

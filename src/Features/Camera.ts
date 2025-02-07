@@ -22,6 +22,7 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
   );
 
   let camera: FreeCamera;
+  let skybox: PhotoDome;
 
   if (isMobile) {
     // DeviceOrientation Berechtigungen anfordern
@@ -61,7 +62,7 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera.setTarget(new Vector3(0, 1.6, 1));
 
     // Skybox erstellen
-    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
+    skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
@@ -88,5 +89,5 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera.attachControl(canvas, true);
   }
 
-  return camera;
+  return {camera, skybox};
 }
