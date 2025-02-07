@@ -24,6 +24,7 @@ export default async function createARFeatures(scene: Scene) {
       optionalFeatures: ["anchors", "hit-test"],
     });
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
+    scene.getMeshById("Skybox")?.dispose();
     console.log("AR-Session gestartet!");
   } catch (error) {
     console.error("Fehler in createARFeatures:", error);

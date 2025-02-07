@@ -59,8 +59,7 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera.setTarget(new Vector3(0, 1.6, 1));
 
     // Skybox erstellen
-    if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
-    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);}
+    const skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
