@@ -47,9 +47,11 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     // Kamera erstellen
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 1.6, -0.5), // Augenhöhe
+      new Vector3(-3, 1.6, 2.5), // Augenhöhe
       scene
     );
+    camera.setTarget(new Vector3(0, 0, 2.5));
+    
 
     // Kamera-Einstellungen
     camera.fov = 0.9;
