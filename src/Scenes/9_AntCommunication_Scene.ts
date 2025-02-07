@@ -71,12 +71,12 @@ export default async function createAntCommunicationScene(
   ) as HTMLButtonElement;
   startButton.addEventListener("click", async () => {
     // Prüfen, ob AR-Modus unterstützt wird
-    if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
-      console.log("AR wird unterstützt");
-      // Nun AR-Features initialisieren
-      await createARFeatures(scene).then(() => {
-        skybox.dispose();
-      });
-    }
+    // if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+    //   console.log("AR wird unterstützt");
+    //   // Nun AR-Features initialisieren
+    //   await createARFeatures(scene).then(() => {
+    //     skybox.dispose();
+    //   });
+    // }
   });
 }
