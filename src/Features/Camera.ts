@@ -60,7 +60,7 @@ export default async function createCamera(
       new Vector3(-3, 1.6, 2.5), // Augenhöhe
       scene
     );
-    camera.setTarget(new Vector3(0, 0, 2.5));
+    camera.setTarget(new Vector3(0, 0, 0));
 
     // Kamera-Einstellungen
     camera.fov = 0.9;
