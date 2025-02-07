@@ -50,8 +50,7 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  // AR Features aktivieren
-  let sceneParent: TransformNode = new TransformNode("sceneParent", scene);
+  createCamera(canvas, scene);
 
   // NavigationFeatures erstellen und Crowd erhalten
   const { navigationPlugin, crowd } = await createNavigationFeatures(
@@ -63,4 +62,17 @@ export default async function createAntCommunicationScene(
   GameLogic(scene, navigationPlugin, crowd);
 
   new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
+
+  // AR über Start Button auslösen
+  const startButton = document.getElementById(
+    "startButton"
+  ) as HTMLButtonElement;
+  startButton.addEventListener("click", async () => {
+    // Prüfen, ob AR-Modus unterstützt wird
+    if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+      console.log("AR wird unterstützt");
+      // Nun AR-Features initialisieren
+      await createARFeatures(scene);
+    }
+  });
 }

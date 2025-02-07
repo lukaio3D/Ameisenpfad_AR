@@ -35,6 +35,7 @@ class App {
 
     // Start-Button
     const startButton = document.createElement("button");
+    startButton.id = "startButton";
     startButton.innerText = "Start";
     startButton.style.display = "block";
     startButton.style.margin = "20px auto";
@@ -63,14 +64,6 @@ class App {
 
     const uiManager = UIManager.getInstance();
     await createAntCommunicationScene(canvas, scene);
-      if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
-        console.log("AR wird unterstützt");
-        await createARFeatures(scene);
-      } else {
-        console.log("AR wird nicht unterstützt");
-        // Kamera erstellen für Geräte, die AR nicht unterstützen
-        createCamera(canvas, scene);
-      }
 
     //scene.debugLayer.show();
 
