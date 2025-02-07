@@ -15,14 +15,21 @@ import {
 
 import treeSkybox from "../assets/woods_4k.jpg";
 
-export default async function createCamera(canvas: HTMLCanvasElement, scene: Scene) {
+export default async function createCamera(
+  canvas: HTMLCanvasElement,
+  scene: Scene
+) {
   // Überprüfung, ob das Gerät mobil ist
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
 
   let camera: FreeCamera;
   let skybox: PhotoDome;
+
+  // Skybox erstellen
+  skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
   if (isMobile) {
     // DeviceOrientation Berechtigungen anfordern
@@ -31,7 +38,9 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
       typeof (DeviceOrientationEvent as any).requestPermission === "function"
     ) {
       try {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
+        const permission = await (
+          DeviceOrientationEvent as any
+        ).requestPermission();
         if (permission !== "granted") {
           console.error("DeviceOrientation Berechtigung nicht erteilt");
           return;
@@ -52,7 +61,6 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
       scene
     );
     camera.setTarget(new Vector3(0, 0, 2.5));
-    
 
     // Kamera-Einstellungen
     camera.fov = 0.9;
@@ -60,9 +68,6 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera.inertia = 0.3;
     camera.angularSensibility = 2000;
     camera.setTarget(new Vector3(0, 1.6, 1));
-
-    // Skybox erstellen
-    skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
@@ -87,7 +92,8 @@ export default async function createCamera(canvas: HTMLCanvasElement, scene: Sce
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
     camera.setTarget(new Vector3(0, 0, 2.5));
     camera.attachControl(canvas, true);
+    skybox.dispose();
   }
 
-  return {camera, skybox};
+  return { camera, skybox };
 }

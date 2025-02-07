@@ -63,7 +63,7 @@ export default async function createAntCommunicationScene(
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
   
-  console.log(skybox);
+  
 
   // AR über Start Button auslösen
   const startButton = document.getElementById(
