@@ -62,7 +62,9 @@ export default async function createCamera(
       new Vector3(-3, 1.6, 2.5), // Augenhöhe
       scene
     );
-    camera.setTarget(new Vector3(0, 0, 1));
+    camera.setTarget(new Vector3(5, 0, 5));
+
+    let smoothFactor;
 
     if (isIOs) {
       // Kamera-Einstellungen iOS
@@ -70,32 +72,34 @@ export default async function createCamera(
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
-
-      // Bewegungsglättung
-      let filteredQuaternion = camera.rotationQuaternion?.clone();
-      const smoothFactor = 0.1;
-
-      scene.onBeforeRenderObservable.add(() => {
-        if (camera.rotationQuaternion && filteredQuaternion) {
-          Quaternion.SlerpToRef(
-            filteredQuaternion,
-            camera.rotationQuaternion,
-            smoothFactor,
-            filteredQuaternion
-          );
-          camera.rotationQuaternion.copyFrom(filteredQuaternion);
-        }
-      });
+      smoothFactor = 0.1;
     } else {
       // Kamera-Einstellungen Android
       camera.fov = 0.9;
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
+      smoothFactor = 0.03;
     }
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
+
+    // Bewegungsglättung
+    let filteredQuaternion = camera.rotationQuaternion?.clone();
+    
+
+    scene.onBeforeRenderObservable.add(() => {
+      if (camera.rotationQuaternion && filteredQuaternion) {
+        Quaternion.SlerpToRef(
+          filteredQuaternion,
+          camera.rotationQuaternion,
+          smoothFactor,
+          filteredQuaternion
+        );
+        camera.rotationQuaternion.copyFrom(filteredQuaternion);
+      }
+    });
   } else {
     // Desktop-Kamera-Setup
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
