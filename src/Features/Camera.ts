@@ -77,9 +77,9 @@ export default async function createCamera(
       // Kamera-Einstellungen Android
       camera.fov = 0.7;
       camera.minZ = 0.1;
-      camera.inertia = 0.15;
+      camera.inertia = 0.1;
       camera.angularSensibility = 2000;
-      smoothFactor = 0.15;
+      smoothFactor = 0.25;
     }
 
     // Touch Controls aktivieren
