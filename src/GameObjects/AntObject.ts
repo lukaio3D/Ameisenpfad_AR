@@ -138,7 +138,7 @@ export default class AntObject extends Mesh {
           Quaternion.SlerpToRef(
             this.rotationQuaternion,
             targetRotation,
-            0.1, // Smoothness-Faktor, anpassbar
+            0.2, // Smoothness-Faktor, anpassbar
             this.rotationQuaternion
           );
         }
