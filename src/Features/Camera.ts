@@ -33,30 +33,25 @@ export default async function createCamera(
   // Skybox erstellen
   skybox = new PhotoDome("Skybox", treeSkybox, {}, scene);
 
-  if (isMobile) {
-    // DeviceOrientation Berechtigungen anfordern
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof (DeviceOrientationEvent as any).requestPermission === "function"
-    ) {
-      try {
-        const permission = await (
-          DeviceOrientationEvent as any
-        ).requestPermission();
-        if (permission !== "granted") {
-          console.error("DeviceOrientation Berechtigung nicht erteilt");
-          return;
-        }
-      } catch (error) {
-        console.error(
-          "Fehler beim Anfordern der DeviceOrientation Berechtigung:",
-          error
-        );
+  // Prüfen, ob Mobile + DeviceOrientation Unterstützung
+  if (
+    isMobile &&
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof (DeviceOrientationEvent as any).requestPermission === "function"
+  ) {
+    // DeviceOrientation-Berechtigung anfordern
+    try {
+      const permission = await (DeviceOrientationEvent as any).requestPermission();
+      if (permission !== "granted") {
+        console.error("DeviceOrientation-Berechtigung nicht erteilt");
         return;
       }
+    } catch (error) {
+      console.error("Fehler beim Anfordern der DeviceOrientation-Berechtigung:", error);
+      return;
     }
 
-    // Kamera erstellen
+    // Erstelle die DeviceOrientation-Kamera
     camera = new DeviceOrientationCamera(
       "camera",
       new Vector3(0, 1.6, -1), // Augenhöhe
