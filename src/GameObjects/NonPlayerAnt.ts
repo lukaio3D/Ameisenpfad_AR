@@ -14,6 +14,7 @@ export default class NonPlayerAnt extends AntObject {
   private isIdentifying: boolean = false;
   private isAttacking: boolean = false;
   private isFeeding: boolean = false;
+  private uiManager = UIManager.getInstance();
 
   constructor(
     antType: string = "NonPlayerAnt",
@@ -66,6 +67,7 @@ export default class NonPlayerAnt extends AntObject {
 
   public identifyPlayerAnt() {
     // Bewegen Sie die Ameise zur festen Position in der Nähe der Spielerameise
+    this.uiManager.displayMessage("Über das Betrillern identifizieren sich Ameisen.");
     PlayerController(this.scene, this.playerAnt).disableControl();
     this.fireAntAction("betrillernNPC");
     this.playerAnt.fireAntAction("betrillernPlayer");
@@ -88,11 +90,17 @@ export default class NonPlayerAnt extends AntObject {
 
     setTimeout(() => {
       this.changeColor(this.identifierColor);
+      if(this.identifierColor.r === 1) {
+        this.uiManager.displayMessage("Es ist eine feindliche Ameise");
+      } else {
+        this.uiManager.displayMessage("Es ist eine freundliche Ameise");
+      }
     }, 8000); // Farbe ändern
 
     // Nach Ablauf der Zeit den Zustand ändern
     setTimeout(() => {
       this.setBehaviourState("runAway");
+      this.uiManager.displayMessage("Sammle weiter Früchte ein.");
       PlayerController(this.scene, this.playerAnt).enableControl();
       this.isIdentified = true;
       this.isIdentifying = false;
@@ -128,6 +136,7 @@ export default class NonPlayerAnt extends AntObject {
 
   public healPlayerAnt() {
     // Ihre Heilungslogik
+    this.uiManager.displayMessage("Die freundliche Ameise übergibt Nahrung.");
     PlayerController(this.scene, this.playerAnt).disableControl();
     this.isFeeding = true;
     this.fireAntAction("feeding");
@@ -157,6 +166,7 @@ export default class NonPlayerAnt extends AntObject {
       }
       UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
       this.changeBehaviourState("runAway");
+      this.uiManager.displayMessage("Sammle weiter Früchte ein.");
       PlayerController(this.scene, this.playerAnt).enableControl();
     }, 10500);
     
@@ -166,6 +176,7 @@ export default class NonPlayerAnt extends AntObject {
     if (!this.isAttacking) {
       this.lookAt(this.playerAnt.position);
       this.fireAntAction("attack");
+      this.uiManager.displayMessage("Die feindliche Ameise greift an.");
 
       // Ant attack animation initiated; freeze movement at current position
       this.moveAnt(this.position);
@@ -178,6 +189,7 @@ export default class NonPlayerAnt extends AntObject {
         UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
         this.changeBehaviourState("runAway");
         this.isAttacking = false;
+        this.uiManager.displayMessage("Sammle weiter Früchte ein.");
       }, 3000);
     }
   }
