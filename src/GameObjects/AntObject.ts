@@ -183,7 +183,6 @@ export default class AntObject extends Mesh {
   public fireAntAction(action: string) {
     this.actionIsFired = true;
     this.currentAnimation.stop();
-    console.log("Action fired: " + action);
 
     const animationFire = (animationIndex: number) => {
       this.animationGroups[animationIndex].start();
@@ -191,7 +190,6 @@ export default class AntObject extends Mesh {
       this.animationGroups[animationIndex].onAnimationGroupEndObservable.addOnce(
         () => {
           this.actionIsFired = false;
-          console.log("Animation ended");
         }
       );
     };
