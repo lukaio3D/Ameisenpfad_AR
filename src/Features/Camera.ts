@@ -59,7 +59,7 @@ export default async function createCamera(
     // Kamera erstellen
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(-3, 1.6, 2.5), // Augenhöhe
+      new Vector3(0, 1.6, -1), // Augenhöhe
       scene
     );
     camera.rotation = new Vector3(0, Math.PI/2, 0);
