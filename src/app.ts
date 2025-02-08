@@ -43,6 +43,27 @@ class App {
     startButton.style.fontSize = "20px";
     startScreen.appendChild(startButton);
 
+    // Start-AR-Button
+    const startARButton = document.createElement("button");
+    startARButton.id = "startARButton";
+    startARButton.innerText = "Start AR";
+    startARButton.style.display = "none";
+    startARButton.style.margin = "20px auto";
+    startARButton.style.padding = "10px 20px";
+    startARButton.style.fontSize = "20px";
+    startScreen.appendChild(startARButton);
+
+    // Intro Text (P)
+    // const introText = document.createElement("p");
+    // introText.style.color = "white";
+    // introText.style.fontFamily = "sans-serif";
+    // introText.style.textAlign = "center";
+    // introText.style.marginTop = "20px";
+    // introText.style.overflow = "auto";
+    // introText.style.maxWidth = "40%";
+    // introText.innerText =
+    //   "Klicke auf „Start“, und das Spiel wählt automatisch den passenden Modus für dein Gerät. Steuere deine Ameise, indem du auf den Boden tippst: Sie läuft dorthin, wo du geklickt hast. Je nach Modus kannst du dich entweder durch Drehen des Geräts umsehen oder in AR sogar frei im Raum bewegen. Sammle Früchte, um fremde Ameisen anzulocken und erlebe ihr reales „Betriller“-Verhalten: Kommt deine Ameise nahe genug heran, werden sie als Freund (grün) oder Feind (rot) identifiziert. Rote Ameisen ziehen dir Lebenspunkte ab, grüne füttern dich und füllen dein Leben wieder auf. Viel Spaß beim Entdecken und Sammeln!";
+
     this.initialize();
 
     // Klick-Event für den Start-Button
