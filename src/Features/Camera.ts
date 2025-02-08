@@ -79,7 +79,7 @@ export default async function createCamera(
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
-      smoothFactor = 0.025;
+      smoothFactor = 0.01;
     }
 
     // Touch Controls aktivieren
