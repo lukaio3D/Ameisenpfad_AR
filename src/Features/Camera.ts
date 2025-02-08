@@ -62,7 +62,7 @@ export default async function createCamera(
       new Vector3(-3, 1.6, 2.5), // Augenhöhe
       scene
     );
-    camera.setTarget(new Vector3(5, 0, 5));
+    camera.rotation = new Vector3(0, Math.PI/2, 0);
 
     let smoothFactor;
 
