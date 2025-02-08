@@ -70,34 +70,32 @@ export default async function createCamera(
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
-      camera.setTarget(new Vector3(0, 1.6, 1));
+
+      // Bewegungsglättung
+      let filteredQuaternion = camera.rotationQuaternion?.clone();
+      const smoothFactor = 0.1;
+
+      scene.onBeforeRenderObservable.add(() => {
+        if (camera.rotationQuaternion && filteredQuaternion) {
+          Quaternion.SlerpToRef(
+            filteredQuaternion,
+            camera.rotationQuaternion,
+            smoothFactor,
+            filteredQuaternion
+          );
+          camera.rotationQuaternion.copyFrom(filteredQuaternion);
+        }
+      });
     } else {
       // Kamera-Einstellungen Android
       camera.fov = 0.9;
       camera.minZ = 0.1;
-      camera.inertia = 0.1;
+      camera.inertia = 0.3;
       camera.angularSensibility = 2000;
-      camera.setTarget(new Vector3(0, 1.6, 1));
     }
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
-
-    // Bewegungsglättung
-    let filteredQuaternion = camera.rotationQuaternion?.clone();
-    const smoothFactor = 0.1;
-
-    scene.onBeforeRenderObservable.add(() => {
-      if (camera.rotationQuaternion && filteredQuaternion) {
-        Quaternion.SlerpToRef(
-          filteredQuaternion,
-          camera.rotationQuaternion,
-          smoothFactor,
-          filteredQuaternion
-        );
-        camera.rotationQuaternion.copyFrom(filteredQuaternion);
-      }
-    });
   } else {
     // Desktop-Kamera-Setup
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
