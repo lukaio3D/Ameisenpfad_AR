@@ -59,7 +59,7 @@ export default async function createCamera(
     // Kamera erstellen
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 1.6, ), // Augenhöhe
+      new Vector3(0, 2.5, -1 ), // Augenhöhe
       scene
     );
     camera.rotation = new Vector3(0, Math.PI/2, 0);
@@ -77,9 +77,9 @@ export default async function createCamera(
       // Kamera-Einstellungen Android
       camera.fov = 0.9;
       camera.minZ = 0.1;
-      camera.inertia = 0.1;
+      camera.inertia = 0.15;
       camera.angularSensibility = 2000;
-      smoothFactor = 0.25;
+      smoothFactor = 0.025;
     }
 
     // Touch Controls aktivieren
