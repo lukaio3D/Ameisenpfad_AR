@@ -68,14 +68,14 @@ export default async function createCamera(
 
     if (isIOs) {
       // Kamera-Einstellungen iOS
-      camera.fov = 0.8;
+      camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
       smoothFactor = 0.1;
     } else {
       // Kamera-Einstellungen Android
-      camera.fov = 0.8;
+      camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.1;
       camera.angularSensibility = 2000;
