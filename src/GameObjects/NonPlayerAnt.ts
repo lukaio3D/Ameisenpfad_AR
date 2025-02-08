@@ -159,8 +159,8 @@ export default class NonPlayerAnt extends AntObject {
     // After the stand duration, change to "runAway" state
     setTimeout(() => {
       // Apply damage and update the health bar
-      if (this.playerAnt.getHealth() < 80) {
-        this.playerAnt.setHealth(this.playerAnt.getHealth() + 20);
+      if (this.playerAnt.getHealth() < 60) {
+        this.playerAnt.setHealth(this.playerAnt.getHealth() + 40);
       } else {
         this.playerAnt.setHealth(100);
       }
@@ -185,7 +185,7 @@ export default class NonPlayerAnt extends AntObject {
       // After the stand duration, change to "runAway" state
       setTimeout(() => {
         // Apply damage and update the health bar
-        this.playerAnt.setHealth(this.playerAnt.getHealth() - 20);
+        this.playerAnt.setHealth(this.playerAnt.getHealth() - 34);
         UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
         this.changeBehaviourState("runAway");
         this.isAttacking = false;
