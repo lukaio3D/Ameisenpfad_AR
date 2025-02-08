@@ -25,6 +25,8 @@ export default async function createCamera(
       navigator.userAgent
     );
 
+  const isIOs = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
   let camera: FreeCamera;
   let skybox: PhotoDome;
 
@@ -60,14 +62,23 @@ export default async function createCamera(
       new Vector3(-3, 1.6, 2.5), // Augenhöhe
       scene
     );
-    camera.setTarget(new Vector3(0, 0, 0));
+    camera.setTarget(new Vector3(0, 0, 1));
 
-    // Kamera-Einstellungen
-    camera.fov = 0.9;
-    camera.minZ = 0.1;
-    camera.inertia = 0.3;
-    camera.angularSensibility = 2000;
-    camera.setTarget(new Vector3(0, 1.6, 1));
+    if (isIOs) {
+      // Kamera-Einstellungen iOS
+      camera.fov = 0.9;
+      camera.minZ = 0.1;
+      camera.inertia = 0.3;
+      camera.angularSensibility = 2000;
+      camera.setTarget(new Vector3(0, 1.6, 1));
+    } else {
+      // Kamera-Einstellungen Android
+      camera.fov = 0.9;
+      camera.minZ = 0.1;
+      camera.inertia = 0.1;
+      camera.angularSensibility = 2000;
+      camera.setTarget(new Vector3(0, 1.6, 1));
+    }
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
