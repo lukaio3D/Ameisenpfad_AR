@@ -1,6 +1,7 @@
 import {
   Color3,
   ICrowd,
+  PointerEventTypes,
   RecastJSPlugin,
   Scene,
   Vector3,
@@ -62,8 +63,12 @@ export function GameLogic(
     maxEnemyAnts: number = 1,
     maxFriendAnts: number = 1
   ) => {
-    const enemyAntCount = allAnts.filter((ant) => ant instanceof EnemyAnt).length;
-    const friendAntCount = allAnts.filter((ant) => ant instanceof FriendAnt).length;
+    const enemyAntCount = allAnts.filter(
+      (ant) => ant instanceof EnemyAnt
+    ).length;
+    const friendAntCount = allAnts.filter(
+      (ant) => ant instanceof FriendAnt
+    ).length;
     const randomNumber = Math.random();
 
     // Zufällige x-Koordinate zwischen -2.5 und 2.5
@@ -137,14 +142,12 @@ export function GameLogic(
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
       } else if (ant.getBehaviourState() !== "runAway") {
-          ant.setBehaviourState("attackPlayerAnt");
+        ant.setBehaviourState("attackPlayerAnt");
       }
     } else if (ant instanceof FriendAnt) {
-      if (!ant.getIsIdentified() ) {
+      if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
-      }
-      else if(playerAnt.getHealth() < 100 && !ant.getIsFeeding()) {
-        console.log("Feeding");
+      } else if (playerAnt.getHealth() < 100 && !ant.getIsFeeding()) {
         ant.setBehaviourState("feedPlayerAnt");
       }
     }
@@ -159,6 +162,26 @@ export function GameLogic(
       }
     }
   }
+
+  scene.onPointerObservable.add((pointerInfo) => {
+    if (pointerInfo.type === PointerEventTypes.POINTERPICK) {
+      const pickedMesh = pointerInfo.pickInfo?.pickedMesh;
+      if (!pickedMesh) return;
+
+      if (pickedMesh.name === "Ant.006") {
+        const pickedAnt = allAnts.find((ant) =>
+          ant?.getChildMeshes().includes(pickedMesh)
+        );
+        // allAnts enthält alle Ant-Instanzen
+        if (pickedAnt instanceof EnemyAnt) {
+          console.log("Feindliche Ameise angeklickt");
+        } else if (pickedAnt instanceof FriendAnt) {
+          console.log("Freundliche Ameise angeklickt");
+          pickedAnt.setBehaviourState("feedPlayerAnt");
+        }
+      }
+    }
+  });
 
   // Start Spawner
   let twigsCollected: number = 0;

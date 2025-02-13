@@ -199,6 +199,7 @@ export default class NonPlayerAnt extends AntObject {
   public addNonPlayerAntBehaviour() {
     this.scene.registerBeforeRender(() => {
       switch (this.behaviourState) {
+        
         case "randomMove":
           // randomMove sollte nur einmal gestartet werden
           if (!this.isRandomMoving) {

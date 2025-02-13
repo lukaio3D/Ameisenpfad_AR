@@ -69,7 +69,6 @@ class App {
     // Klick-Event für den Start-Button
     startButton.addEventListener("click", async () => {
       // Erst jetzt Szene/Camera laden
-      console.log("Starte Spiel...");
       this.initialize();
       startScreen.remove();
     });
