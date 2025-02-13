@@ -64,10 +64,29 @@ class App {
     // introText.innerText =
     //   "Klicke auf „Start“, und das Spiel wählt automatisch den passenden Modus für dein Gerät. Steuere deine Ameise, indem du auf den Boden tippst: Sie läuft dorthin, wo du geklickt hast. Je nach Modus kannst du dich entweder durch Drehen des Geräts umsehen oder in AR sogar frei im Raum bewegen. Sammle Früchte, um fremde Ameisen anzulocken und erlebe ihr reales „Betriller“-Verhalten: Kommt deine Ameise nahe genug heran, werden sie als Freund (grün) oder Feind (rot) identifiziert. Rote Ameisen ziehen dir Lebenspunkte ab, grüne füttern dich und füllen dein Leben wieder auf. Viel Spaß beim Entdecken und Sammeln!";
 
-    this.initialize();
+    
 
     // Klick-Event für den Start-Button
     startButton.addEventListener("click", async () => {
+      // DeviceOrientation-Berechtigung erfragen
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof (DeviceOrientationEvent as any).requestPermission === "function"
+      ) {
+        try {
+          const permission = await (DeviceOrientationEvent as any).requestPermission();
+          if (permission !== "granted") {
+            console.error("DeviceOrientation-Berechtigung nicht erteilt");
+            return;
+          }
+        } catch (error) {
+          console.error("Fehler bei der DeviceOrientation-Berechtigung:", error);
+          return;
+        }
+      }
+
+      // Erst jetzt Szene/Camera laden
+      this.initialize();
       startScreen.remove();
     });
   }
