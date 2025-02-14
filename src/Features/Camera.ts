@@ -14,6 +14,7 @@ import {
 } from "@babylonjs/core";
 
 import treeSkybox from "../assets/woods_4k.jpg";
+import * as dat from "dat.gui";
 
 export default async function createCamera(
   canvas: HTMLCanvasElement,
@@ -100,6 +101,22 @@ export default async function createCamera(
         camera.rotationQuaternion.copyFrom(filteredQuaternion);
       }
     });
+
+    // Debug GUI: Regler für inertia und smoothFactor
+    const gui = new dat.GUI();
+    const cameraConfig = {
+      inertia: camera.inertia,
+      smoothFactor: smoothFactor
+    };
+
+    gui.add(cameraConfig, "inertia", 0, 1).step(0.01).onChange((value: number) => {
+      camera.inertia = value;
+    });
+
+    gui.add(cameraConfig, "smoothFactor", 0, 1).step(0.01).onChange((value: number) => {
+      smoothFactor = value;
+    });
+
   } else {
     // Desktop-Kamera-Setup
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
