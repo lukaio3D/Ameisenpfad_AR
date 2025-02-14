@@ -65,7 +65,7 @@ export default async function createCamera(
     );
     camera.rotation = new Vector3(0, Math.PI/2, 0);
 
-    
+    let smoothFactor;
 
     if (isIOs) {
       let smoothFactor;
@@ -76,24 +76,26 @@ export default async function createCamera(
       camera.angularSensibility = 2000;
       smoothFactor = 0.1;
 
-      scene.onBeforeRenderObservable.add(() => {
-        if (camera.rotationQuaternion && filteredQuaternion) {
-          Quaternion.SlerpToRef(
-            filteredQuaternion,
-            camera.rotationQuaternion,
-            smoothFactor,
-            filteredQuaternion
-          );
-          camera.rotationQuaternion.copyFrom(filteredQuaternion);
-        }
-      });
     } else {
       // Kamera-Einstellungen Android
       camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.1;
       camera.angularSensibility = 10;
+      smoothFactor = 0.1;
     }
+
+    scene.onBeforeRenderObservable.add(() => {
+      if (camera.rotationQuaternion && filteredQuaternion) {
+        Quaternion.SlerpToRef(
+          filteredQuaternion,
+          camera.rotationQuaternion,
+          smoothFactor,
+          filteredQuaternion
+        );
+        camera.rotationQuaternion.copyFrom(filteredQuaternion);
+      }
+    });
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
