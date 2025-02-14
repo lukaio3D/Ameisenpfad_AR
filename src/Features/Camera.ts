@@ -60,22 +60,20 @@ export default async function createCamera(
     // Kamera erstellen
     camera = new DeviceOrientationCamera(
       "camera",
-      new Vector3(0, 2.5, -1 ), // Augenhöhe
+      new Vector3(0, 2.5, -1), // Augenhöhe
       scene
     );
-    camera.rotation = new Vector3(0, Math.PI/2, 0);
+    camera.rotation = new Vector3(0, Math.PI / 2, 0);
 
-    let smoothFactor;
+    let smoothFactor: number;
 
     if (isIOs) {
-      let smoothFactor;
       // Kamera-Einstellungen iOS
       camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
       smoothFactor = 0.1;
-
     } else {
       // Kamera-Einstellungen Android
       camera.fov = 0.7;
@@ -84,6 +82,9 @@ export default async function createCamera(
       camera.angularSensibility = 10;
       smoothFactor = 0.1;
     }
+
+    // Bewegungsglättung
+    let filteredQuaternion = camera.rotationQuaternion?.clone();
 
     scene.onBeforeRenderObservable.add(() => {
       if (camera.rotationQuaternion && filteredQuaternion) {
@@ -99,10 +100,6 @@ export default async function createCamera(
 
     // Touch Controls aktivieren
     camera.attachControl(canvas, true);
-
-    // Bewegungsglättung
-    let filteredQuaternion = camera.rotationQuaternion?.clone();
-
   } else {
     // Desktop-Kamera-Setup
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
