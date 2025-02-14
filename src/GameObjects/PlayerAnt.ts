@@ -1,6 +1,7 @@
 import AntObject from "./AntObject";
 import PlayerController from "../Features/PlayerController";
 import { Mesh, MeshBuilder } from "@babylonjs/core";
+import EnemyAnt from "./EnemyAnt";
 
 export default class PlayerAnt extends AntObject {
   private health: number = 100;
@@ -18,12 +19,12 @@ export default class PlayerAnt extends AntObject {
   private createCheckProximityMesh() {
     this.checkProximityMesh = MeshBuilder.CreateCylinder(
       "checkProximityMesh",
-      { diameter: 3, height: 0.3 },
+      { diameter: 15, height: 1 },
       this.scene
     );
     this.checkProximityMesh.parent = this;
     this.checkProximityMesh.isVisible = false;
-    this.checkProximityMesh.showBoundingBox = true;
+    this.checkProximityMesh.showBoundingBox = false;
   }
 
   public getCheckProximityMesh() {

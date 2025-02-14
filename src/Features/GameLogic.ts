@@ -13,9 +13,13 @@ import FriendAnt from "../GameObjects/FriendAnt";
 import ConstructionTwig from "../GameObjects/ConstructionTwig";
 import AntObject from "../GameObjects/AntObject";
 import NonPlayerAnt from "../GameObjects/NonPlayerAnt";
+import PlayerController from "./PlayerController";
 
 // Liste aller in der Szene vorhandenen Ameisen
 export const allAnts: AntObject[] = [];
+
+// Fügen Sie oben im File (außerhalb von Event-Handlern) eine Map zum Speichern der Klickdaten hinzu:
+const enemyAntClickCount = new Map<string, { count: number; lastClick: number }>();
 
 export function GameLogic(
   scene: Scene,
@@ -86,6 +90,7 @@ export function GameLogic(
         crowd,
         playerAnt
       );
+      handleAntProximity(enemyAnt);
       allAnts.push(enemyAnt);
     }
     // Freundliche Ameise (FriendAnt) spawnen, wenn Platz ist
@@ -97,6 +102,7 @@ export function GameLogic(
         crowd,
         playerAnt
       );
+      handleAntProximity(friendAnt);
       allAnts.push(friendAnt);
     }
   };
@@ -111,44 +117,53 @@ export function GameLogic(
   };
 
   function handleAntProximity(ant: NonPlayerAnt) {
-    const playerMesh = playerAnt;
-    const antMesh = ant;
-    const proximityMesh = playerAnt.getCheckProximityMesh();
+    scene.onAfterRenderObservable.add(() => {
+      const playerMesh = playerAnt;
+      const antMesh = ant;
+      const proximityMesh = playerAnt.getCheckProximityMesh();
 
-    if (
-      ant.getBehaviourState() === "attackPlayerAnt" ||
-      ant.getBehaviourState() === "identifyPlayerAnt"
-    ) {
-      return;
-    }
+      if (
+        playerAnt.getActionIsFired() ||
+        ant.getActionIsFired() ||
+        ant.getBehaviourState() === "runAway"
+      ) {
+        return;
+      }
 
-    // Überprüfen, ob alle benötigten Meshes definiert sind
-    if (!playerMesh || !antMesh || !proximityMesh) {
-      return;
-    }
+      // Überprüfen, ob alle benötigten Meshes definiert sind
+      else if (!playerMesh || !antMesh || !proximityMesh) {
+        return;
+      }
 
-    // Überprüfen, ob die PlayerAnt das Ant-Mesh schneidet
-    if (playerMesh.intersectsMesh(antMesh, false)) {
-      handleCloseProximity(ant);
-    }
-    // Überprüfen, ob das Proximity-Mesh das Ant-Mesh schneidet
-    else if (proximityMesh.intersectsMesh(antMesh, false)) {
-      handleFarProximity(ant);
-    }
+      // Überprüfen, ob die PlayerAnt das Ant-Mesh schneidet
+      else if (playerMesh.intersectsMesh(antMesh, false)) {
+        handleCloseProximity(ant);
+        return;
+      }
+      // Überprüfen, ob das Proximity-Mesh das Ant-Mesh schneidet
+      else if (proximityMesh.intersectsMesh(antMesh, false)) {
+        handleFarProximity(ant);
+        return;
+      }
+    });
   }
 
   function handleCloseProximity(ant: NonPlayerAnt) {
     if (ant instanceof EnemyAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
+        return;
       } else if (ant.getBehaviourState() !== "runAway") {
         ant.setBehaviourState("attackPlayerAnt");
       }
+      return;
     } else if (ant instanceof FriendAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("identifyPlayerAnt");
+        return;
       } else if (playerAnt.getHealth() < 100 && !ant.getIsFeeding()) {
         ant.setBehaviourState("feedPlayerAnt");
+        return;
       }
     }
   }
@@ -156,9 +171,11 @@ export function GameLogic(
   function handleFarProximity(ant: NonPlayerAnt) {
     if (ant instanceof EnemyAnt) {
       ant.setBehaviourState("followPlayerAnt");
+      return;
     } else if (ant instanceof FriendAnt) {
       if (!ant.getIsIdentified()) {
         ant.setBehaviourState("followPlayerAnt");
+        return;
       }
     }
   }
@@ -172,12 +189,51 @@ export function GameLogic(
         const pickedAnt = allAnts.find((ant) =>
           ant?.getChildMeshes().includes(pickedMesh)
         );
-        // allAnts enthält alle Ant-Instanzen
+        // Prüfen, ob die Ameise existiert und vom Typ EnemyAnt ist
         if (pickedAnt instanceof EnemyAnt) {
           console.log("Feindliche Ameise angeklickt");
+
+          // Klick-Logik: 5 schnelle Klicks nötig
+          const antId = pickedAnt.id; // Annahme: jede Ameise hat eine eindeutige id
+          const now = Date.now();
+          const clickData = enemyAntClickCount.get(antId) || { count: 0, lastClick: now };
+
+          // Wenn die Zeit seit dem letzten Klick unter 500ms liegt, erhöhen wir den Zähler, sonst resetten wir ihn
+          if (now - clickData.lastClick < 500) { // 500ms Schwelle
+            clickData.count = clickData.count + 1;
+          } else {
+            clickData.count = 1;
+          }
+          clickData.lastClick = now;
+          enemyAntClickCount.set(antId, clickData);
+
+          // Nur auslösen, wenn 5 schnelle Klicks vorliegen und die Ameise identifiziert ist
+          if (clickData.count >= 3 && pickedAnt.getIsIdentified()) {
+            // Zurücksetzen der Klickdaten
+            enemyAntClickCount.set(antId, { count: 0, lastClick: now });
+
+            playerAnt.moveAnt(playerAnt.position);
+            // Observer, der playerAnt jeden Frame auf pickedAnt schauen lässt
+            const lookAtObserver = scene.onBeforeRenderObservable.add(() => {
+              playerAnt.lookAt(pickedAnt.position);
+            });
+            
+            playerAnt.fireAntAction("defend");
+            PlayerController(scene, playerAnt).disableControl();
+            
+            // Sobald die Aktion beendet ist, entfernen wir den Observer und aktivieren PlayerControls wieder
+            playerAnt.onActionFinishedObservable.addOnce(() => {
+              // Optionale Schadenslogik
+              pickedAnt.substractEnemyHealth(50);
+              scene.onBeforeRenderObservable.remove(lookAtObserver);
+              PlayerController(scene, playerAnt).enableControl();
+            });
+          }
         } else if (pickedAnt instanceof FriendAnt) {
           console.log("Freundliche Ameise angeklickt");
-          pickedAnt.setBehaviourState("feedPlayerAnt");
+          if (playerAnt.getHealth() < 100) {
+            pickedAnt.setBehaviourState("followPlayerAnt");
+          }
         }
       }
     }
@@ -192,12 +248,6 @@ export function GameLogic(
 
   // Kollisionen verwalten
   scene.onAfterRenderObservable.add(() => {
-    // Kollisionen zwischen PlayerAnt und NonPlayerAnts verwalten
-    allAnts.forEach((ant) => {
-      if (ant instanceof NonPlayerAnt) {
-        handleAntProximity(ant);
-      }
-    });
     // Kollisionen zwischen PlayerAnt und Bauzweigen verwalten
     if (twig.intersectsMesh(playerAnt, true)) {
       twigsCollected++;

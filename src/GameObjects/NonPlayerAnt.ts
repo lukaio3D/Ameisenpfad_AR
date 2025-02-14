@@ -67,7 +67,9 @@ export default class NonPlayerAnt extends AntObject {
 
   public identifyPlayerAnt() {
     // Bewegen Sie die Ameise zur festen Position in der Nähe der Spielerameise
-    this.uiManager.displayMessage("Über das Betrillern identifizieren sich Ameisen.");
+    this.uiManager.displayMessage(
+      "Über das Betrillern identifizieren sich Ameisen."
+    );
     PlayerController(this.scene, this.playerAnt).disableControl();
     this.fireAntAction("betrillernNPC");
     this.playerAnt.fireAntAction("betrillernPlayer");
@@ -90,7 +92,7 @@ export default class NonPlayerAnt extends AntObject {
 
     setTimeout(() => {
       this.changeColor(this.identifierColor);
-      if(this.identifierColor.r === 1) {
+      if (this.identifierColor.r === 1) {
         this.uiManager.displayMessage("Es ist eine feindliche Ameise");
       } else {
         this.uiManager.displayMessage("Es ist eine freundliche Ameise");
@@ -169,28 +171,29 @@ export default class NonPlayerAnt extends AntObject {
       this.uiManager.displayMessage("Sammle weiter Früchte ein.");
       PlayerController(this.scene, this.playerAnt).enableControl();
     }, 10500);
-    
   }
 
   public attackPlayerAnt() {
     if (!this.isAttacking) {
-      this.lookAt(this.playerAnt.position);
+      // Füge hier einen Observer hinzu, der jeden Frame die feindliche Ameise den PlayerAnt anblicken lässt
+      const lookAtObserver = this.scene.onBeforeRenderObservable.add(() => {
+        this.lookAt(this.playerAnt.position);
+      });
       this.fireAntAction("attack");
       this.uiManager.displayMessage("Die feindliche Ameise greift an.");
-
-      // Ant attack animation initiated; freeze movement at current position
-      this.moveAnt(this.position);
+      // Bewegung einfrieren
+      this.moveAnt(this.playerAnt.position);
       this.isAttacking = true;
 
-      // After the stand duration, change to "runAway" state
-      setTimeout(() => {
-        // Apply damage and update the health bar
+      // Sobald die Aktion beendet ist, entferne den Observer
+      this.onActionFinishedObservable.addOnce(() => {
+        this.scene.onBeforeRenderObservable.remove(lookAtObserver);
+        this.isAttacking = false;
         this.playerAnt.setHealth(this.playerAnt.getHealth() - 34);
         UIManager.getInstance().setHealthBar(this.playerAnt.getHealth());
         this.changeBehaviourState("runAway");
-        this.isAttacking = false;
         this.uiManager.displayMessage("Sammle weiter Früchte ein.");
-      }, 3000);
+      });
     }
   }
 
@@ -199,7 +202,6 @@ export default class NonPlayerAnt extends AntObject {
   public addNonPlayerAntBehaviour() {
     this.scene.registerBeforeRender(() => {
       switch (this.behaviourState) {
-        
         case "randomMove":
           // randomMove sollte nur einmal gestartet werden
           if (!this.isRandomMoving) {
@@ -240,10 +242,10 @@ export default class NonPlayerAnt extends AntObject {
           break;
 
         case "feedPlayerAnt":
-          if(!this.isFeeding) {
+          if (!this.isFeeding) {
             this.healPlayerAnt();
             this.randomMove(false); // Falls nötig
-            this.isRandomMoving = false; // Falls nötig 
+            this.isRandomMoving = false; // Falls nötig
           }
           break;
 

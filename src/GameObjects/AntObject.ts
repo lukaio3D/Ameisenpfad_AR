@@ -15,6 +15,7 @@ import {
   PBRMaterial,
   AsyncCoroutine,
   Quaternion,
+  Observable,
 } from "@babylonjs/core";
 
 import antModel from "../assets/240206_AnimatedAnt_final.glb";
@@ -29,7 +30,7 @@ export default class AntObject extends Mesh {
   protected currentAnimation: AnimationGroup;
   private idle: AnimationGroup;
   private run: AnimationGroup;
-  private actionIsFired: boolean = false;
+  protected actionIsFired: boolean = false;
   protected scene: Scene;
   navigationPlugin: RecastJSPlugin;
   crowd: ICrowd;
@@ -44,6 +45,7 @@ export default class AntObject extends Mesh {
   };
   // Deklaration der Klassenvariable
   private randomMoveInterval;
+  public onActionFinishedObservable: Observable<void> = new Observable();
 
   constructor(
     antType: string,
@@ -74,6 +76,10 @@ export default class AntObject extends Mesh {
     this.animateAntOnMove(this.scene);
     this.idle = this.animationGroups[0];
     this.run = this.animationGroups[2];
+  }
+
+  public getActionIsFired() {
+    return this.actionIsFired;
   }
 
   private async createAntMesh(scene: Scene) {
@@ -187,11 +193,11 @@ export default class AntObject extends Mesh {
     const animationFire = (animationIndex: number) => {
       this.animationGroups[animationIndex].start();
       this.animationGroups[animationIndex].loopAnimation = false;
-      this.animationGroups[animationIndex].onAnimationGroupEndObservable.addOnce(
-        () => {
-          this.actionIsFired = false;
-        }
-      );
+      this.animationGroups[animationIndex].onAnimationGroupEndObservable.addOnce(() => {
+        this.actionIsFired = false;
+        // Benachrichtigen, dass die Aktion beendet ist:
+        this.onActionFinishedObservable.notifyObservers();
+      });
     };
 
     switch (action) {
@@ -209,6 +215,9 @@ export default class AntObject extends Mesh {
         break;
       case "attack":
         animationFire(8);
+        break;
+      case "defend": 
+        animationFire(7);
         break;
     }
   }
