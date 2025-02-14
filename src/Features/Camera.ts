@@ -65,22 +65,34 @@ export default async function createCamera(
     );
     camera.rotation = new Vector3(0, Math.PI/2, 0);
 
-    let smoothFactor;
+    
 
     if (isIOs) {
+      let smoothFactor;
       // Kamera-Einstellungen iOS
       camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.3;
       camera.angularSensibility = 2000;
       smoothFactor = 0.1;
+
+      scene.onBeforeRenderObservable.add(() => {
+        if (camera.rotationQuaternion && filteredQuaternion) {
+          Quaternion.SlerpToRef(
+            filteredQuaternion,
+            camera.rotationQuaternion,
+            smoothFactor,
+            filteredQuaternion
+          );
+          camera.rotationQuaternion.copyFrom(filteredQuaternion);
+        }
+      });
     } else {
       // Kamera-Einstellungen Android
       camera.fov = 0.7;
       camera.minZ = 0.1;
       camera.inertia = 0.1;
       camera.angularSensibility = 2000;
-      smoothFactor = 0.25;
     }
 
     // Touch Controls aktivieren
@@ -88,34 +100,6 @@ export default async function createCamera(
 
     // Bewegungsglättung
     let filteredQuaternion = camera.rotationQuaternion?.clone();
-    
-
-    scene.onBeforeRenderObservable.add(() => {
-      if (camera.rotationQuaternion && filteredQuaternion) {
-        Quaternion.SlerpToRef(
-          filteredQuaternion,
-          camera.rotationQuaternion,
-          smoothFactor,
-          filteredQuaternion
-        );
-        camera.rotationQuaternion.copyFrom(filteredQuaternion);
-      }
-    });
-
-    // Debug GUI: Regler für inertia und smoothFactor
-    const gui = new dat.GUI();
-    const cameraConfig = {
-      inertia: camera.inertia,
-      smoothFactor: smoothFactor
-    };
-
-    gui.add(cameraConfig, "inertia", 0, 1).step(0.01).onChange((value: number) => {
-      camera.inertia = value;
-    });
-
-    gui.add(cameraConfig, "smoothFactor", 0, 1).step(0.01).onChange((value: number) => {
-      smoothFactor = value;
-    });
 
   } else {
     // Desktop-Kamera-Setup
