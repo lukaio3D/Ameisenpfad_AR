@@ -91,7 +91,7 @@ export default async function createCamera(
       // Kamera-Einstellungen Android
       camera.fov = 0.7;
       camera.minZ = 0.1;
-      // camera.inertia = 0.1;
+      camera.inertia = 0.1;
       camera.angularSensibility = 10;
     }
 
@@ -108,17 +108,6 @@ export default async function createCamera(
     camera.attachControl(canvas, true);
     skybox.dispose();
   }
-
-   // Debug GUI mit dat.gui für inertia und angularSensibility
-   const gui = new dat.GUI();
-   gui.add(camera, "inertia", 0, 1)
-     .step(0.01)
-     .name("Inertia")
-     .listen();
-   gui.add(camera, "angularSensibility", 0, 5000)
-     .step(10)
-     .name("Angular Sensibility")
-     .listen();
 
   return { camera, skybox };
 }
