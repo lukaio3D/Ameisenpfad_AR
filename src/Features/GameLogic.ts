@@ -19,7 +19,10 @@ import PlayerController from "./PlayerController";
 export const allAnts: AntObject[] = [];
 
 // Fügen Sie oben im File (außerhalb von Event-Handlern) eine Map zum Speichern der Klickdaten hinzu:
-const enemyAntClickCount = new Map<string, { count: number; lastClick: number }>();
+const enemyAntClickCount = new Map<
+  string,
+  { count: number; lastClick: number }
+>();
 
 export function GameLogic(
   scene: Scene,
@@ -191,15 +194,17 @@ export function GameLogic(
         );
         // Prüfen, ob die Ameise existiert und vom Typ EnemyAnt ist
         if (pickedAnt instanceof EnemyAnt) {
-          console.log("Feindliche Ameise angeklickt");
-
-          // Klick-Logik: 5 schnelle Klicks nötig
+          // Klick-Logik: 3 schnelle Klicks nötig
           const antId = pickedAnt.id; // Annahme: jede Ameise hat eine eindeutige id
           const now = Date.now();
-          const clickData = enemyAntClickCount.get(antId) || { count: 0, lastClick: now };
+          const clickData = enemyAntClickCount.get(antId) || {
+            count: 0,
+            lastClick: now,
+          };
 
           // Wenn die Zeit seit dem letzten Klick unter 500ms liegt, erhöhen wir den Zähler, sonst resetten wir ihn
-          if (now - clickData.lastClick < 500) { // 500ms Schwelle
+          if (now - clickData.lastClick < 500) {
+            // 500ms Schwelle
             clickData.count = clickData.count + 1;
           } else {
             clickData.count = 1;
@@ -207,7 +212,7 @@ export function GameLogic(
           clickData.lastClick = now;
           enemyAntClickCount.set(antId, clickData);
 
-          // Nur auslösen, wenn 5 schnelle Klicks vorliegen und die Ameise identifiziert ist
+          // Nur auslösen, wenn 3 schnelle Klicks vorliegen und die Ameise identifiziert ist
           if (clickData.count >= 3 && pickedAnt.getIsIdentified()) {
             // Zurücksetzen der Klickdaten
             enemyAntClickCount.set(antId, { count: 0, lastClick: now });
@@ -217,20 +222,29 @@ export function GameLogic(
             const lookAtObserver = scene.onBeforeRenderObservable.add(() => {
               playerAnt.lookAt(pickedAnt.position);
             });
-            
+
             playerAnt.fireAntAction("defend");
             PlayerController(scene, playerAnt).disableControl();
-            
+
+            setTimeout(() => {
+              pickedAnt.substractEnemyHealth(50);
+            }, 5000);
+
             // Sobald die Aktion beendet ist, entfernen wir den Observer und aktivieren PlayerControls wieder
             playerAnt.onActionFinishedObservable.addOnce(() => {
-              // Optionale Schadenslogik
-              pickedAnt.substractEnemyHealth(50);
               scene.onBeforeRenderObservable.remove(lookAtObserver);
               PlayerController(scene, playerAnt).enableControl();
+
+              // Entferne die angeklickte Ameise aus dem allAnts Array
+              if (pickedAnt.getEnemyHealth() <= 0) {
+                const index = allAnts.indexOf(pickedAnt);
+                if (index > -1) {
+                  allAnts.splice(index, 1);
+                }
+              }
             });
           }
         } else if (pickedAnt instanceof FriendAnt) {
-          console.log("Freundliche Ameise angeklickt");
           if (playerAnt.getHealth() < 100) {
             pickedAnt.setBehaviourState("followPlayerAnt");
           }
