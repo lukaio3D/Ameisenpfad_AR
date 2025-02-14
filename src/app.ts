@@ -89,7 +89,7 @@ class App {
     canvas.style.height = "100%";
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
-    // canvas.style.userSelect = "none"; // Deaktiviert Textauswahl
+    canvas.style.userSelect = "none"; // Deaktiviert Textauswahl
 
     const engine = new Engine(canvas, true);
     const scene = new Scene(engine);
