@@ -109,5 +109,16 @@ export default async function createCamera(
     skybox.dispose();
   }
 
+   // Debug GUI mit dat.gui für inertia und angularSensibility
+   const gui = new dat.GUI();
+   gui.add(camera, "inertia", 0, 1)
+     .step(0.01)
+     .name("Inertia")
+     .listen();
+   gui.add(camera, "angularSensibility", 0, 5000)
+     .step(10)
+     .name("Angular Sensibility")
+     .listen();
+
   return { camera, skybox };
 }
