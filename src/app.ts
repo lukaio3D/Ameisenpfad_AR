@@ -90,14 +90,8 @@ class App {
     canvas.id = "gameCanvas";
     document.body.appendChild(canvas);
     canvas.style.userSelect = "none"; // Deaktiviert Textauswahl
-    canvas.style.webkitUserSelect = "none"; // Für iOS
     canvas.style.userSelect = "none"; // Für ältere Browser
 
-    // Zusätzlich kann man den Kontextmenü-Event verhindern:
-    canvas.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-      return false;
-    });
 
     const engine = new Engine(canvas, true);
     const scene = new Scene(engine);
