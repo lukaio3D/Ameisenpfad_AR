@@ -224,6 +224,7 @@ export function GameLogic(
             });
 
             playerAnt.fireAntAction("defend");
+            this.uiManager.displayMessage("Deine Ameise verteidigt sich mit Ameisensäure!");
             PlayerController(scene, playerAnt).disableControl();
 
             setTimeout(() => {
@@ -234,6 +235,7 @@ export function GameLogic(
             playerAnt.onActionFinishedObservable.addOnce(() => {
               scene.onBeforeRenderObservable.remove(lookAtObserver);
               PlayerController(scene, playerAnt).enableControl();
+              this.uiManager.displayMessage("Sammle weiter Früchte ein.");
 
               // Entferne die angeklickte Ameise aus dem allAnts Array
               if (pickedAnt.getEnemyHealth() <= 0) {
