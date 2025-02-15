@@ -213,7 +213,7 @@ export function GameLogic(
           enemyAntClickCount.set(antId, clickData);
 
           // Nur auslösen, wenn 3 schnelle Klicks vorliegen und die Ameise identifiziert ist
-          if (clickData.count >= 3 && pickedAnt.getIsIdentified()) {
+          if (clickData.count >= 2 && pickedAnt.getIsIdentified()) {
             // Zurücksetzen der Klickdaten
             enemyAntClickCount.set(antId, { count: 0, lastClick: now });
 
@@ -224,7 +224,7 @@ export function GameLogic(
             });
 
             playerAnt.fireAntAction("defend");
-            this.uiManager.displayMessage("Deine Ameise verteidigt sich mit Ameisensäure!");
+            uiManager.displayMessage("Deine Ameise verteidigt sich mit Ameisensäure!");
             PlayerController(scene, playerAnt).disableControl();
 
             setTimeout(() => {
@@ -235,7 +235,7 @@ export function GameLogic(
             playerAnt.onActionFinishedObservable.addOnce(() => {
               scene.onBeforeRenderObservable.remove(lookAtObserver);
               PlayerController(scene, playerAnt).enableControl();
-              this.uiManager.displayMessage("Sammle weiter Früchte ein.");
+              uiManager.displayMessage("Sammle weiter Früchte ein.");
 
               // Entferne die angeklickte Ameise aus dem allAnts Array
               if (pickedAnt.getEnemyHealth() <= 0) {
