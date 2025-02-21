@@ -22,7 +22,7 @@ export default async function createARFeatures(scene: Scene) {
   try {
     xrHelper = await scene.createDefaultXRExperienceAsync({
       uiOptions: { sessionMode: "immersive-ar" },
-      optionalFeatures: ["anchors", "hit-test"],
+      optionalFeatures: ["anchors", "hit-test", "dom-overlay"],
     });
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
     console.log("AR-Session gestartet!");
@@ -31,6 +31,7 @@ export default async function createARFeatures(scene: Scene) {
     uiManager.displayMessage("Fehler: " + error.message);
     return;
   }
+
 
   // // Anchor-System
   // const anchorSystem = xrHelper.baseExperience.featuresManager.enableFeature(
