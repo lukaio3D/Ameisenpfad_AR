@@ -32,7 +32,7 @@ export function GameLogic(
   const uiManager = UIManager.getInstance();
 
   // Dialogzeile erstellen
-  uiManager.dialogzeile.text = `Sammle die Früchte ein!`;
+  uiManager.displayMessage("Sammle 8 Früchte ein um das Spiel zu gewinnen");
 
   // Timer erstellen in Sekunden
   // let countDown: number = 240;

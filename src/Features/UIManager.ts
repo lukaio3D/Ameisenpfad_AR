@@ -4,39 +4,20 @@ import * as GUI from "@babylonjs/gui";
 export class UIManager {
   private static instance: UIManager;
   public advancedTexture: GUI.AdvancedDynamicTexture;
-  public dialogzeile: GUI.TextBlock;
   public timer: GUI.TextBlock;
   public healthBar: GUI.Slider;
   public collectBar: GUI.Slider;
   public overlayText: GUI.TextBlock;
   public bigScreen: GUI.Rectangle;
   public dialogContainer: GUI.StackPanel;
-  public dialogText: GUI.TextBlock;
+  public dialogzeile: HTMLParagraphElement;
   public startScreen: GUI.Rectangle;
   public startButton: GUI.Button;
 
   private constructor() {
+    this.dialogzeile = document.getElementById("dialogzeile") as HTMLParagraphElement;
     // AdvancedTexture erstellen
     this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-    // Dialogzeile erstellen und konfigurieren
-    this.dialogzeile = new GUI.TextBlock();
-    this.dialogzeile.text = "";
-    this.dialogzeile.color = "white";
-    this.dialogzeile.fontSize = "2%";
-    this.dialogzeile.height = "5%";
-    this.dialogzeile.width = "100%";
-    this.dialogzeile.paddingBottom = "20%";
-    this.dialogzeile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    this.dialogzeile.textHorizontalAlignment =
-      GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-
-    // **Schwarzen Umriss hinzufügen**
-    this.dialogzeile.outlineWidth = 2;
-    this.dialogzeile.outlineColor = "black";
-
-    // TextBlock zur GUI hinzufügen
-    this.advancedTexture.addControl(this.dialogzeile);
 
     // Container erstellen und konfigurieren
     let containerTopLeft = new GUI.Rectangle();
@@ -48,8 +29,6 @@ export class UIManager {
       GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     this.advancedTexture.addControl(containerTopLeft);
 
-    // TextBlock zur GUI hinzufügen
-    this.advancedTexture.addControl(this.dialogzeile);
 
     // Timer-TextBlock erstellen und konfigurieren
     this.timer = new GUI.TextBlock();
@@ -171,8 +150,7 @@ export class UIManager {
 
   // Neue Methode zum Anzeigen von Nachrichten in der Dialogzeile
   public displayMessage(text: string) {
-    this.dialogzeile.text = text;
-    this.dialogzeile.isVisible = true;
+    this.dialogzeile.innerHTML = text;
   }
 
   public setOverlayText(text: string) {
