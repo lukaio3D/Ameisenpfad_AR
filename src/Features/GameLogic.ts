@@ -272,13 +272,13 @@ export function GameLogic(
       twig = spawnConstructionTwig();
       spawnAntRandomly();
       if (twigsCollected === twigsToCollect) {
-        uiManager.setOverlayText("Spiel gewonnen!");
+        uiManager.toogleWinnerScreen();
         // clearInterval(timer);
       }
     }
     // Game Over bei Health 0
     if (playerAnt.getHealth() <= 0) {
-      uiManager.setOverlayText("Spiel verloren! - Kein Leben mehr");
+      uiManager.toogleLoserScreen();
       // clearInterval(timer);
     }
   });

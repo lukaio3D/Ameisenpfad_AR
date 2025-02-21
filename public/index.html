@@ -5,13 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ameisenpfad AR</title>
-    <script src="https://launchar.app/sdk/v1?key=7DDZHxfr1RpsCdlVPJ1G60yl7laQBAVM&redirect=true"></script>
+    <!-- <script src="https://launchar.app/sdk/v1?key=7DDZHxfr1RpsCdlVPJ1G60yl7laQBAVM&redirect=true"></script> -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 
 </head>
 
 <body class="" style="padding: 0; margin: 0; width: 100vw; height: 100vh; overflow: hidden;">
     <div id="overlay" class="fixed w-[100vw] h-[100vh] z-20 pointer-events-none">
+        <div id="winnerScreen"
+            class="w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-100 text-gray-100 text-center hidden pointer-events-auto">
+            <h1>Herzlichen Glückwunsch! <br> Du hast gewonnen!</h1>
+            <button id="restartButton"
+                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
+                onclick="location.reload()">Neustart</button>
+        </div>
+        <div id="loserScreen"
+            class="w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-100 text-gray-100 text-center hidden pointer-events-auto">
+            <h1>Schade! <br> Du hast verloren!</h1>
+            <button id="restartButton"
+                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
+                onclick="location.reload();">Neustart</button>
+        </div>
         <div id="progressDiv" class="absolute right-5 top-5 flex flex-col gap-2 items-end text-gray-100">
             <div class="flex flex-row items-center gap-4">
                 <p style="text-shadow: -.8px -.8px 0 black, .8px -.8px 0 black, -.8px .8px 0 black, .8px .8px 0 black">
@@ -25,6 +39,7 @@
                 <progress id="fruechteAnzeige" class="w-20" max="100" value="0"></progress>
             </div>
         </div>
+
     </div>
 
     </div>
@@ -44,79 +59,97 @@
         <!-- Content -->
         <div class="h-[76vh] w-full flex flex-col items-center overflow-auto ">
             <div class="max-w-lg p-4 px-8 ">
-                <h1 class="font-bold pt-4 pb-1">Willkommen in der 3D Ameisen Welt!</h1>
-                <p class="pl-2">Erlebe eine faszinierende Welt, in der du das Kommunikationsverhalten von Ameisen in
-                    einer
-                    3D-Umgebung
-                    entdeckst und in die reale Welt holst. Sammle Früchte, weiche Angriffen feindlicher Ameisen aus und
-                    nutze die Hilfe freundlicher Verbündeter.</p>
+                <div class=" p-4 rounded-xl">
+                    <h1 class="font-bold pt-4 pb-1">Willkommen in der 3D Ameisen Welt!</h1>
+                    <p class="">Erlebe eine faszinierende Welt, in der du das Kommunikationsverhalten von Ameisen in
+                        einer
+                        3D-Umgebung
+                        entdeckst und in die reale Welt holst. Sammle Früchte, weiche Angriffen feindlicher Ameisen aus
+                        und
+                        nutze die Hilfe freundlicher Verbündeter.</p>
+                    <br>
+                </div>
+                <div class="bg-gray-200 p-4 rounded-xl">
+                    <h2 class="font-bold pb-1 text-xl">Spielziel</h2>
+                    <p class=" ">Dein Ziel ist es, eine vorgegebene Anzahl an Früchten einzusammeln. Vorsicht: Nach drei
+                        unheilvollen
+                        Feindangriffen ohne Heilung verlierst du das Spiel!</p>
+                    <br>
+                </div>
+
                 <br>
+                <div class="bg-gray-200 p-4 rounded-xl">
+                    <h3 class="font-bold pb-1 text-xl">Steuerung</h3>
+                    <ul class="">
+                        <li>Bewege deine Spielerameise, indem du auf den Boden klickst. Sie läuft dann direkt zur
+                            angeklickten
+                            Stelle.</li>
+                    </ul>
+                    <br>
+                </div>
                 <br>
-                <h2 class="font-bold pb-1 text-lg">Spielziel</h2>
-                <p class="pl-2">Dein Ziel ist es, eine vorgegebene Anzahl an Früchten einzusammeln. Vorsicht: Nach drei
-                    unheilvollen
-                    Feindangriffen ohne Heilung verlierst du das Spiel!</p>
+                <div class="bg-gray-200 p-4 rounded-xl">
+                    <h2 class="font-bold pb-1 text-xl">Interaktion mit Ameisen</h2>
+                    <ul class="">
+                        <li>
+                            <p class="font-semibold">Erkennung</p> Sobald deine Spielerameise einer unbekannten Ameise
+                            näher
+                            kommt,
+                            startet
+                            automatisch eine Erkennungssequenz. Dabei wird die fremde Ameise rot (Feind) oder grün
+                            (Freund)
+                            angezeigt.
+                        </li><br>
+                        <li>
+                            <p class="font-semibold">Angriff und Abwehr</p> Nähert sich deine Ameise erneut einem Feind,
+                            greift
+                            dieser
+                            an.
+                            Du kannst ihn mit Ameisensäure bespritzen, indem du mehrfach auf ihn klickst, um ihn
+                            abzuwehren.
+                        </li><br>
+                        <li>
+                            <p class="font-semibold">Heilung</p> Hat deine Ameise Schaden genommen, klicke auf eine
+                            freundliche
+                            Ameise,
+                            um
+                            eine Nahrungsübergabe zu starten, die deine Lebensenergie wiederherstellt.
+                        </li>
+                    </ul>
+                    <br>
+                </div>
                 <br>
+
+                <div class="bg-gray-200 p-4 rounded-xl">
+                    <h2 class="font-bold pb-1 text-xl">Spielmodi</h2>
+                    <h3 class="font-semibold  ">3D-Modus</h3>
+                    <p class=" ">Starte den 3D-Modus über den Button "Start 3D" unten. Drehe dein Mobilgerät und
+                        erkunde
+                        die virtuelle Umgebung aus neuen Perspektiven.</p>
+                    <br>
+                    <br>
+                    <h3 class="font-semibold  ">AR-Modus</h3>
+                    <p class=" ">Aktiviere den AR-Modus (auf geeigneten Android-Geräten) mit dem Button "Start AR".
+                        In
+                        diesem Modus werden die virtuellen Ameisen in deine reale Umgebung integriert, sodass du ihnen
+                        hautnah
+                        begegnen kannst.</p>
+                    <br>
+                </div>
                 <br>
-                <h2 class="font-bold pb-1 text-lg">Interaktion mit Ameisen</h2>
-                <ul class="pl-2">
-                    <li>
-                        <p class="font-semibold">Erkennung</p> Sobald deine Spielerameise einer unbekannten Ameise näher
-                        kommt,
-                        startet
-                        automatisch eine Erkennungssequenz. Dabei wird die fremde Ameise rot (Feind) oder grün (Freund)
-                        angezeigt.
-                    </li><br>
-                    <li>
-                        <p class="font-semibold">Angriff und Abwehr</p> Nähert sich deine Ameise erneut einem Feind,
-                        greift
-                        dieser
-                        an.
-                        Du kannst ihn mit Ameisensäure bespritzen, indem du mehrfach auf ihn klickst, um ihn abzuwehren.
-                    </li><br>
-                    <li>
-                        <p class="font-semibold">Heilung</p> Hat deine Ameise Schaden genommen, klicke auf eine
-                        freundliche
-                        Ameise,
-                        um
-                        eine Nahrungsübergabe zu starten, die deine Lebensenergie wiederherstellt.
-                    </li>
-                </ul>
-                <br>
-                <br>
-                <h3 class="font-bold pb-1 text-lg">Steuerung</h3>
-                <ul class="pl-2">
-                    <li>Bewege deine Spielerameise, indem du auf den Boden klickst. Sie läuft dann direkt zur
-                        angeklickten
-                        Stelle.</li>
-                </ul>
-                <br>
-                <br>
-                <h2 class="font-bold pb-1 text-lg">Spielmodi</h2>
-                <h3 class="font-semibold pl-2">3D-Modus</h3>
-                <p class="pl-2">Starte den 3D-Modus über den Button "Start 3D" unten. Drehe dein Mobilgerät und
-                    erkunde
-                    die virtuelle Umgebung aus neuen Perspektiven.</p>
-                <br>
-                <br>
-                <h3 class="font-semibold pl-2">AR-Modus</h3>
-                <p class="pl-2">Aktiviere den AR-Modus (auf geeigneten Android-Geräten) mit dem Button "Start AR".
-                    In
-                    diesem Modus werden die virtuellen Ameisen in deine reale Umgebung integriert, sodass du ihnen
-                    hautnah
-                    begegnen kannst.</p>
-                <br>
-                <br>
-                <p>Viel Spaß beim Erkunden der Ameisenwelt und beim Sammeln der Früchte!</p>
+                <div class="font-semibold rounded-xl">
+                    <p>Viel Spaß beim Erkunden der Ameisenwelt und beim Sammeln der Früchte!</p>
+                    <br>
+                </div>
             </div>
         </div>
 
         <!-- Fußzeile -->
         <div id="bottomLine"
-            class="w-full h-[12vh] flex flex-row justify-center gap-16 items-center text-gray-100 text-xl text-bold "
+            class="w-full h-[12vh] flex flex-row justify-center gap-16 items-center text-black text-xl text-bold "
             style="background-color: #286836;">
-            <button id="startButton" class="p-2 h-12">Start 3D</button>
-            <button id="startARButton" class="p-2 h-12 hidden">Start AR</button>
+            <button id="startButton" class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg">Start 3D</button>
+            <button id="startARButton" class="p-2 h-12 bg-gray-100 rounded-xl shadow-lg hidden">Start AR</button>
         </div>
     </div>
 </body>
