@@ -5,8 +5,8 @@ export class UIManager {
   private static instance: UIManager;
   public advancedTexture: GUI.AdvancedDynamicTexture;
   public timer: GUI.TextBlock;
-  public healthBar: GUI.Slider;
-  public collectBar: GUI.Slider;
+  public healthBar: HTMLProgressElement;
+  public collectBar: HTMLProgressElement;
   public overlayText: GUI.TextBlock;
   public bigScreen: GUI.Rectangle;
   public dialogContainer: GUI.StackPanel;
@@ -16,107 +16,12 @@ export class UIManager {
 
   private constructor() {
     this.dialogzeile = document.getElementById("dialogzeile") as HTMLParagraphElement;
+    this.healthBar = document.getElementById("lebensAnzeige") as HTMLProgressElement;
+    this.collectBar = document.getElementById("fruechteAnzeige") as HTMLProgressElement;
+
+
     // AdvancedTexture erstellen
     this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-    // Container erstellen und konfigurieren
-    let containerTopLeft = new GUI.Rectangle();
-    containerTopLeft.height = "10%";
-    containerTopLeft.width = "20%";
-    containerTopLeft.thickness = 0; // Rahmen entfernen
-    containerTopLeft.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    containerTopLeft.horizontalAlignment =
-      GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    this.advancedTexture.addControl(containerTopLeft);
-
-
-    // Timer-TextBlock erstellen und konfigurieren
-    this.timer = new GUI.TextBlock();
-    this.timer.text = "";
-    this.timer.color = "orange";
-    this.timer.fontSize = 24;
-    this.timer.height = "10%";
-    this.timer.width = "20%";
-
-    // **Schwarzen Umriss hinzufügen**
-    this.timer.outlineWidth = 2;
-    this.timer.outlineColor = "black";
-
-    // TextBlock zur GUI hinzufügen
-    containerTopLeft.addControl(this.timer);
-
-    // Container erstellen und konfigurieren
-    let containerTopRight = new GUI.Rectangle();
-    containerTopRight.height = "10%";
-    containerTopRight.width = "40%";
-    containerTopRight.paddingTop = "20px";
-    containerTopRight.paddingRight = "20px";
-    containerTopRight.thickness = 0; // Rahmen entfernen
-    containerTopRight.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    containerTopRight.horizontalAlignment =
-      GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    this.advancedTexture.addControl(containerTopRight);
-
-    // Grid erstellen und zum Container hinzufügen
-    let grid = new GUI.Grid();
-    grid.addColumnDefinition(0.5, false);
-    grid.addColumnDefinition(0.5, false);
-    grid.addRowDefinition(0.5, false);
-    grid.addRowDefinition(0.5, false);
-    grid.width = "100%";
-    grid.height = "100%";
-    containerTopRight.addControl(grid);
-
-    // Beschriftung Lebensbalken erstellen und konfigurieren
-    let legendHealth = new GUI.TextBlock();
-    legendHealth.text = "Leben";
-    legendHealth.color = "white";
-    legendHealth.fontSize = "40%";
-    legendHealth.height = "50%";
-    legendHealth.width = "100%";
-    // **Schwarzen Umriss hinzufügen**
-    legendHealth.outlineWidth = 2;
-    legendHealth.outlineColor = "black";
-    grid.addControl(legendHealth, 0, 0);
-
-    // Lebensbalken konfigurieren und hinzufügen
-    this.healthBar = new GUI.Slider();
-    this.healthBar.minimum = 0;
-    this.healthBar.maximum = 100;
-    this.healthBar.color = "green";
-    this.healthBar.background = "white";
-    this.healthBar.value = 100;
-    this.healthBar.height = "50%";
-    this.healthBar.width = "100%";
-    this.healthBar.displayThumb = false;
-    this.healthBar.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    grid.addControl(this.healthBar, 0, 1);
-
-    // Beschriftung Lebensbalken erstellen und konfigurieren
-    let legendCollected = new GUI.TextBlock();
-    legendCollected.text = "Früchte";
-    legendCollected.color = "white";
-    legendCollected.fontSize = "40%";
-    legendCollected.height = "50%";
-    legendCollected.width = "100%";
-    // **Schwarzen Umriss hinzufügen**
-    legendCollected.outlineWidth = 2;
-    legendCollected.outlineColor = "black";
-    grid.addControl(legendCollected, 1, 0);
-
-    // Sammelbalken konfigurieren und hinzufügen
-    this.collectBar = new GUI.Slider();
-    this.collectBar.minimum = 0;
-    this.collectBar.maximum = 100;
-    this.collectBar.color = "orange";
-    this.collectBar.background = "white";
-    this.collectBar.value = 0;
-    this.collectBar.height = "50%";
-    this.collectBar.width = "100%";
-    this.collectBar.displayThumb = false;
-    this.collectBar.horizontalAlignment =
-      GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    grid.addControl(this.collectBar, 2, 2);
 
     // Big Screen Overlay
     this.bigScreen = new GUI.Rectangle();
@@ -160,5 +65,9 @@ export class UIManager {
 
   public setHealthBar(value: number) {
     this.healthBar.value = value;
+  }
+
+  public setFruitBar(value: number) {
+    this.collectBar.value = value;
   }
 }
