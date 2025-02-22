@@ -17,7 +17,6 @@ import {
 import { UIManager } from "../Features/UIManager";
 
 export default async function createARFeatures(scene: Scene) {
-  const uiManager = UIManager.getInstance();
 
   let xrHelper: WebXRDefaultExperience;
   try {
@@ -25,16 +24,24 @@ export default async function createARFeatures(scene: Scene) {
       uiOptions: { sessionMode: "immersive-ar" },
       optionalFeatures: ["anchors", "hit-test", "dom-overlay"],
     });
+    await createDOMOverlay();
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
     console.log("AR-Session gestartet!");
   } catch (error) {
     console.error("Fehler in createARFeatures:", error);
-    uiManager.displayMessage("Fehler: " + error.message);
     return;
   }
 
-  const featuresManager = xrHelper.baseExperience.featuresManager;
-  const domOverlayFeature = featuresManager.enableFeature(WebXRDomOverlay, "latest", { element: "#overlay" }, undefined, false);
+  async function createDOMOverlay() {
+    const featuresManager = xrHelper.baseExperience.featuresManager;
+    const domOverlayFeature = featuresManager.enableFeature(
+      WebXRDomOverlay,
+      "latest",
+      { element: "#overlay" },
+      undefined,
+      false
+    );
+  }
 
   // // Anchor-System
   // const anchorSystem = xrHelper.baseExperience.featuresManager.enableFeature(

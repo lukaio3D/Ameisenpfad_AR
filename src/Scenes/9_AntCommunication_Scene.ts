@@ -64,13 +64,14 @@ export default async function createAntCommunicationScene(
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 
   // AR über Start Button auslösen
-  const startButton = document.getElementById(
+  const startARButton = document.getElementById(
     "startARButton"
   ) as HTMLButtonElement;
   //Prüfen, ob AR-Modus unterstützt wird
   if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
-    startButton.style.display = "block";
-    startButton.addEventListener("click", async () => {
+    startARButton.style.display = "block";
+    startARButton.addEventListener("click", async () => {
+      console.log("Scene:", scene);
       // Nun AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
