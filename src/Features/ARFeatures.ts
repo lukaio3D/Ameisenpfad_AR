@@ -21,9 +21,12 @@ export default async function createARFeatures(scene: Scene) {
   let xrHelper: WebXRDefaultExperience;
   try {
     xrHelper = await scene.createDefaultXRExperienceAsync({
-      uiOptions: { sessionMode: "immersive-ar" },
-      optionalFeatures: ["anchors", "hit-test", "dom-overlay"],
-    });
+      uiOptions: {
+          sessionMode: "immersive-ar",
+          referenceSpaceType: "local-floor"
+      },
+      optionalFeatures: true
+  });
     await createDOMOverlay();
     await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
     console.log("AR-Session gestartet!");
@@ -41,6 +44,7 @@ export default async function createARFeatures(scene: Scene) {
       undefined,
       false
     );
+
   }
 
   // // Anchor-System

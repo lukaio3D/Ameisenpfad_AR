@@ -47,12 +47,14 @@ class App {
 
     const engine = new Engine(canvas, true);
     const scene = new Scene(engine);
+    // Szene wird hier NICHT zugewiesen:
     scene.clearColor = new Color4(0.95, 0.95, 0.95, 1);
+
+    // Speichere die erstellte Szene in der Klassenvariable:
+    this.scene = scene;
 
     const uiManager = UIManager.getInstance();
     await createAntCommunicationScene(canvas, scene);
-
-    //scene.debugLayer.show();
 
     window.addEventListener("resize", () => engine.resize());
     engine.runRenderLoop(() => scene.render());

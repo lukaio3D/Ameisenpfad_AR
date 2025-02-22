@@ -68,14 +68,20 @@ export default async function createAntCommunicationScene(
     "startARButton"
   ) as HTMLButtonElement;
   //Prüfen, ob AR-Modus unterstützt wird
-  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar") && startARButton) {
     startARButton.style.display = "block";
-    startARButton.addEventListener("click", async () => {
-      console.log("Scene:", scene);
-      // Nun AR-Features initialisieren
+    
+    // Benannte Event-Handler-Funktion, die sich selbst entfernt:
+    async function handleStartARClick() {
+      // Eventlistener selbst entfernen
+      startARButton.removeEventListener("click", handleStartARClick);
+
+      // AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
       });
-    });
+    }
+    
+    startARButton.addEventListener("click", handleStartARClick);
   }
 }
