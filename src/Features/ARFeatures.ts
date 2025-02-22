@@ -34,7 +34,7 @@ export default async function createARFeatures(scene: Scene) {
   }
 
   const featuresManager = xrHelper.baseExperience.featuresManager;
-  const domOverlayFeature = featuresManager.enableFeature(WebXRDomOverlay, "latest", { element: ".overlay" }, undefined, false);
+  const domOverlayFeature = featuresManager.enableFeature(WebXRDomOverlay, "latest", { element: "#overlay" }, undefined, false);
 
   // // Anchor-System
   // const anchorSystem = xrHelper.baseExperience.featuresManager.enableFeature(
