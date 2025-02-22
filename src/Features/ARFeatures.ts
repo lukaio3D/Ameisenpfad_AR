@@ -12,6 +12,7 @@ import {
   PointerEventTypes,
   IWebXRHitResult,
   Mesh,
+  WebXRDomOverlay,
 } from "@babylonjs/core";
 import { UIManager } from "../Features/UIManager";
 
@@ -32,6 +33,8 @@ export default async function createARFeatures(scene: Scene) {
     return;
   }
 
+  const featuresManager = xrHelper.baseExperience.featuresManager;
+  const domOverlayFeature = featuresManager.enableFeature(WebXRDomOverlay, "latest", { element: ".overlay" }, undefined, false);
 
   // // Anchor-System
   // const anchorSystem = xrHelper.baseExperience.featuresManager.enableFeature(
