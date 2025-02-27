@@ -11,22 +11,9 @@
 </head>
 
 <body class="" style="padding: 0; margin: 0; width: 100vw; height: 100vh; overflow: hidden;">
-    <div id="overlay" class="fixed w-[100vw] h-[100vh] z-20 pointer-events-none">
-        <div id="winnerScreen"
-            class="w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-100 text-gray-100 text-center hidden pointer-events-auto">
-            <h1>Herzlichen Glückwunsch! <br> Du hast gewonnen!</h1>
-            <button id="restartButton"
-                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
-                onclick="location.reload()">Neustart</button>
-        </div>
-        <div id="loserScreen"
-            class="w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-100 text-gray-100 text-center hidden pointer-events-auto">
-            <h1>Schade! <br> Du hast verloren!</h1>
-            <button id="restartButton"
-                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
-                onclick="location.reload();">Neustart</button>
-        </div>
-        <div id="progressDiv" class="absolute right-5 top-5 flex flex-col gap-2 items-end text-gray-100">
+    <div id="overlay" class="fixed w-[100vw] h-[100vh] pointer-events-none">
+
+        <div id="progressDiv" class="absolute right-5 top-5 flex flex-col gap-2 z-40 items-end text-gray-100">
             <div class="flex flex-row items-center gap-4">
                 <p style="text-shadow: -.8px -.8px 0 black, .8px -.8px 0 black, -.8px .8px 0 black, .8px .8px 0 black">
                     Leben</p>
@@ -40,10 +27,25 @@
             </div>
         </div>
 
-        <div id="dialogContainer" class="absolute bottom-20 w-full flex flex-col items-center">
+        <div id="dialogContainer" class="absolute bottom-20 w-full flex z-40 flex-col items-center">
             <p id="dialogzeile" class="text-gray-100 tracking-widest px-4 text-center"
                 style="text-shadow: -.8px -.8px 0 black, .8px -.8px 0 black, -.8px .8px 0 black, .8px .8px 0 black;">
             </p>
+        </div>
+
+        <div id="winnerScreen"
+            class="fixed w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-40 text-gray-100 text-center hidden pointer-events-auto">
+            <h1>Herzlichen Glückwunsch! <br> Du hast gewonnen!</h1>
+            <button id="restartButton"
+                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
+                onclick="location.reload()">Neustart</button>
+        </div>
+        <div id="loserScreen"
+            class="fixed w-full h-full flex flex-col p-4 gap-8 justify-center items-center text-4xl font-semibold bg-[#286836] z-40 text-gray-100 text-center hidden pointer-events-auto">
+            <h1>Schade! <br> Du hast verloren!</h1>
+            <button id="restartButton"
+                class="p-2 h-12 bg-gray-100 rounded-xl font-semibold shadow-lg text-black text-xl"
+                onclick="location.reload();">Neustart</button>
         </div>
 
     </div>
@@ -148,10 +150,16 @@
 
         <!-- Fußzeile -->
         <div id="bottomLine"
-            class="w-full h-[12vh] flex flex-row justify-center gap-16 items-center text-black font-semibold text-bold "
+            class="w-full h-[12vh] flex flex-row justify-center gap-16 items-center text-gray-100 font-semibold text-bold "
             style="background-color: #286836;">
-            <button id="startButton" class="p-2 h-12 bg-gray-100 rounded-xl shadow-lg">Start 3D</button>
-            <button id="startARButton" class="p-2 h-12 bg-gray-100 rounded-xl shadow-lg hidden">Start AR</button>
+            <button id="startButton" class="p-2 flex flex-col justify-center items-center">
+                <img class="w-12" src="./3d-select-solid.svg"></img>
+                <p>Start 3D</p>
+            </button>
+            <button id="startARButton" class="p-2 flex flex-col justify-center items-center hidden">
+                <img class="w-12" src="./3d-cube-sphere.svg"></img>
+                <p>Start AR</p>
+            </button>
         </div>
     </div>
 </body>

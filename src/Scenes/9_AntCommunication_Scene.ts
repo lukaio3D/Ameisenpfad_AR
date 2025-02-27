@@ -69,7 +69,7 @@ export default async function createAntCommunicationScene(
   ) as HTMLButtonElement;
   //Prüfen, ob AR-Modus unterstützt wird
   if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar") && startARButton) {
-    startARButton.style.display = "block";
+    startARButton.style.display = "flex";
     
     // Benannte Event-Handler-Funktion, die sich selbst entfernt:
     async function handleStartARClick() {
