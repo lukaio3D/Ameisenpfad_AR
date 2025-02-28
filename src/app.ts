@@ -25,26 +25,27 @@ class App {
       typeof (DeviceOrientationEvent as any).requestPermission !== "function"
     ) {
       await this.initialize();
-      return;
     }
 
     // Klick-Event für den Start-Button:
     startButton.addEventListener("click", async () => {
       // Falls DeviceOrientation abgefragt werden muss, holen wir zuerst die Berechtigung ab:
+      // Berechtigung erteilt: Szene laden und Startscreen entfernen.
+      console.log("Start Button geklickt");
+      startScreen.remove();
       try {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
+        const permission = await (
+          DeviceOrientationEvent as any
+        ).requestPermission();
         if (permission !== "granted") {
           console.error("DeviceOrientation-Berechtigung nicht erteilt");
           return;
         }
+        await this.initialize();
       } catch (error) {
         console.error("Fehler bei der DeviceOrientation-Berechtigung:", error);
         return;
       }
-
-      // Berechtigung erteilt: Szene laden und Startscreen entfernen.
-      await this.initialize();
-      startScreen.remove();
     });
   }
 
