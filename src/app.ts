@@ -20,18 +20,18 @@ class App {
     const startButton = document.getElementById("startButton");
     const startARButton = document.getElementById("startARButton");
 
-    // Klick-Event für den Start-Button
+    // Klick-Event für den Start-Button:
     startButton.addEventListener("click", async () => {
       // Erst jetzt Szene/Camera laden
       this.initialize();
       startScreen.remove();
     });
 
-    // Prüfen, ob AR unterstützt wird und Button sichtbar machen
+    // Prüfen, ob AR unterstützt wird und Button sichtbar machen:
     if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
       startARButton.style.display = "block";
       startARButton.addEventListener("click", async () => {
-        // AR-Features starten
+        // AR-Features starten:
         await createARFeatures(this.scene);
       });
     }
@@ -47,7 +47,6 @@ class App {
 
     const engine = new Engine(canvas, true);
     const scene = new Scene(engine);
-    // Szene wird hier NICHT zugewiesen:
     scene.clearColor = new Color4(0.95, 0.95, 0.95, 1);
 
     // Speichere die erstellte Szene in der Klassenvariable:
@@ -61,24 +60,30 @@ class App {
   }
 }
 
-// Beim Laden der Seite direkt DeviceOrientation-Berechtigung anfragen und Szene laden
+// Nur App erstellen, wenn die DeviceOrientation-Anfrage (sofern erforderlich) erteilt wird:
 (async () => {
-  // Sensor-Berechtigung anfragen (falls möglich)
+  let permissionGranted = true;
+
+  // Prüfen, ob device orientation explizit angefordert werden muss
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof (DeviceOrientationEvent as any).requestPermission === "function"
   ) {
     try {
       const permission = await (DeviceOrientationEvent as any).requestPermission();
-      if (permission !== "granted") {
+      permissionGranted = permission === "granted";
+      if (!permissionGranted) {
         console.error("DeviceOrientation-Berechtigung nicht erteilt");
+        // Hier kannst du optional eine Meldung anzeigen oder einen alternativen Ablauf definieren.
+        return;
       }
     } catch (error) {
       console.error("Fehler bei der DeviceOrientation-Berechtigung:", error);
+      return;
     }
   }
 
-  // Szene im Hintergrund laden
+  // Falls die Berechtigung erteilt wurde, App erstellen und initialisieren:
   const app = new App();
   await app.initialize();
 })();
