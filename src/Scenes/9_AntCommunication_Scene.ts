@@ -62,26 +62,22 @@ export default async function createAntCommunicationScene(
   GameLogic(scene, navigationPlugin, crowd);
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
-
-  // AR über Start Button auslösen
+  
   const startARButton = document.getElementById(
     "startARButton"
   ) as HTMLButtonElement;
-  //Prüfen, ob AR-Modus unterstützt wird
-  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar") && startARButton) {
-    startARButton.style.display = "flex";
-    
-    // Benannte Event-Handler-Funktion, die sich selbst entfernt:
-    async function handleStartARClick() {
-      // Eventlistener selbst entfernen
-      startARButton.removeEventListener("click", handleStartARClick);
+  console.log("Szene startet")
 
+  // Prüfen, ob AR unterstützt wird und Button sichtbar machen:
+  if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
+    // AR über Start Button auslösen
+
+    startARButton.style.display = "flex";
+    startARButton.addEventListener("click", async () => {
       // AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
       });
-    }
-    
-    startARButton.addEventListener("click", handleStartARClick);
+    });
   }
 }

@@ -17,36 +17,35 @@ class App {
   async createStartButton() {
     const startScreen = document.getElementById("startScreen");
     const startButton = document.getElementById("startButton");
-    const startARButton = document.getElementById("startARButton");
+
+    // Falls DeviceOrientation nicht unterstützt wird oder keine Erlaubnisabfrage nötig ist,
+    // laden wir die Szene direkt:
+    if (
+      typeof DeviceOrientationEvent === "undefined" ||
+      typeof (DeviceOrientationEvent as any).requestPermission !== "function"
+    ) {
+      await this.initialize();
+      return;
+    }
 
     // Klick-Event für den Start-Button:
     startButton.addEventListener("click", async () => {
-      // Wenn device orientation angefragt werden muss, holen wir die Berechtigung ab:
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof (DeviceOrientationEvent as any).requestPermission === "function"
-      ) {
-        try {
-          const permission = await (DeviceOrientationEvent as any).requestPermission();
-          if (permission !== "granted") {
-            console.error("DeviceOrientation-Berechtigung nicht erteilt");
-            return;
-          }
-        } catch (error) {
-          console.error("Fehler bei der DeviceOrientation-Berechtigung:", error);
+      // Falls DeviceOrientation abgefragt werden muss, holen wir zuerst die Berechtigung ab:
+      try {
+        const permission = await (DeviceOrientationEvent as any).requestPermission();
+        if (permission !== "granted") {
+          console.error("DeviceOrientation-Berechtigung nicht erteilt");
           return;
         }
+      } catch (error) {
+        console.error("Fehler bei der DeviceOrientation-Berechtigung:", error);
+        return;
       }
-      
-      // Berechtigung erteilt oder nicht erforderlich: Fenster schließen und Szene laden.
+
+      // Berechtigung erteilt: Szene laden und Startscreen entfernen.
       await this.initialize();
       startScreen.remove();
     });
-
-    // Prüfen, ob AR unterstützt wird und Button sichtbar machen:
-    if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
-      startARButton.style.display = "flex";
-    }
   }
 
   async initialize() {
@@ -70,5 +69,4 @@ class App {
   }
 }
 
-// App wird hier über den Start-Button initialisiert – keine automatische Initialisierung mehr.
 new App();
