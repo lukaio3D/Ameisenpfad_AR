@@ -1,4 +1,6 @@
 import { SceneLoader, AssetContainer, Scene } from "@babylonjs/core";
+import antModel from "../assets/240206_AnimatedAnt_final.glb";
+import strawberryModel from "../assets/Strawberry.glb";
 
 export class AssetManager {
   private static antAssetContainer: AssetContainer | null = null;
@@ -8,8 +10,8 @@ export class AssetManager {
   public static async loadAntAsset(scene: Scene): Promise<AssetContainer> {
     if (!this.antAssetContainer) {
       this.antAssetContainer = await SceneLoader.LoadAssetContainerAsync(
-        "../assets/", // Pfad (kann je nach Struktur angepasst werden)
-        "240206_AnimatedAnt_final.glb",
+        "", // Pfad (kann je nach Struktur angepasst werden)
+        antModel,
         scene
       );
     }
@@ -20,8 +22,8 @@ export class AssetManager {
     public static async loadStrawberryAsset(scene: Scene): Promise<AssetContainer> {
         if (!this.strawberryAssetContainer) {
           this.strawberryAssetContainer = await SceneLoader.LoadAssetContainerAsync(
-            "../assets/",
-            "Strawberry.glb",
+            "",
+            strawberryModel,
             scene
           );
         }

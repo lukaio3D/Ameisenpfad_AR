@@ -8,7 +8,6 @@ import {
   Color3,
 } from "@babylonjs/core";
 
-import strawberry from "../assets/Strawberry.glb";
 import { AssetManager } from "../Features/AssetsManager";
 
 export default class ConstructionTwig extends Mesh {
