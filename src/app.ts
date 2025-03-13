@@ -31,7 +31,6 @@ class App {
     startButton.addEventListener("click", async () => {
       // Falls DeviceOrientation abgefragt werden muss, holen wir zuerst die Berechtigung ab:
       // Berechtigung erteilt: Szene laden und Startscreen entfernen.
-      console.log("Start Button geklickt");
       startScreen.remove();
       try {
         const permission = await (

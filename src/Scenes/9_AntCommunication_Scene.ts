@@ -66,7 +66,6 @@ export default async function createAntCommunicationScene(
   const startARButton = document.getElementById(
     "startARButton"
   ) as HTMLButtonElement;
-  console.log("Szene startet")
 
   // Prüfen, ob AR unterstützt wird und Button sichtbar machen:
   if (await WebXRSessionManager.IsSessionSupportedAsync("immersive-ar")) {
