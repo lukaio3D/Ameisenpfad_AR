@@ -19,6 +19,8 @@ import {
 } from "@babylonjs/core";
 
 import antModel from "../assets/240206_AnimatedAnt_final.glb";
+import { AssetManager } from "../Features/AssetsManager";
+import { Contrast } from "@babylonjs/inspector/components/actionTabs/tabs/propertyGrids/materials/textures/defaultTools/contrast";
 
 export default class AntObject extends Mesh {
   public ready: Promise<void>;
@@ -83,8 +85,13 @@ export default class AntObject extends Mesh {
   }
 
   private async createAntMesh(scene: Scene) {
-    const result = await SceneLoader.ImportMeshAsync("", antModel, "", scene);
-    this.antMesh = result.meshes[0];
+    const container = await AssetManager.loadAntAsset(scene);
+    const instance = container.instantiateModelsToScene();
+    const rootMesh = instance.rootNodes.find(
+      (node) => node instanceof Mesh
+    ) as AbstractMesh;
+    this.antMesh = rootMesh;
+
     // Parent zuweisen
     this.antMesh.parent = this;
 
@@ -96,24 +103,19 @@ export default class AntObject extends Mesh {
     // Optionale Rotation
     // this.antMesh.rotate(Vector3.Up(), Math.PI / 2);
 
-    // Animation zuweisen
-    if (result.animationGroups.length > 0) {
-      this.animationGroups = result.animationGroups;
+    // Animation zuweisen, falls vorhanden
+    if (instance.animationGroups && instance.animationGroups.length > 0) {
+      this.animationGroups = instance.animationGroups;
       this.animationGroups[0].stop();
     }
 
     // Materialien der geladenen Meshes anpassen
-    result.meshes.forEach((childMesh) => {
-      if (childMesh.material) {
-        // Prüfen, ob das Material ein PBRMaterial ist (typisch für .glb-Dateien)
-        let pbrMaterial = childMesh.material as PBRMaterial;
-        if (pbrMaterial) {
-          // Emissive Farbe auf Weiß setzen
-          pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
-          // Optional: Emissive Textur auf die Albedo-Textur setzen, um die vorhandene Textur zum Leuchten zu bringen
-          if (pbrMaterial.albedoTexture) {
-            pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
-          }
+    container.materials.forEach((material) => {
+      let pbrMaterial = material as PBRMaterial;
+      if (pbrMaterial) {
+        pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
+        if (pbrMaterial.albedoTexture) {
+          pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
         }
       }
     });
@@ -131,11 +133,14 @@ export default class AntObject extends Mesh {
         const targetPosition = this.position.add(velocity);
         const direction = targetPosition.subtract(this.position).normalize();
         // Erzeuge die Zielrotation basierend auf der Richtungsvektor
-        let targetRotation = Quaternion.FromLookDirectionLH(direction, Vector3.Up());
+        let targetRotation = Quaternion.FromLookDirectionLH(
+          direction,
+          Vector3.Up()
+        );
         // Korrigiere die Rotation um 180° (pi) um das Modell richtig auszurichten
         const correction = Quaternion.RotationAxis(Vector3.Up(), Math.PI);
         targetRotation = targetRotation.multiply(correction);
-        
+
         // Falls noch keine RotationQuaternion existiert, initialisiere sie
         if (!this.rotationQuaternion) {
           this.rotationQuaternion = targetRotation;
@@ -151,8 +156,6 @@ export default class AntObject extends Mesh {
       }
     });
   }
-
-
 
   private async animateAntOnMove(scene: Scene) {
     scene.onBeforeRenderObservable.add(() => {
@@ -193,7 +196,9 @@ export default class AntObject extends Mesh {
     const animationFire = (animationIndex: number) => {
       this.animationGroups[animationIndex].start();
       this.animationGroups[animationIndex].loopAnimation = false;
-      this.animationGroups[animationIndex].onAnimationGroupEndObservable.addOnce(() => {
+      this.animationGroups[
+        animationIndex
+      ].onAnimationGroupEndObservable.addOnce(() => {
         this.actionIsFired = false;
         // Benachrichtigen, dass die Aktion beendet ist:
         this.onActionFinishedObservable.notifyObservers();
@@ -216,7 +221,7 @@ export default class AntObject extends Mesh {
       case "attack":
         animationFire(8);
         break;
-      case "defend": 
+      case "defend":
         animationFire(7);
         break;
     }
