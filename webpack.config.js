@@ -70,6 +70,10 @@ module.exports = (env) => {
             from: path.resolve(__dirname, "src/assets"),
             to: "assets",
           },
+          {
+            from: path.resolve(__dirname, "public/output.css"),
+            to: "output.css",
+          },
         ],
       }),
     ],
