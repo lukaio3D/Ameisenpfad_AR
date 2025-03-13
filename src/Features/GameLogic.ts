@@ -188,7 +188,7 @@ export function GameLogic(
       const pickedMesh = pointerInfo.pickInfo?.pickedMesh;
       if (!pickedMesh) return;
 
-      if (pickedMesh.name === "Ant.006") {
+      if (pickedMesh.name === "Clone of Ant.006") {
         const pickedAnt = allAnts.find((ant) =>
           ant?.getChildMeshes().includes(pickedMesh)
         );
