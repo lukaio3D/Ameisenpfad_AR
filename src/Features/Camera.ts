@@ -107,7 +107,7 @@ export default async function createCamera(
     camera = new FreeCamera("camera", new Vector3(0, 5, -5), scene);
     camera.setTarget(new Vector3(0, 0, 2.5));
     camera.attachControl(canvas, true);
-    skybox.dispose();
+    //skybox.dispose();
   }
 
   return { camera, skybox };
