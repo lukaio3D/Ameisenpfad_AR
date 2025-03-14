@@ -113,7 +113,7 @@ export default class AntObject extends Mesh {
     container.materials.forEach((material) => {
       let pbrMaterial = material as PBRMaterial;
       if (pbrMaterial) {
-        pbrMaterial.emissiveColor = new Color3(0.5, 0.5, 0.5);
+        pbrMaterial.emissiveColor = new Color3(0.6, 0.6, 0.6);
         if (pbrMaterial.albedoTexture) {
           pbrMaterial.emissiveTexture = pbrMaterial.albedoTexture;
         }
@@ -282,12 +282,21 @@ export default class AntObject extends Mesh {
   }
 
   public changeColor(newColor: Color3) {
-    // Neues Material erstellen
-    const newAntMaterial = new StandardMaterial(
+    // Neues PBR-Material erstellen
+    const newAntMaterial = new PBRMaterial(
       "newAntMaterial",
       this.antMesh.getScene()
     );
-    newAntMaterial.diffuseColor = newColor;
+    newAntMaterial.albedoColor = newColor;
+    newAntMaterial.metallic = 0; // Kein metallischer Effekt
+    newAntMaterial.roughness = 0.5; // Komplett rau (matt)
+
+    // Leichter Emissive-Effekt, um Konturen subtil hervorzuheben
+    newAntMaterial.emissiveColor = newColor.scale(0.2);
+
+    // Optionale Einstellungen zur Beleuchtungsintensität
+    newAntMaterial.directIntensity = 1;
+    newAntMaterial.environmentIntensity = 0.5;
 
     // Alle untergeordneten Meshes abrufen und Material setzen
     const allMeshes = this.antMesh.getChildMeshes();
