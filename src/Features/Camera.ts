@@ -28,7 +28,7 @@ export default async function createCamera(
 
   const isIOs =
     /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    (navigator.userAgent.includes("Macintosh") && "ontouchend" in document);
+    (navigator.userAgent.includes("iPad"));
 
   let camera: FreeCamera;
   let skybox: PhotoDome;
