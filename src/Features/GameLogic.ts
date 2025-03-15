@@ -4,6 +4,7 @@ import {
   PointerEventTypes,
   RecastJSPlugin,
   Scene,
+  ShadowGenerator,
   Vector3,
 } from "@babylonjs/core";
 import { UIManager } from "./UIManager";
@@ -27,7 +28,8 @@ const enemyAntClickCount = new Map<
 export function GameLogic(
   scene: Scene,
   navigationPlugin: RecastJSPlugin,
-  crowd: ICrowd
+  crowd: ICrowd,
+  shadowGenerator: ShadowGenerator
 ) {
   const uiManager = UIManager.getInstance();
 
@@ -93,6 +95,9 @@ export function GameLogic(
         crowd,
         playerAnt
       );
+      if (shadowGenerator) {
+        shadowGenerator.addShadowCaster(enemyAnt, true);
+      }
       handleAntProximity(enemyAnt);
       allAnts.push(enemyAnt);
     }
@@ -105,6 +110,7 @@ export function GameLogic(
         crowd,
         playerAnt
       );
+      shadowGenerator.addShadowCaster(friendAnt, true);
       handleAntProximity(friendAnt);
       allAnts.push(friendAnt);
     }
@@ -224,11 +230,13 @@ export function GameLogic(
             });
 
             playerAnt.fireAntAction("defend");
-            uiManager.displayMessage("Deine Ameise verteidigt sich mit Ameisensäure!");
+            uiManager.displayMessage(
+              "Deine Ameise verteidigt sich mit Ameisensäure!"
+            );
             PlayerController(scene, playerAnt).disableControl();
 
             setTimeout(() => {
-              pickedAnt.substractEnemyHealth(50);
+              pickedAnt.substractEnemyHealth(100);
             }, 5000);
 
             // Sobald die Aktion beendet ist, entfernen wir den Observer und aktivieren PlayerControls wieder
@@ -254,6 +262,19 @@ export function GameLogic(
       }
     }
   });
+
+  function disposeDeadEnemyAnts() {
+    // Durchlaufe die Liste rückwärts, damit beim Entfernen keine Indizes verschoben werden.
+    for (let i = allAnts.length - 1; i >= 0; i--) {
+      const ant = allAnts[i];
+      // Wir gehen davon aus, dass EnemyAnt über die Methode getEnemyHealth() verfügt
+      if (ant instanceof EnemyAnt && ant.getEnemyHealth() <= 0) {
+        // Entsorge die Ameise (sofern ant.dispose() vorhanden ist, z.B. in AntObject)
+        ant.dispose();
+        allAnts.splice(i, 1);
+      }
+    }
+  }
 
   // Start Spawner
   let twigsCollected: number = 0;
@@ -281,5 +302,6 @@ export function GameLogic(
       uiManager.toogleLoserScreen();
       // clearInterval(timer);
     }
+    disposeDeadEnemyAnts();
   });
 }

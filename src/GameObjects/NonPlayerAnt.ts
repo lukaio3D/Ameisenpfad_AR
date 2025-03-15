@@ -11,6 +11,7 @@ export default class NonPlayerAnt extends AntObject {
   protected identifierColor: Color3;
   private behaviourState: string = "randomMove";
   private isRandomMoving: boolean = false;
+  private isRunningAway: boolean = false;
   private isIdentifying: boolean = false;
   private isAttacking: boolean = false;
   private isFeeding: boolean = false;
@@ -118,22 +119,16 @@ export default class NonPlayerAnt extends AntObject {
   }
 
   public runAwayFromPlayerAnt() {
-    // Richtung von der Spielerameise weg berechnen
+    let randomPosition = this.createRandomPointOnNavMesh();
+    this.moveAnt(randomPosition);
 
-    const directionAway = this.position
-      .subtract(this.playerAnt.position)
-      .normalize();
-    // Zielposition bestimmen, die außerhalb der Proximity-Zone liegt
-    const escapeDistance = 10; // Distanz zum Weglaufen
-    const targetPosition = this.position.add(
-      directionAway.scale(escapeDistance)
-    );
-    this.moveAnt(targetPosition);
+    // Nach 5 Sekunden wird der Zustand zurückgesetzt
     setTimeout(() => {
       this.changeBehaviourState("randomMove");
       this.isAttacking = false;
       this.isFeeding = false;
-    }, 5000); // Dauer des Weglaufens
+      this.isRunningAway = false;
+    }, 5000);
   }
 
   public healPlayerAnt() {
@@ -227,7 +222,10 @@ export default class NonPlayerAnt extends AntObject {
 
         case "runAway":
           // Muss bei jedem Frame aktualisiert werden
-          this.runAwayFromPlayerAnt();
+          if (!this.isRunningAway) {
+            this.isRunningAway = true;
+            this.runAwayFromPlayerAnt();
+          }
           this.randomMove(false); // Falls nötig
           this.isRandomMoving = false; // Falls nötig
           break;

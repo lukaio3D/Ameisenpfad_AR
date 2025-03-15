@@ -37,18 +37,6 @@ export default class EnemyAnt extends NonPlayerAnt {
 
   private initializeEnemyAnt(scene: Scene, playerAnt: PlayerAnt) {
     this.randomMove();
-    
-    // Observer hinzufügen, der die Ameise disposed, wenn die Health <= 0 ist:
-    this.addHealthObserver();
-  }
-
-  private addHealthObserver(): void {
-    const healthObserver = this.scene.onBeforeRenderObservable.add(() => {
-      if (this.enemyHealth <= 0) {
-        this.dispose();
-        this.scene.onBeforeRenderObservable.remove(healthObserver);
-      }
-    });
   }
 
   public setEnemyHealth(health: number) {

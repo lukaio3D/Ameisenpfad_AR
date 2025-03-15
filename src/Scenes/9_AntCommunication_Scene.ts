@@ -15,7 +15,9 @@ import {
   WebXRState,
   Quaternion,
   WebXRSessionManager,
+  ShadowGenerator,
 } from "@babylonjs/core";
+import { ShadowOnlyMaterial } from '@babylonjs/materials';
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
 import { GameLogic } from "../Features/GameLogic";
@@ -32,23 +34,34 @@ export default async function createAntCommunicationScene(
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
   light.intensity = 0.7;
 
-  const dirLight = new DirectionalLight(
-    "dirLight",
-    new Vector3(0, -1, -0.5),
-    scene
-  );
-  dirLight.position = new Vector3(0, 5, -5);
+	var dirLight = new DirectionalLight("dir01", new Vector3(-1, -2, -1), scene);
+	dirLight.position = new Vector3(20, 40, 20);
+	dirLight.intensity = 0.5;
 
-  // GroundMesh erstellen
   const groundMesh = MeshBuilder.CreateGround(
     "ground",
     { width: 5, height: 5 },
     scene
   );
+
   groundMesh.position = new Vector3(0, -0.1, 2.5);
-  const groundMaterial = new StandardMaterial("groundMaterial", scene);
+  const groundMaterial = new ShadowOnlyMaterial("groundShadowMat", scene);
   groundMesh.material = groundMaterial;
-  groundMaterial.alpha = 0;
+  groundMesh.receiveShadows = true;
+
+  // Erstelle die End-Communication-Box
+  const endCommunicationBox = MeshBuilder.CreateBox(
+    "endCommunicationBox",
+    { size: 1 },
+    scene
+  );
+  endCommunicationBox.position = new Vector3(0, 0.5, 3); // Position anpassen, damit sie im Licht steht
+
+  // Schatten Setup
+  const shadowGenerator = new ShadowGenerator(1024, dirLight);
+  shadowGenerator.useExponentialShadowMap = true;
+  shadowGenerator.addShadowCaster(endCommunicationBox);
+  groundMesh.receiveShadows = true;
 
   let { camera, skybox } = await createCamera(canvas, scene);
 
@@ -59,10 +72,10 @@ export default async function createAntCommunicationScene(
     false
   );
 
-  GameLogic(scene, navigationPlugin, crowd);
+  GameLogic(scene, navigationPlugin, crowd, shadowGenerator);
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
-  
+
   const startARButton = document.getElementById(
     "startARButton"
   ) as HTMLButtonElement;

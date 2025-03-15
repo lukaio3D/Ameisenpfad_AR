@@ -266,6 +266,9 @@
   .block\! {
     display: block !important;
   }
+  .contents {
+    display: contents;
+  }
   .flex {
     display: flex;
   }
