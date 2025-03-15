@@ -249,6 +249,10 @@ export default class AntObject extends Mesh {
     }
   }
 
+  public getAntIndex(): number {
+    return this.antIndex;
+  }
+
   public getMesh(): AbstractMesh {
     return this.antMesh;
   }

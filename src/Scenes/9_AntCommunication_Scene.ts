@@ -48,7 +48,7 @@ export default async function createAntCommunicationScene(
   groundMesh.position = new Vector3(0, -0.1, 2.5);
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh.material = groundMaterial;
-  groundMaterial.alpha = 0.1;
+  groundMaterial.alpha = 0;
 
   // Schatten Setup
   const shadowGenerator = new ShadowGenerator(1024, dirLight);
@@ -97,7 +97,7 @@ export default async function createAntCommunicationScene(
       // AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
-        groundMaterial.alpha = 0.2;
+        groundMaterial.alpha = 0.1;
       });
     });
   }

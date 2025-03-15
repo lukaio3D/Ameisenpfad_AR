@@ -1,4 +1,4 @@
-import { Color3, Vector3 } from "@babylonjs/core";
+import { Color3, Nullable, Observer, Scene, Vector3 } from "@babylonjs/core";
 import AntObject from "./AntObject";
 import PlayerAnt from "./PlayerAnt";
 import PlayerController from "../Features/PlayerController";
@@ -193,6 +193,7 @@ export default class NonPlayerAnt extends AntObject {
   }
 
   private previousBehaviourState: string = "";
+
 
   public addNonPlayerAntBehaviour() {
     this.scene.registerBeforeRender(() => {

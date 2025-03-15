@@ -52,7 +52,12 @@ export default class EnemyAnt extends NonPlayerAnt {
 
   public substractEnemyHealth(damage: number) {
     this.enemyHealth -= damage;
+    if(this.enemyHealth <= 0) {
+      this.dispose();
+      console.log(this);
+    }
   }
+
 
   
 }

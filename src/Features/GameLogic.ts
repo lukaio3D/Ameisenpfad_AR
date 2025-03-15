@@ -258,20 +258,6 @@ export function GameLogic(
     }
   });
 
-  function disposeDeadEnemyAnts() {
-    // Durchlaufe die Liste rückwärts, damit beim Entfernen keine Indizes verschoben werden.
-    for (let i = allAnts.length - 1; i >= 0; i--) {
-      const ant = allAnts[i];
-      // Wir gehen davon aus, dass EnemyAnt über die Methode getEnemyHealth() verfügt
-      if (ant instanceof EnemyAnt && ant.getEnemyHealth() <= 0) {
-        // Entsorge die Ameise (sofern ant.dispose() vorhanden ist, z.B. in AntObject)
-        ant.dispose();
-        allAnts.splice(i, 1);
-      }
-    }
-    console.log(crowd);
-  }
-
   // Start Spawner
   let twigsCollected: number = 0;
   const twigsToCollect: number = 10;
@@ -298,6 +284,5 @@ export function GameLogic(
       uiManager.toogleLoserScreen();
       // clearInterval(timer);
     }
-    disposeDeadEnemyAnts();
   });
 }
