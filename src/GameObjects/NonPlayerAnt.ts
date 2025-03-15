@@ -16,6 +16,7 @@ export default class NonPlayerAnt extends AntObject {
   private isAttacking: boolean = false;
   private isFeeding: boolean = false;
   private uiManager = UIManager.getInstance();
+  public antHealth: number = 100;
 
   constructor(
     antType: string = "NonPlayerAnt",
@@ -192,11 +193,16 @@ export default class NonPlayerAnt extends AntObject {
     }
   }
 
+  public deleteAnt() {
+    this.dispose();
+    this.scene.unregisterBeforeRender(this.renderLoopBehaviour);
+    this.setBehaviourState("randomMove");
+  }
+
   private previousBehaviourState: string = "";
 
-
-  public addNonPlayerAntBehaviour() {
-    this.scene.registerBeforeRender(() => {
+  private renderLoopBehaviour = () => {
+    if (this.antHealth >= 0) {
       switch (this.behaviourState) {
         case "randomMove":
           // randomMove sollte nur einmal gestartet werden
@@ -252,6 +258,10 @@ export default class NonPlayerAnt extends AntObject {
           // Standardverhalten oder Fehlerbehandlung
           break;
       }
-    });
+    }
+  };
+
+  public addNonPlayerAntBehaviour() {
+    this.scene.registerBeforeRender(this.renderLoopBehaviour);
   }
 }

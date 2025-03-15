@@ -11,7 +11,6 @@ import NonPlayerAnt from "./NonPlayerAnt";
 
 export default class EnemyAnt extends NonPlayerAnt {
   private enemyMaterial: StandardMaterial;
-  private enemyHealth: number = 100;
 
   constructor(
     startPosition: Vector3,
@@ -40,21 +39,20 @@ export default class EnemyAnt extends NonPlayerAnt {
   }
 
   public setEnemyHealth(health: number) {
-    this.enemyHealth = health;
-    if (this.enemyHealth > 100) {
-      this.enemyHealth = 100;
+    this.antHealth = health;
+    if (this.antHealth > 100) {
+      this.antHealth = 100;
     }
   }
 
   public getEnemyHealth() {
-    return this.enemyHealth;
+    return this.antHealth;
   }
 
   public substractEnemyHealth(damage: number) {
-    this.enemyHealth -= damage;
-    if(this.enemyHealth <= 0) {
-      this.dispose();
-      console.log(this);
+    this.antHealth -= damage;
+    if(this.antHealth <= 0) {
+      this.deleteAnt();
     }
   }
 
