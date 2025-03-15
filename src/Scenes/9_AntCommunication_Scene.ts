@@ -43,6 +43,8 @@ export default async function createAntCommunicationScene(
     scene
   );
 
+  //Fix Error with ShadowOnlyMaterial
+
   groundMesh.position = new Vector3(0, -0.1, 2.5);
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh.material = groundMaterial;
@@ -62,7 +64,7 @@ export default async function createAntCommunicationScene(
     false
   );
 
-  GameLogic(scene, navigationPlugin, crowd, shadowGenerator);
+  GameLogic(scene, navigationPlugin, crowd);
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 

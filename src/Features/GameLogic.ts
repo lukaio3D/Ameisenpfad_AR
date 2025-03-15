@@ -29,7 +29,6 @@ export function GameLogic(
   scene: Scene,
   navigationPlugin: RecastJSPlugin,
   crowd: ICrowd,
-  shadowGenerator: ShadowGenerator
 ) {
   const uiManager = UIManager.getInstance();
 
