@@ -48,18 +48,11 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  // Erstelle die End-Communication-Box
-  const endCommunicationBox = MeshBuilder.CreateBox(
-    "endCommunicationBox",
-    { size: 1 },
-    scene
-  );
-  endCommunicationBox.position = new Vector3(0, 0.5, 3); // Position anpassen, damit sie im Licht steht
+
 
   // Schatten Setup
   const shadowGenerator = new ShadowGenerator(1024, dirLight);
   shadowGenerator.useExponentialShadowMap = true;
-  shadowGenerator.addShadowCaster(endCommunicationBox);
   groundMesh.receiveShadows = true;
 
   let { camera, skybox } = await createCamera(canvas, scene);
