@@ -50,10 +50,6 @@ export default async function createAntCommunicationScene(
   groundMesh.material = groundMaterial;
   groundMaterial.alpha = 0;
 
-  // Schatten Setup
-  const shadowGenerator = new ShadowGenerator(1024, dirLight);
-  shadowGenerator.useExponentialShadowMap = true;
-  groundMesh.receiveShadows = true;
 
   let { camera, skybox } = await createCamera(canvas, scene);
 
@@ -68,22 +64,6 @@ export default async function createAntCommunicationScene(
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
 
-  scene.meshes.forEach((mesh) => {
-    shadowGenerator.addShadowCaster(mesh);
-    mesh.receiveShadows = true;
-  });
-  // RenderLoop: Überprüfe in jedem Frame, ob neue Meshes in der Szene vorhanden sind
-  const processedMeshIds = new Set<string>();
-  scene.onBeforeRenderObservable.add(() => {
-    scene.meshes.forEach((mesh) => {
-      if (!processedMeshIds.has(mesh.id)) {
-        shadowGenerator.addShadowCaster(mesh);
-        mesh.receiveShadows = true;
-        processedMeshIds.add(mesh.id);
-      }
-    });
-  });
-
   const startARButton = document.getElementById(
     "startARButton"
   ) as HTMLButtonElement;
@@ -97,7 +77,6 @@ export default async function createAntCommunicationScene(
       // AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
-        groundMaterial.alpha = 0.1;
       });
     });
   }
