@@ -17,7 +17,6 @@ import {
   WebXRSessionManager,
   ShadowGenerator,
 } from "@babylonjs/core";
-import { ShadowOnlyMaterial } from '@babylonjs/materials';
 import createNavigationFeatures from "../Features/NavigationFeatures";
 import createARFeatures from "../Features/ARFeatures";
 import { GameLogic } from "../Features/GameLogic";
@@ -45,9 +44,9 @@ export default async function createAntCommunicationScene(
   );
 
   groundMesh.position = new Vector3(0, -0.1, 2.5);
-  const groundMaterial = new ShadowOnlyMaterial("groundShadowMat", scene);
+  const groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh.material = groundMaterial;
-  groundMesh.receiveShadows = true;
+  groundMaterial.alpha = 0;
 
   // Erstelle die End-Communication-Box
   const endCommunicationBox = MeshBuilder.CreateBox(
