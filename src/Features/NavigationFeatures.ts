@@ -13,7 +13,7 @@ export default async function createNavigationFeatures(scene: Scene, groundMesh:
 
   const parameters = {
     cs: 0.1,
-    ch: 0.1,
+    ch: 0.01,
     walkableSlopeAngle: 35,
     walkableHeight: 1,
     walkableClimb: 1,

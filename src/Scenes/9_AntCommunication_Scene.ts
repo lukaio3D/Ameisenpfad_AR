@@ -33,9 +33,9 @@ export default async function createAntCommunicationScene(
   const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
   light.intensity = 0.7;
 
-	var dirLight = new DirectionalLight("dir01", new Vector3(-1, -2, -1), scene);
-	dirLight.position = new Vector3(20, 40, 20);
-	dirLight.intensity = 0.5;
+  var dirLight = new DirectionalLight("dir01", new Vector3(-1, -2, -1), scene);
+  dirLight.position = new Vector3(20, 40, 20);
+  dirLight.intensity = 5;
 
   const groundMesh = MeshBuilder.CreateGround(
     "ground",
@@ -46,9 +46,7 @@ export default async function createAntCommunicationScene(
   groundMesh.position = new Vector3(0, -0.1, 2.5);
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
   groundMesh.material = groundMaterial;
-  groundMaterial.alpha = 0;
-
-
+  groundMaterial.alpha = 0.1;
 
   // Schatten Setup
   const shadowGenerator = new ShadowGenerator(1024, dirLight);
@@ -67,6 +65,22 @@ export default async function createAntCommunicationScene(
   GameLogic(scene, navigationPlugin, crowd, shadowGenerator);
 
   // new TreeStump(scene, new Vector3(0, 0, 0), navigationPlugin);
+
+  scene.meshes.forEach((mesh) => {
+    shadowGenerator.addShadowCaster(mesh);
+    mesh.receiveShadows = true;
+  });
+  // RenderLoop: Überprüfe in jedem Frame, ob neue Meshes in der Szene vorhanden sind
+  const processedMeshIds = new Set<string>();
+  scene.onBeforeRenderObservable.add(() => {
+    scene.meshes.forEach((mesh) => {
+      if (!processedMeshIds.has(mesh.id)) {
+        shadowGenerator.addShadowCaster(mesh);
+        mesh.receiveShadows = true;
+        processedMeshIds.add(mesh.id);
+      }
+    });
+  });
 
   const startARButton = document.getElementById(
     "startARButton"

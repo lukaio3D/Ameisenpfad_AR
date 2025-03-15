@@ -95,9 +95,6 @@ export function GameLogic(
         crowd,
         playerAnt
       );
-      if (shadowGenerator) {
-        shadowGenerator.addShadowCaster(enemyAnt, true);
-      }
       handleAntProximity(enemyAnt);
       allAnts.push(enemyAnt);
     }
@@ -110,7 +107,6 @@ export function GameLogic(
         crowd,
         playerAnt
       );
-      shadowGenerator.addShadowCaster(friendAnt, true);
       handleAntProximity(friendAnt);
       allAnts.push(friendAnt);
     }
@@ -274,6 +270,7 @@ export function GameLogic(
         allAnts.splice(i, 1);
       }
     }
+    console.log(crowd);
   }
 
   // Start Spawner

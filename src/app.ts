@@ -61,7 +61,7 @@ class App {
     scene.clearColor = new Color4(0.95, 0.95, 0.95, 1);
     this.scene = scene;
 
-    scene.debugLayer.show();
+    //scene.debugLayer.show();
 
     const uiManager = UIManager.getInstance();
     await createAntCommunicationScene(canvas, scene);
