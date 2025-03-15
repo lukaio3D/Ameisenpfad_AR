@@ -95,6 +95,7 @@ export default async function createAntCommunicationScene(
       // AR-Features initialisieren
       await createARFeatures(scene).then(() => {
         skybox.dispose();
+        groundMaterial.alpha = 0.2;
       });
     });
   }
