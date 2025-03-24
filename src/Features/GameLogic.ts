@@ -28,7 +28,7 @@ const enemyAntClickCount = new Map<
 export function GameLogic(
   scene: Scene,
   navigationPlugin: RecastJSPlugin,
-  crowd: ICrowd,
+  crowd: ICrowd
 ) {
   const uiManager = UIManager.getInstance();
 
@@ -265,6 +265,8 @@ export function GameLogic(
 
   let twig: ConstructionTwig = spawnConstructionTwig();
 
+  const engine = scene.getEngine();
+
   // Kollisionen verwalten
   scene.onAfterRenderObservable.add(() => {
     // Kollisionen zwischen PlayerAnt und Bauzweigen verwalten
@@ -275,12 +277,14 @@ export function GameLogic(
       twig = spawnConstructionTwig();
       spawnAntRandomly();
       if (twigsCollected === twigsToCollect) {
+        engine.stopRenderLoop();
         uiManager.toogleWinnerScreen();
         // clearInterval(timer);
       }
     }
     // Game Over bei Health 0
     if (playerAnt.getHealth() <= 0) {
+      engine.stopRenderLoop();
       uiManager.toogleLoserScreen();
       // clearInterval(timer);
     }
