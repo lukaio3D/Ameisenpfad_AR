@@ -16,6 +16,7 @@ import {
   AsyncCoroutine,
   Quaternion,
   Observable,
+  MeshBuilder,
 } from "@babylonjs/core";
 
 import antModel from "../assets/240206_AnimatedAnt_final.glb";
@@ -45,6 +46,7 @@ export default class AntObject extends Mesh {
     pathOptimizationRange: 0.0,
     separationWeight: 1.0,
   };
+  protected interactionVolume: Mesh;
   // Deklaration der Klassenvariable
   private randomMoveInterval;
   public onActionFinishedObservable: Observable<void> = new Observable();
@@ -65,6 +67,7 @@ export default class AntObject extends Mesh {
     this.scene = assignedScene;
     this.position.copyFrom(startPosition);
     this.ready = this.initialize();
+    this.setupInterationVolume();
   }
 
   private async initialize() {
@@ -78,6 +81,31 @@ export default class AntObject extends Mesh {
     this.animateAntOnMove(this.scene);
     this.idle = this.animationGroups[0];
     this.run = this.animationGroups[2];
+  }
+
+  private setupInterationVolume() {
+    this.interactionVolume = MeshBuilder.CreateCylinder(
+      "antInteractionVolume",
+      {
+        height: 5, // Höhe anpassen
+        diameter: 13, // Durchmesser anpassen (größer als die Ameise)
+      },
+      this.scene
+    );
+
+    this.interactionVolume.isVisible = true; // Unsichtbar machen
+    this.interactionVolume.isPickable = true; // Anklickbar machen
+    this.interactionVolume.checkCollisions = false; // Normalerweise keine Kollision nötig
+    this.interactionVolume.bakeCurrentTransformIntoVertices(); // Optimierung
+    const interactionMat = new StandardMaterial("interactionVolumeMat", this.scene);
+    interactionMat.alpha = 0; // Material komplett durchsichtig machen
+    this.interactionVolume.material = interactionMat;
+    if (this) {
+      // Annahme: this.mesh ist das Haupt-Mesh/Node der Ameise
+      this.interactionVolume.parent = this;
+      this.interactionVolume.position = new Vector3(0, 2, 0); // Position relativ zum Parent anpassen (z.B. Mitte der Höhe)
+    }
+    this.interactionVolume.metadata = { ant: this };
   }
 
   public getActionIsFired() {
@@ -331,5 +359,6 @@ export default class AntObject extends Mesh {
     this.antMesh.dispose();
     this.dispose();
     this.crowd.removeAgent(this.antIndex);
+    this.interactionVolume.dispose();
   }
 }

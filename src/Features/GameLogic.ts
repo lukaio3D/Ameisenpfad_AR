@@ -189,11 +189,11 @@ export function GameLogic(
       const pickedMesh = pointerInfo.pickInfo?.pickedMesh;
       if (!pickedMesh) return;
 
-      if (pickedMesh.name === "Clone of Ant.006") {
-        const pickedAnt = allAnts.find((ant) =>
-          ant?.getChildMeshes().includes(pickedMesh)
-        );
-        // Prüfen, ob die Ameise existiert und vom Typ EnemyAnt ist
+      // Prüfe, ob das geklickte Mesh ein Interaktionsvolumen ist und Metadaten hat
+      if (pickedMesh.name === "antInteractionVolume" && pickedMesh.metadata?.ant) {
+        const pickedAnt = pickedMesh.metadata.ant as AntObject; // Typ-Zuweisung
+
+        // Prüfen, ob die Ameise vom Typ EnemyAnt ist
         if (pickedAnt instanceof EnemyAnt) {
           // Klick-Logik: 3 schnelle Klicks nötig
           const antId = pickedAnt.id; // Annahme: jede Ameise hat eine eindeutige id
